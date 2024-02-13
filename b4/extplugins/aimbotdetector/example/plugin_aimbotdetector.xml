@@ -1,0 +1,82 @@
+<configuration plugin="aimbotdetector">
+	<!-- Hit location console code. You can add more than one location although not recommended! -->
+	<hitlocs>
+		<!--
+		('1',  'HEAD');
+		('2',  'HELMET');
+		('3',  'TORSO');
+		('4',  'VEST');
+		('5',  'LEFT ARM');
+		('6',  'RIGHT ARM');
+		('7',  'GROIN');
+		('8',  'BUTT');
+		('9',  'LEFT UPPER LEG');
+		('10', 'RIGHT UPPER LEG');
+		('11', 'LEFT LOWER LEG');
+		('12', 'RIGHT LOWER LEG');
+		('13', 'LEFT FOOT');
+		('14', 'RIGHT FOOT');
+		-->
+		<hitloc>1</hitloc>
+		<hitloc>2</hitloc>
+	</hitlocs>
+	<settings name="settings">
+		<!--
+		Number of killstreak for the specific hitlocation(s). When the number
+		specified here is reached, an action will be triggered depending
+		on your selection in action setting.
+		Yes, it's spelled wrong, but leave it that way.
+		-->
+		<set name="treshold">10</set>
+		<!--
+		You can choose different actions when the player reaches the treshold.
+		Please write the corresponding number of the action of your choice:
+			Kick        : 0
+			Tempban     : 1
+			Permban     : 2
+			Notify Only : 3
+		-->
+		<set name="action">3</set>
+		<!--
+		If you have chosen to tempban the player, you can define a duration
+		as in B3 duration format.
+		Example:
+			6m : 6 Minutes
+			2h : 2 Hours
+			1w : 1 Week
+			3d : 3 Days
+		-->
+		<set name="duration">2h</set>
+		<!--
+		If you have chosen to notify online admins, all admins equal or higher level will get
+		notified via PM
+		-->
+		<set name="adminlevel">40</set>
+		<!-- Minimum level to ignore. i.e. players with equal or higher level will not be checked -->
+		<set name="ignorelevel">40</set>
+	</settings>
+	<settings name="messages">
+		<set name="warnmessage">^1ATTENTION: ^7%s maybe using aimbot! Better check it out.</set>
+		<set name="kickmessage">^1Aimbot Detected!</set>
+	</settings>
+	<settings name="mail">
+		<!-- Do you want to send e-mail to admin(s) when the bot detects a suspicious player? -->
+		<set name="mailtoadmin">no</set>
+		<!-- Your game server name to be included in e-mail message. Useful if you have multiple servers -->
+		<set name="servername">Your Server Name</set>
+		<!-- Sender's Real Name -->
+		<set name="sendername">Your Name</set>
+		<!-- Sender's e-mail address -->
+		<set name="sendermail">you@example.com</set>
+		<!-- Receivers' e-mail addresses (separate with comma (,) if multiple receivers) -->
+		<set name="receivers">admin_1@example.com, admin_2@example.com</set>
+		<!-- Your SMTP server Example: mail.example.com. For Google that is smtp.gmail.com:587 -->
+		<set name="smtp">mail.example.com</set>
+		<!-- E-mail login name -->
+		<set name="login">login_name</set>
+		<!-- E-mail password -->
+		<set name="password">password</set>
+		<!-- Your E-mail message body -->
+		<set name="emailbody">Attention! A suspicious player detected!</set>
+	</settings>
+</configuration>

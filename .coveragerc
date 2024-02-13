@@ -1,0 +1,6 @@
+[run]
+omit =
+	tests/*
+	b4/lib/*
+	b4/tools/*
+	b4/fake

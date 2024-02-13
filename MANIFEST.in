@@ -1,0 +1,13 @@
+include *.py
+include b4_run.py
+include b4/sql/*.sql
+include CHANGELOG README.md b4/PKG-INFO *.txt
+include b4/conf/*.xml
+include b4/conf/*.ini
+include b4/conf/templates/*.tpl
+exclude .idea/*
+exclude tests/*
+exclude setup.cfg
+exclude setup.py
+exclude build-requirements.txt
+exclude MANIFEST.in

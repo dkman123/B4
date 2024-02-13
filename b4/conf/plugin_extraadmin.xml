@@ -1,0 +1,63 @@
+<configuration plugin="extraadmin">
+	<settings name="commands">
+		<!--
+            #
+            # Groups are (keyword / level : description)
+            # ==============================================
+            # superadmin / 100 : Super admin (server owner)
+            # senioradmin / 80 : Senior admins
+            # fulladmin / 60   : Full admins
+            # admin / 40       : Admins
+            # mod / 20         : Moderators
+            # reg / 2          : Regular players (VIP)
+            # user / 1         : Registered players (those who typed !register)
+            # guest / 0        : Unregistered players
+        -->
+        <!-- Command to list all loaded lists -->
+        <set name="autonuke">senioradmin</set>
+        <set name="afk">admin</set>
+        <set name="kafk">fulladmin</set>
+        <set name="salut">fulladmin</set>
+        <set name="change">admin</set>
+        <set name="pm">user</set>
+        <set name="exit">admin</set>
+	</settings>
+    <settings name="settings">
+
+    <!-- To reverse two players teams -->
+        <set name="min_level_change">40</set>
+
+    <!-- To kick or force spec afk players -->
+        <set name="min_level_kafk">60</set>
+        <set name="min_level_afk">20</set>
+        <set name="time_afk">10</set>
+        <set name="time_kafk">10</set>
+
+    <!-- To pm a player when you are spectator-->
+        <set name="min_level_pm">2</set>
+
+    <!-- To say hello to a player with bigtext-->
+        <set name="min_level_salut">40</set>
+
+    <!-- To show ip of a player on player connect-->
+        <set name="showIP">0</set>
+
+    <!-- To nuke to death -->
+        <set name="min_level_autonuke">100</set>
+
+    <!-- To put on a definite map, gametype if number of player < or = limit-->
+        <set name="RAZ_server">0</set>
+        <set name="RAZ_map">ut4_abbey</set>
+        <set name="RAZ_gametype">7</set>
+        <set name="RAZ_limit">0</set>
+
+    <!-- Show next player disconnected-->
+        <set name="min_level_exit">20</set>
+    <!-- To Unban last disconnect player-->
+        <set name="min_level_unbanexit">60</set>
+
+    <!-- Show the moderator online-->
+        <set name="min_level_modos">20</set>
+
+    </settings>
+</configuration>

@@ -1,0 +1,104 @@
+<configuration plugin="vpncheck">
+    <settings name="settings">
+        <!-- level from which players won't be checked, thus never be kicked. (default: 100) -->
+        <!--set name="immunity_level">100</set -->
+        <set name="immunity_level">superadmin</set>
+        <!--  key_iphub : the key to IP Hub (entered or "blank" without quotes) -->
+        <!--  https://iphub.info/api -->
+        <set name="key_iphub">YOURKEYIPHUB</set>
+        <!--  key_abuseipdb : the key to Abuse IP DB -->
+        <!--  https://docs.abuseipdb.com/#check-endpoint -->
+        <set name="key_abuseipdb">YOURKEYABUSEIPDB</set>
+        <!--  email_getipintel : the email address to use for Get IP Intel -->
+        <!--  https://getipintel.net/free-proxy-vpn-tor-detection-api/ -->
+        <set name="email_getipintel">YOUREMAILADDRESS</set>
+        <!--  days_abuseipdb : the days to look for bad behavior. default 30 -->
+        <set name="days_abuseipdb">30</set>
+        <!--  score_needed_abuseipdb : the score needed to flag as bad. default 50 -->
+        <set name="score_needed_abuseipdb">50</set>
+        <!--  score_needed_getipintel : the score needed to flag as bad. default 0.94 -->
+        <set name="score_needed_getipintel">0.94</set>
+        <!--  check for vpns on player connect. 1 = enabled, 0 = disabled -->
+        <set name="on_connect">1</set>
+        <!--  key_proxycheck : the key to use for ProxyCheck.io -->
+        <!--  https://proxycheck.io/v2/13.13.13.51?vpn=1&asn=1 -->
+        <set name="key_proxycheck">YOURKEY</set>
+        <!--  use IP Hub. 1 = enabled, 0 = disabled -->
+        <set name="use_iphub">0</set>
+        <!--  use Abuse IP DB. 1 = enabled, 0 = disabled -->
+        <set name="use_abuseipdb">0</set>
+        <!--  use Get IP Intel. 1 = enabled, 0 = disabled -->
+        <set name="use_getipintel">0</set>
+        <!--  use ProxyCheck.io. 1 = enabled, 0 = disabled -->
+        <set name="use_proxycheck">1</set>
+        <!--  store_for_minutes (int). hold good connections for this long, so a rescan is not necessary. default = 120 -->
+        <set name="store_for_minutes">120</set>
+        <!--  bad_for_minutes (int). hold bad connections for this long, so a rescan is not necessary. default = 120 -->
+        <set name="bad_for_minutes">120</set>
+        <!-- list of client strings to not allow (blacklist). (comma delimited, no space [ie "client a,client b") -->
+        <set name="blacklist_clients">Q3 1.32e</set>
+        <!-- time to temp ban a blacklist client, in minutes (1440 = 1d) -->
+        <set name="blacklist_client_time">120</set>
+        <!-- list of client strings to allow. (comma delimited, no space [ie "client a,client b"). if whitelist_clients is not empty it will block any unspecified client -->
+        <set name="whitelist_clients">FTWGL,UrtSlim-Q3e</set>
+        <!-- time to temp ban an invalid client (not in whitelist), in minutes (1440 = 1d) -->
+        <set name="non_whitelist_client_time">120</set>
+    </settings>
+
+    <settings name="messages">
+        <set name="iphub_block">^7IPHub block: ^1%s</set>
+        <set name="iphub_countryCode">^7IPHub countryCode: ^1%s</set>
+        <set name="iphub_isp">^7IPHub isp: ^1%s</set>
+        <set name="abuseipdb_block">^7AbuseIPDB block: ^1%s</set>
+        <set name="abuseipdb_countryCode">^7AbuseIPDB countryCode: ^1%s</set>
+        <set name="abuseipdb_domain">^7AbuseIPDB domain: ^1%s</set>
+        <set name="abuseipdb_isp">^7AbuseIPDB isp: ^1%s</set>
+        <set name="getipintel_block">^7GetIPIntel block: ^1%s</set>
+        <set name="proxycheck_asn">^7ProxyCheck ASN: ^1%s</set>
+        <set name="proxycheck_org">^7ProxyCheck Org: ^1%s</set>
+        <set name="proxycheck_isocode">^7ProxyCheck ISO Code: ^1%s</set>
+        <set name="proxycheck_region">^7ProxyCheck Region: ^1%s</set>
+        <set name="proxycheck_type">^7ProxyCheck Type: ^1%s</set>
+        <set name="proxycheck_proxy">^7ProxyCheck Is Proxy: ^1%s</set>
+    </settings>
+
+    <settings name="commands">
+        <!--
+            #
+            # Groups are (keyword / level : description)
+            # ==============================================
+            # superadmin / 100 : Super admin (server owner)
+            # senioradmin / 80 : Senior admins
+            # fulladmin / 60   : Full admins
+            # admin / 40       : Admins
+            # mod / 20         : Moderators
+            # reg / 2          : Regular players (VIP)
+            # user / 1         : Registered players (those who typed !register)
+            # guest / 0        : Unregistered players
+        -->
+        <!-- Command to check a client's connection -->
+        <set name="vpncheck-vc">senioradmin</set>
+        <set name="vpncheckip-vcip">senioradmin</set>
+    </settings>
+
+    <!--
+    You can define as many banlist/whilelist files as you want.
+    Banlists can be of 4 types : ip banlist, ip whitelist, guid banlist or guid whitelist
+    Each banlist definition contains the following information :
+    * name : the name of the banlist, will be used as a reason for the kick (useful to find them in Echelon)
+    * file : the path to the banlist file.
+        - ip banlist : a file containing ip to ban, compatible with quake3 banlist format. If an ip ends with ".0", the full range will be banned. Lines stating with "//" will be ignored.
+     * message : an optional message that will be displayed in game. Keywords that can be used : $id, $ip, $guid, $pbid, $name
+        - NOTE:  the ban message is only visible to other players. The banned player WILL NOT SEE that message as it is kicked before having a chance to load the map.
+    * url : an optional url from where the banlist file will be updated hourly
+    * force_ip_range : yes/no. If yes all IPs will be read as if they were ending with '.0'
+    -->
+
+    <ip_whitelist>
+        <name>friends</name>
+        <file>/home/urt/ipwhitelist1.txt</file>
+        <force_ip_range>no</force_ip_range>
+        <message>^4$@id^7 found in friends list</message>
+    </ip_whitelist>
+
+</configuration>

@@ -1,0 +1,9 @@
+
+-- see 5 entries
+select reason, id, CONCAT(substring_index(reason, '.', 1), '.', substring_index(substring_index(reason, '.', 2), '.', -1), '.*.*') AS newval from penalties where reason like 'BANLIST%' order by id desc limit 5;
+
+
+-- to update the entries
+update penalties set reason=CONCAT(substring_index(reason, '.', 1), '.', substring_index(substring_index(reason, '.', 2), '.', -1), '.*.*') where reason like 'BANLIST%';
+
+

@@ -1,0 +1,36 @@
+<configuration plugin="follow">
+   <!--
+		# Groups are (keyword / level : description)
+		# ==============================================
+		# superadmin / 100 : Super admin (server owner)
+		# senioradmin / 80 : Senior admins
+		# fulladmin / 60   : Full admins
+		# admin / 40       : Admins
+		# mod / 20         : Moderators
+		# reg / 2          : Regular players (VIP)
+		# user / 1         : Registered players (those who typed !register)
+		# guest / 0        : Unregistered players
+	-->
+	<settings name="commands">
+		<set name="follow-ff">40</set>
+		<set name="unfollow-uf">40</set>
+		<set name="listfollow-lif">20</set>
+		<set name="checkfollow-ckf">20</set>
+		<set name="syncfollow">40</set>
+		<set name="followinfo-fli">20</set>
+	</settings>
+	<settings name="settings">
+		<!-- Users above this level will get notified -->
+		<set name="notify_level">20</set>
+		<!-- Do you want to remove the banned user from follow list? -->
+		<set name="remove_banned">true</set>
+        <!-- Remove when banned by b4 (ie, no admin intervention) -->
+		<set name="remove_on_b4ban">false</set>
+        <!-- Ban with duration less than this value won't cause a remove -->
+		<set name="remove_ban_minduration">43829</set> <!-- 1 month -->
+		<!-- Do you want to enable twitter integration? -->
+		<set name="twit_connect">false</set>
+		<!-- Message to be sent -->
+		<set name="message">^1WARNING: ^1%(client_name)s ^7[^2@%(client_id)s^7] ^7has been placed under watch by ^4%(admin_name)s ^7[^2@%(admin_id)s^7] ^7for: ^5%(reason)s</set>
+	</settings>
+</configuration>
