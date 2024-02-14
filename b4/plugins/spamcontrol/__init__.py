@@ -23,18 +23,18 @@
 # ################################################################### #
 
 import b4
-import b4_events
-import b4_plugin
+import b4.b4_events
+import b4.b4_plugin
 import re
 
-from b4_functions import getCmd
-from b4_functions import clamp
+from b4.b4_functions import getCmd
+from b4.b4_functions import clamp
 
 __author__ = 'ThorN, Courgette'
 __version__ = '1.4.4'
 
 
-class SpamcontrolPlugin(b4_plugin.Plugin):
+class SpamcontrolPlugin(b4.b4_plugin.Plugin):
 
     _adminPlugin = None
 
@@ -99,7 +99,7 @@ class SpamcontrolPlugin(b4_plugin.Plugin):
         now = self.getTime()
         if client.var(self, 'ignore_till', now).value > now:
             # ignore the user
-            raise b4_events.VetoEvent
+            raise b4.b4_events.VetoEvent
 
         last_message_time = client.var(self, 'last_message_time', now).value
         gap = now - last_message_time
@@ -126,7 +126,7 @@ class SpamcontrolPlugin(b4_plugin.Plugin):
             self._adminPlugin.warnClient(client, 'spam')
             spamins = int(spamins / 1.5)
             client.setvar(self, 'spamins', spamins)
-            raise b4_events.VetoEvent
+            raise b4.b4_events.VetoEvent
 
     ####################################################################################################################
     #                                                                                                                  #

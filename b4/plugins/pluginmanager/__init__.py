@@ -26,24 +26,24 @@ __author__ = 'Fenix'
 __version__ = '1.2'
 
 import b4
-import b4_cron
-import b4_plugin
-#import b4_plugin.admin
-import b4_events
+import b4.b4_cron
+import b4.b4_plugin
+#import b4.b4_plugin.admin
+import b4.b4_events
 import glob
 import os
 import re
 import sys
 
 from b4 import __version__ as currentVersion
-from b4_exceptions import MissingRequirement
-from b4_functions import getCmd
-from b4_functions import topological_sort
-from b4_plugin import PluginData
-from b4_update import B4version
+from b4.b4_exceptions import MissingRequirement
+from b4.b4_functions import getCmd
+from b4.b4_functions import topological_sort
+from b4.b4_plugin import PluginData
+from b4.b4_update import B4version
 from traceback import extract_tb
 
-class PluginmanagerPlugin(b4_plugin.Plugin):
+class PluginmanagerPlugin(b4.b4_plugin.Plugin):
 
     _adminPlugin = None
     _reSplit = re.compile(r'''\w+''')
@@ -157,7 +157,7 @@ class PluginmanagerPlugin(b4_plugin.Plugin):
             search_path = _search_config_file(p_name)
             if len(search_path) == 0:
                 if p_clazz.requiresConfigFile:
-                    raise b4.config.ConfigFileNotFound('could not find any configuration file')
+                    raise b4.b4_config.ConfigFileNotFound('could not find any configuration file')
                 self.debug('no configuration file found for plugin %s: is not required either...' % p_name)
                 return None
             if len(search_path) > 1:
@@ -165,7 +165,7 @@ class PluginmanagerPlugin(b4_plugin.Plugin):
 
             self.debug('using %s as configuration file for plugin %s', search_path[0], p_name)
             self.bot('loading configuration file %s for plugin %s', search_path[0], p_name)
-            return b4.config.load(search_path[0])
+            return b4.b4_config.load(search_path[0])
 
         name = name.lower()
         if name in self._protected:
@@ -189,10 +189,10 @@ class PluginmanagerPlugin(b4_plugin.Plugin):
             client.message('^7Plugin ^1%s ^7has an invalid structure: can\'t load' % name)
             client.message('^7Please inspect your b4 log file for more information')
             self.error('could not create plugin %s instance: %s' % (name, extract_tb(sys.exc_info()[2])))
-        except b4.config.ConfigFileNotFound:
+        except b4.b4_config.ConfigFileNotFound:
             client.message('^7Missing ^1%s ^7plugin configuration file' % name)
             client.message('^7Please put the plugin configuration file in ^3@b4/conf ^7or ^3@b4/extplugins/%s/conf' % name)
-        except b4.config.ConfigFileNotValid:
+        except b4.b4_config.ConfigFileNotValid:
             client.message('^7invalid configuration file found for plugin ^1%s' % name)
             client.message('^7Please inspect your b4 log file for more information')
             self.error('plugin %s has an invalid configuration file and can\'t be loaded: %s' % (name, extract_tb(sys.exc_info()[2])))
@@ -263,7 +263,11 @@ class PluginmanagerPlugin(b4_plugin.Plugin):
 
                 for s in sorted_list:
                     p = plugin_dict[s]
-                    self.bot('loading plugin %s [%s]', p.name, '--' if p.conf is None else p.conf.fileName)
+                    if plugin_data.conf is None:
+                        plugin_conf_path = '--'
+                    else:
+                        plugin_conf_path = plugin_data.conf.fileName
+                    self.bot('loading plugin %s [%s]', p.name, plugin_conf_path)
                     plugin_instance = p.clazz(self.console, p.conf)
                     plugin_instance.onLoadConfig()
                     plugin_instance.onStartup()
@@ -279,7 +283,7 @@ class PluginmanagerPlugin(b4_plugin.Plugin):
                     # changes if a plugin in the dependency tree fails to load/start
                     rollback.append(p.name)
 
-            except b4.exceptions.MissingRequirement:
+            except b4.b4_exceptions.MissingRequirement:
                 # here we do not have to rollback
                 client.message('^7Plugin ^1%s can\'t be loaded due to unmet dependencies' % name)
                 client.message('^7Please inspect your b4 log file for more information')
@@ -318,7 +322,7 @@ class PluginmanagerPlugin(b4_plugin.Plugin):
 
                     # remove all the crontabs bounded to this plugin
                     unreg = [x for x in self.console.cron._tabs
-                                if isinstance(self.console.cron._tabs[x], b4.cron.PluginCronTab)
+                                if isinstance(self.console.cron._tabs[x], b4.b4_cron.PluginCronTab)
                                     and self.console.cron._tabs[x].plugin == plugin]
 
                     for tab in unreg:
@@ -346,7 +350,7 @@ class PluginmanagerPlugin(b4_plugin.Plugin):
             for r in [re.compile(r'(?:http[s]?://|www.)[^\s]*'),                         # website
                       re.compile(r'[a-zA-Z0-9._%-+]+@[a-zA-Z0-9._%-]+.[a-zA-Z]{2,6}')]:  # email
                 a = re.sub(r, '', a)
-                a = re.sub(re.compile(r'-|\|'), '', a).strip()
+                a = re.sub(re.compile(r'-|\\|'), '', a).strip()
             client.message('^7You are running plugin ^3%s ^7v%s by %s' % (name, v, a))
 
     ####################################################################################################################

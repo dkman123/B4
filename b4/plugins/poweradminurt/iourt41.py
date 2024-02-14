@@ -25,23 +25,23 @@
 # 2019.08.02 add pamuteall, pamuteall_under_level config setting
 
 import b4
-import b4_config
-import b4_cron
-#import b4_events
-import b4_functions
-import b4_plugin
+import b4.b4_config
+import b4.b4_cron
+#import b4.b4_events
+import b4.b4_functions
+import b4.b4_plugin
 import time
 import threading
 import re
 import os
 import random
-import string
+#import string
 
 from . import __version__
 from . import __author__
 
 
-class Poweradminurt41Plugin(b4_plugin.Plugin):
+class Poweradminurt41Plugin(b4.b4_plugin.Plugin):
 
     # ClientUserInfo and ClientUserInfoChanged lines return different names, unsanitized and sanitized
     # this regexp designed to make sure either one is sanitized before namecomparison in onNameChange()
@@ -192,7 +192,7 @@ class Poweradminurt41Plugin(b4_plugin.Plugin):
                 if len(sp) == 2:
                     cmd, alias = sp
 
-                func = b4_functions.getCmd(self, cmd)
+                func = b4.b4_functions.getCmd(self, cmd)
                 if func:
                     self._adminPlugin.registerCommand(self, cmd, level, func, alias)
 
@@ -281,19 +281,19 @@ class Poweradminurt41Plugin(b4_plugin.Plugin):
         """
         Set up the name checker
         """
-        self._ninterval = self.getSetting('namechecker', 'ninterval', b4.INT, self._ninterval, lambda x: b4_functions.clamp(x, maxv=59))
+        self._ninterval = self.getSetting('namechecker', 'ninterval', b4.INT, self._ninterval, lambda x: b4.b4_functions.clamp(x, maxv=59))
         self._checkdupes = self.getSetting('namechecker', 'checkdupes', b4.BOOL, self._checkdupes)
         self._checkunknown = self.getSetting('namechecker', 'checkunknown', b4.BOOL, self._checkunknown)
         self._checkbadnames = self.getSetting('namechecker', 'checkbadnames', b4.BOOL, self._checkbadnames)
         self._checkchanges = self.getSetting('namechecker', 'checkchanges', b4.BOOL, self._checkchanges)
-        self._checkallowedchanges = self.getSetting('namechecker', 'checkallowedchanges', b4.INT, self._checkallowedchanges, lambda x: b4_functions.clamp(x, minv=1))
+        self._checkallowedchanges = self.getSetting('namechecker', 'checkallowedchanges', b4.INT, self._checkallowedchanges, lambda x: b4.b4_functions.clamp(x, minv=1))
 
     def loadTeamBalancer(self):
         """
         Set up the teambalancer
         """
-        self._tinterval = self.getSetting('teambalancer', 'tinterval', b4.INT, self._tinterval, lambda x: b4_functions.clamp(x, maxv=59))
-        self._teamdiff = self.getSetting('teambalancer', 'teamdifference', b4.INT, self._teamdiff, lambda x: b4_functions.clamp(x, minv=1, maxv=9))
+        self._tinterval = self.getSetting('teambalancer', 'tinterval', b4.INT, self._tinterval, lambda x: b4.b4_functions.clamp(x, maxv=59))
+        self._teamdiff = self.getSetting('teambalancer', 'teamdifference', b4.INT, self._teamdiff, lambda x: b4.b4_functions.clamp(x, minv=1, maxv=9))
         self._tmaxlevel = self.getSetting('teambalancer', 'maxlevel', b4.LEVEL, self._tmaxlevel)
         self._announce = self.getSetting('teambalancer', 'announce', b4.INT, self._announce)
         # 10/21/2008 - 1.4.0b9 - mindriot
@@ -308,8 +308,8 @@ class Poweradminurt41Plugin(b4_plugin.Plugin):
         """
         Setup the skill balancer
         """
-        self._skinterval = self.getSetting('skillbalancer', 'interval', b4.INT, self._skinterval, lambda x: b4_functions.clamp(x, maxv=59))
-        self._skilldiff = self.getSetting('skillbalancer', 'difference', b4.FLOAT, self._skilldiff, lambda x: b4_functions.clamp(x, minv=0.1, maxv=9.0))
+        self._skinterval = self.getSetting('skillbalancer', 'interval', b4.INT, self._skinterval, lambda x: b4.b4_functions.clamp(x, maxv=59))
+        self._skilldiff = self.getSetting('skillbalancer', 'difference', b4.FLOAT, self._skilldiff, lambda x: b4.b4_functions.clamp(x, minv=0.1, maxv=9.0))
         self._skill_balance_mode = self.getSetting('skillbalancer', 'mode', b4.INT, self._skill_balance_mode)
         self._minbalinterval = self.getSetting('skillbalancer', 'min_bal_interval', b4.INT, self._minbalinterval)
 
@@ -331,7 +331,7 @@ class Poweradminurt41Plugin(b4_plugin.Plugin):
         """
         Setup the spec checker
         """
-        self._sinterval = self.getSetting('speccheck', 'sinterval', b4.INT, self._sinterval, lambda x: b4_functions.clamp(x, maxv=59))
+        self._sinterval = self.getSetting('speccheck', 'sinterval', b4.INT, self._sinterval, lambda x: b4.b4_functions.clamp(x, maxv=59))
         self._smaxspectime = self.getSetting('speccheck', 'maxspectime', b4.INT, self._smaxspectime)
         self._smaxlevel = self.getSetting('speccheck', 'maxlevel', b4.LEVEL, self._smaxlevel)
         maxclients = self.console.getCvar('sv_maxclients').getInt()
@@ -392,7 +392,7 @@ class Poweradminurt41Plugin(b4_plugin.Plugin):
             # load all the configuration files into a dict
             for key, value in self.config.items('matchmode_configs'):
                 self._gameconfig[key] = value
-        except (b4_config.NoSectionError, b4_config.NoOptionError, KeyError) as e:
+        except (b4.b4_config.NoSectionError, b4.b4_config.NoOptionError, KeyError) as e:
             self.warning('could not read matchmode configs: %s' % e)
 
     def loadBotSupport(self):
@@ -400,8 +400,8 @@ class Poweradminurt41Plugin(b4_plugin.Plugin):
         Setup the bot support
         """
         self._botenable = self.getSetting('botsupport', 'bot_enable', b4.BOOL, self._botenable)
-        self._botskill = self.getSetting('botsupport', 'bot_skill', b4.INT, self._botskill, lambda x: b4_functions.clamp(x, minv=1, maxv=5))
-        self._botminplayers = self.getSetting('botsupport', 'bot_minplayers', b4.INT, self._botminplayers, lambda x: b4_functions.clamp(x, minv=0, maxv=16))
+        self._botskill = self.getSetting('botsupport', 'bot_skill', b4.INT, self._botskill, lambda x: b4.b4_functions.clamp(x, minv=1, maxv=5))
+        self._botminplayers = self.getSetting('botsupport', 'bot_minplayers', b4.INT, self._botminplayers, lambda x: b4.b4_functions.clamp(x, minv=0, maxv=16))
         self._botmaps = self.getSetting('botsupport', 'bot_maps', b4.LIST, [])
 
         if self._botenable:
@@ -415,7 +415,7 @@ class Poweradminurt41Plugin(b4_plugin.Plugin):
 
     def loadHeadshotCounter(self):
         """
-        Setup the headshot counter
+        Set up the headshot counter
         """
         def validate_reset_vars(x):
             acceptable = ('no', 'map', 'round')
@@ -491,16 +491,16 @@ class Poweradminurt41Plugin(b4_plugin.Plugin):
             self.console.cron.cancel(self._skcronTab)
             #self.console.cron - self._skcronTab
         if self._ninterval > 0:
-            self._ncronTab = b4_cron.PluginCronTab(self, self.namecheck, 0, '*/%s' % self._ninterval)
+            self._ncronTab = b4.b4_cron.PluginCronTab(self, self.namecheck, 0, '*/%s' % self._ninterval)
             self.console.cron + self._ncronTab
         if self._tinterval > 0:
-            self._tcronTab = b4_cron.PluginCronTab(self, self.teamcheck, 0, '*/%s' % self._tinterval)
+            self._tcronTab = b4.b4_cron.PluginCronTab(self, self.teamcheck, 0, '*/%s' % self._tinterval)
             self.console.cron + self._tcronTab
         if self._sinterval > 0:
-            self._scronTab = b4_cron.PluginCronTab(self, self.speccheck, 0, '*/%s' % self._sinterval)
+            self._scronTab = b4.b4_cron.PluginCronTab(self, self.speccheck, 0, '*/%s' % self._sinterval)
             self.console.cron + self._scronTab
         if self._skinterval > 0:
-            self._skcronTab = b4_cron.PluginCronTab(self, self.skillcheck, 0, '*/%s' % self._skinterval)
+            self._skcronTab = b4.b4_cron.PluginCronTab(self, self.skillcheck, 0, '*/%s' % self._skinterval)
             self.console.cron + self._skcronTab
 
     ####################################################################################################################
@@ -1543,7 +1543,7 @@ class Poweradminurt41Plugin(b4_plugin.Plugin):
         if args:
             if args[0] is not None and re.match('^([0-9]+)[m]*\s*$', args[0]):
                 if "m" in args[0]:
-                    duration = int(b4_functions.time2minutes(args[0]) * 60)
+                    duration = int(b4.b4_functions.time2minutes(args[0]) * 60)
                 else:
                     duration = int(args[0])
         else:
@@ -1576,7 +1576,7 @@ class Poweradminurt41Plugin(b4_plugin.Plugin):
             # args[0] is the player id
             sclient = self._adminPlugin.findClientPrompt(args[0], client)
             if not sclient:
-                # a player matchin the name was not found, a list of closest matches will be displayed
+                # a player matchin the name was not found, a list of the closest matches will be displayed
                 # we can exit here and the user will retry with a more specific player
                 return
         else:

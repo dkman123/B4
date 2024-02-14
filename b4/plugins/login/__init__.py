@@ -24,18 +24,18 @@
 
 import b4
 #import string
-#import b4_events
-import b4_plugin
+#import b4.b4_events
+import b4.b4_plugin
 
-from b4_functions import hash_password
-from b4_clients import Client
+from b4.b4_functions import hash_password
+from b4.b4_clients import Client
 #from configparser import NoOptionError
 
 __author__ = 'Tim ter Laak'
 __version__ = '1.4'
 
 
-class LoginPlugin(b4_plugin.Plugin):
+class LoginPlugin(b4.b4_plugin.Plugin):
 
     _adminPlugin = None
 

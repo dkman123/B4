@@ -26,15 +26,15 @@ __version__ = '1.3.0'
 __author__ = 'xlr8or'
 
 import b4
-#import b4_events
-#import b4_lib
-import b4_plugin
+#import b4.b4_events
+#import b4.b4_lib
+import b4.b4_plugin
 
 from time import time
 #from configparser import NoOptionError
 
 
-class IpbanPlugin(b4_plugin.Plugin):
+class IpbanPlugin(b4.b4_plugin.Plugin):
 
     _adminPlugin = None
     _maxLevel = 1

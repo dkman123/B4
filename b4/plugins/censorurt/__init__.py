@@ -22,11 +22,11 @@
 #                                                                     #
 # ################################################################### #
 
+import threading
+from b4.plugins.censor import CensorPlugin
+
 __author__ = 'xlr8or & courgette'
 __version__ = '0.2'
-
-import threading
-from plugins.censor import CensorPlugin
 
 
 class CensorurtPlugin(CensorPlugin):

@@ -22,12 +22,9 @@
 #                                                                     #
 # ################################################################### #
 
-__author__ = 'Fenix'
-__version__ = '2.31'
-
 import b4
-import b4_plugin
-#import b4_events
+import b4.b4_plugin
+#import b4.b4_events
 import time
 import datetime
 import urllib
@@ -35,11 +32,14 @@ import urllib.request
 import os
 import re
 
-from b4_functions import getCmd
-from b4_functions import getStuffSoundingLike
-from b4_functions import right_cut
+from b4.b4_functions import getCmd
+from b4.b4_functions import getStuffSoundingLike
+from b4.b4_functions import right_cut
 #from configparser import NoOptionError
 from threading import Timer
+
+__author__ = 'Fenix'
+__version__ = '2.31'
 
 ########################################################################################################################
 #                                                                                                                      #
@@ -181,7 +181,8 @@ class JumpRun(object):
             try:
                 os.unlink(path)
                 self.p.debug('removed jumprun demo file : %s' % path)
-            except os.error as (errno, errstr):
+            except OSError as e:
+                errno, errstr = e.args
                 # when this happens it's mostly a problem related to misconfiguration
                 self.p.error("could not remove jumprun demo file : %s | [%d] %s" % (path, errno, errstr))
 
@@ -274,7 +275,7 @@ class JumpRun(object):
 #                                                                                                                      #
 ########################################################################################################################
 
-class JumperPlugin(b4_plugin.Plugin):
+class JumperPlugin(b4.b4_plugin.Plugin):
 
     adminPlugin = None
     powerAdminUrtPlugin = None

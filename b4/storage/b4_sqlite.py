@@ -25,7 +25,7 @@
 import b4
 import os
 
-from storage.b4_common import DatabaseStorage
+from b4_common import DatabaseStorage
 
 
 class SqliteStorage(DatabaseStorage):

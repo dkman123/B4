@@ -26,12 +26,12 @@ import b4
 import re
 import time
 
-from b4_clients import Client
-from b4_events import Event
-from b4_functions import minutesStr
-from b4_functions import time2minutes
-from parsers.iourt41 import Iourt41Parser
-from plugins.spamcontrol import SpamcontrolPlugin
+from b4.b4_clients import Client
+from b4.b4_events import Event
+from b4.b4_functions import minutesStr
+from b4.b4_functions import time2minutes
+from b4.parsers.iourt41 import Iourt41Parser
+from b4.plugins.spamcontrol import SpamcontrolPlugin
 from types import MethodType as instancemethod
 
 
@@ -1419,7 +1419,8 @@ class Iourt43Parser(Iourt41Parser):
             new_event = Event(type=event.type, client=event.client, target=event.target, data=repr(event.data))
             this.onChat(new_event)
 
-        self.spamcontrolPlugin.onRadio = instancemethod(onRadio, self.spamcontrolPlugin, SpamcontrolPlugin)
+        #self.spamcontrolPlugin.onRadio = instancemethod(onRadio, self.spamcontrolPlugin, SpamcontrolPlugin)
+        self.spamcontrolPlugin.onRadio = instancemethod(onRadio, SpamcontrolPlugin)
         self.spamcontrolPlugin.registerEvent('EVT_CLIENT_RADIO', self.spamcontrolPlugin.onRadio)
 
     @staticmethod

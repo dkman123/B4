@@ -86,13 +86,13 @@ sys.path.append(os.path.join(pathname, 'b3','lib'))
 # Maths functions
 import math
 from statlib import stats as mstats
-import corestats # we need the corestats lib because the mstats implementation of percentile score is broken
-import itertools
+import corestats  # we need the corestats lib because the mstats implementation of percentile score is broken
+#import itertools
 
 # Output and saving functions
-import pprint # to nicely print to the console
-import cPickle as pickle # raw matrix and raw stats exporter - cPickle is a C implementation that is more efficient than pickle
-import yaml # human readable yaml format
+import pprint  # to nicely print to the console
+import _pickle as pickle  # raw matrix and raw stats exporter - cPickle is a C implementation that is more efficient than pickle
+import yaml  # human readable yaml format
 try:
     from yaml import CLoader as Loader
     from yaml import CDumper as Dumper
@@ -102,7 +102,7 @@ except ImportError:
 import csv
 
 # NOT YET FUNCTIONAL
-try: # if we can, we use the numpy arrays instead of Python, they are wayyyyy much more faster
+try:  # if we can, we use the numpy arrays instead of Python, they are wayyyyy much more faster
     import numpy
 except:
     pass
@@ -171,7 +171,7 @@ class LogDiagnostic():
                 self.file.close()
                 if self.debug: pprint.pprint(matrix)
                 self.supermatrix.append( (game_log, matrix) )
-            except Exception, e:
+            except Exception as e:
                 print('Exception when reading the logs per second: '+str(e))
 
         return self.supermatrix
@@ -206,7 +206,7 @@ class LogDiagnostic():
                 stats['skewmeaning'] = 'There exist more smaller values from the mean than higher'
             else:
                 stats['skewmeaning'] = 'There exist more higher values from the mean than smaller'
-            superstats.append( (game_log, stats) )
+            superstats.append((game_log, stats))
         return superstats
 
     def show_results(self, filename=None, *args):
@@ -218,9 +218,9 @@ class LogDiagnostic():
             self.stream = sys.stdout
         try:
             for game_log, stats in args:
-                print >> self.stream, '\n-------------------------'
-                print >> self.stream, '\nStats per second of the log file %s:\n' % game_log
-                print >> self.stream, 'Zero is significant (count missing lines): %s' % str(self.significantzero)
+                print('\n-------------------------', file=self.stream)
+                print('\nStats per second of the log file %s:\n' % game_log, file=self.stream)
+                print('Zero is significant (count missing lines): %s' % str(self.significantzero), file=self.stream)
                 pprint.pprint(stats)
         except:
             pprint.pprint(args)
@@ -234,12 +234,12 @@ class LogDiagnostic():
             self.stream = sys.stdout
         try:
             for game_log, stats in args:
-                print >> self.stream, '### Stats per second of the log file %s:\n' % game_log
-                print >> self.stream, '# Zero is significant (count missing lines): %s' % str(self.significantzero)
-                print >> self.stream, yaml.dump(stats, default_flow_style=False, Dumper=Dumper)
-                print >> self.stream, '---' # YAML objects separator
+                print('### Stats per second of the log file %s:\n' % game_log, file=self.stream)
+                print('# Zero is significant (count missing lines): %s' % str(self.significantzero), file=self.stream)
+                print(yaml.dump(stats, default_flow_style=False, Dumper=Dumper), file=self.stream)
+                print('---', file=self.stream) # YAML objects separator
         except:
-            print >> self.stream, yaml.dump_all(args, default_flow_style=False, Dumper=Dumper)
+            print(yaml.dump_all(args, default_flow_style=False, Dumper=Dumper), file=self.stream)
 
     def load_data_yaml(self, *args):
         ''' Load one or several YAML stats files and merge them with current results '''
@@ -255,9 +255,9 @@ class LogDiagnostic():
             file = open(filename, 'w')
             csvWriter = csv.writer(file, delimiter='\n', quotechar='|', quoting=csv.QUOTE_MINIMAL)
             csvWriter.writerow([object for object in args])
-            file.close
+            file.close()
             return True
-        except Exception, e:
+        except Exception as e:
             print('Exception when trying to save the stats: %s' % str(e))
             return False        
 
@@ -288,8 +288,8 @@ class LogDiagnostic():
                     if row.strip():
                         superstats[lastindex + i] = int(row.strip())
                         i += 1
-                file.close
-            except Exception, e:
+                file.close()
+            except Exception as e:
                 print('Exception when trying to load the stats: %s' % str(e))
                 return False
         return superstats
@@ -300,9 +300,9 @@ class LogDiagnostic():
             file = open(filename, 'w')
             for object in args:
                 pickle.dump(object, file)
-            file.close
+            file.close()
             return True
-        except Exception, e:
+        except Exception as e:
             print('Exception when trying to save the stats: %s' % str(e))
             return False
 
@@ -323,8 +323,8 @@ class LogDiagnostic():
                             superstats.extend(object[1])
                 else:
                     superstats.append(pickle.load(file))
-                file.close
-            except Exception, e:
+                file.close()
+            except Exception as e:
                 print('Exception when trying to load the stats: %s' % str(e))
                 return False
         #print(type(superstats))
@@ -350,18 +350,18 @@ class LogDiagnostic():
                 del stats['cumfreq'] # same...
                 del stats['itemfreq'] # same...
                 del stats['itemscore'] # same...
-            except KeyError, e:
+            except KeyError as e:
                 print('Notice: one of the loaded stat file seems to have been generated by an older version of the Diagnostic tool ! You may miss some important new parameters !')
                 pass
             for key, value in stats.iteritems():
                 if key is not 'count' and key is not 'skewmeaning' and key is not 'cumfreq':
-                    newstat[key] = value * count # multiply by the count of lines
-                    try: # doing the sum of all the stats (one stat at a time)
+                    newstat[key] = value * count  # multiply by the count of lines
+                    try:  # doing the sum of all the stats (one stat at a time)
                         superstats[key] += newstat[key]
-                    except Exception, e:
+                    except Exception as e:
                         superstats[key] = newstat[key]
-        divisor = sum([stat['count'] for stat in args]) # calculating the common divisor, being the sum of all the counts of lines of all the stats
-        weighted_stats = dict( (map(lambda (key, value): (key,float(value) / divisor), superstats.iteritems())) ) # dividing each of the superstats by the common divisor, this gives us the final weighted_stats
+        divisor = sum([stat['count'] for stat in args])  # calculating the common divisor, being the sum of all the counts of lines of all the stats
+        weighted_stats = dict( (map(lambda x: (x[0], float(x[1]) / divisor), superstats.items())))  # dividing each of the superstats by the common divisor, this gives us the final weighted_stats
         # adding a few useful fields
         weighted_stats['count'] = divisor
         weighted_stats['perfectvalue'] = int(math.ceil(weighted_stats['3sigma'] + weighted_stats['mean']))
@@ -415,9 +415,9 @@ if __name__ == '__main__':
     # Instanciating the class
     p = LogDiagnostic()
     # Configuring the general parameters
-    p.significantzero = False # fill in the missing lines and count them as zero (ie: take into account the times when no lines were outputted by the game server)
-    p.debug = False # show some more debug stuffs
-    p.maxlines = 0 # limit the logs processing to a maximum of lines. Set to 0 for unlimited.
+    p.significantzero = False  # fill in the missing lines and count them as zero (ie: take into account the times when no lines were outputted by the game server)
+    p.debug = False  # show some more debug stuffs
+    p.maxlines = 0  # limit the logs processing to a maximum of lines. Set to 0 for unlimited.
     
     # Parsing the logs
     supermatrix = p.lines_per_second(r'/some/dir/games_mp.log', r'/some/dir/games_mp2.log')

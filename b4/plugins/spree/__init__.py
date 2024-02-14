@@ -26,10 +26,10 @@ __author__ = 'Walker, ThorN'
 __version__ = '1.2.3'
 
 import b4
-import b4_events
-import b4_plugin
+import b4.b4_events
+import b4.b4_plugin
 
-from b4_functions import getCmd
+from b4.b4_functions import getCmd
 
 class SpreeStats(object):
     kills = 0
@@ -38,7 +38,7 @@ class SpreeStats(object):
     endKillSpreeMessage = None
     
 
-class SpreePlugin(b4_plugin.Plugin):
+class SpreePlugin(b4.b4_plugin.Plugin):
 
     _adminPlugin = None
     _killingspree_messages_dict = {}

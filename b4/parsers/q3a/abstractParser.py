@@ -22,27 +22,27 @@
 #                                                                     #
 # ################################################################### #
 
-__author__ = 'ThorN, xlr8or'
-__version__ = '1.8.1'
-
 
 import re
 import string
 import time
 from types import MethodType as instancemethod
 import b4
-import b4_events
-import b4_clients
-import b4_functions
-import b4_parser
-import b4_cvar
+import b4.b4_events
+import b4.b4_clients
+import b4.b4_functions
+import b4.b4_parser
+import b4.b4_cvar
 
 import rcon
 from ..punkbuster import PunkBuster
-from b4_functions import prefixText
+from b4.b4_functions import prefixText
+
+__author__ = 'ThorN, xlr8or'
+__version__ = '1.8.1'
 
 
-class AbstractParser(b4_parser.Parser):
+class AbstractParser(b4.b4_parser.Parser):
     """
     An abstract base class to help with developing q3a parsers.
     """
@@ -226,7 +226,7 @@ class AbstractParser(b4_parser.Parser):
         :param info: The infostring to be parsed.
         """
         # 0 \g_password\none\cl_guid\0A337702493AF67BB0B0F8565CE8BC6C\cl_wwwDownload\1\name\thorn\rate\25000...
-        cid, info = string.split(info, ' ', 1)
+        cid, info = info.split(' ', 1)
         if info[:1] != '\\':
             info = '\\' + info
 
@@ -259,7 +259,7 @@ class AbstractParser(b4_parser.Parser):
     ####################################################################################################################
 
     def OnSay(self, action, data, match=None):
-        msg = string.split(data, ': ', 1)
+        msg = data.split(': ', 1)
         if not len(msg) == 2:
             return None
 
@@ -278,7 +278,7 @@ class AbstractParser(b4_parser.Parser):
         return None
 
     def OnSayteam(self, action, data, match=None):
-        msg = string.split(data, ': ', 1)
+        msg = data.split(': ', 1)
         if not len(msg) == 2:
             return None
 
@@ -321,7 +321,7 @@ class AbstractParser(b4_parser.Parser):
 
             if client:
                 # update existing client
-                for k, v in bclient.iteritems():
+                for k, v in bclient.items():
                     setattr(client, k, v)
             else:
                 self.clients.newClient(bclient['cid'], **bclient)
@@ -415,7 +415,7 @@ class AbstractParser(b4_parser.Parser):
     #                                                                                                                  #
     ####################################################################################################################
 
-    def message(self, client, text):
+    def message(self, client, text, *args):
         """
         Send a private message to a client.
         :param client: The client to who send the message.
@@ -437,7 +437,7 @@ class AbstractParser(b4_parser.Parser):
             lines.append(self.getCommand('message', cid=client.cid, message=line))
         self.writelines(lines)
 
-    def say(self, text):
+    def say(self, text, *args):
         """
         Broadcast a message to all players.
         :param text: The message to be broadcasted
@@ -449,7 +449,7 @@ class AbstractParser(b4_parser.Parser):
             lines.append(self.getCommand('say', message=line))
         self.writelines(lines)
     
-    def saybig(self, text):
+    def saybig(self, text, *args):
         """
         Broadcast a message to all players in a way that will catch their attention.
         :param text: The message to be broadcasted
@@ -543,7 +543,7 @@ class AbstractParser(b4_parser.Parser):
         :param admin: The admin who performed the ban
         :param silent: Whether to announce this ban
         """
-        if isinstance(client, b4_clients.Client) and not client.guid:
+        if isinstance(client, b4.b4_clients.Client) and not client.guid:
             # client has no guid, kick instead
             return self.kick(client, reason, admin, silent)
         elif isinstance(client, str) and re.match('^[0-9]+$', client):
@@ -614,19 +614,19 @@ class AbstractParser(b4_parser.Parser):
         :param admin: The admin who performed the tempban
         :param silent: Whether or not to announce this tempban
         """
-        duration = b4_functions.time2minutes(duration)
-        if isinstance(client, b4_clients.Client) and not client.guid:
+        duration = b4.b4_functions.time2minutes(duration)
+        if isinstance(client, b4.b4_clients.Client) and not client.guid:
             # client has no guid, kick instead
             return self.kick(client, reason, admin, silent)
         elif isinstance(client, str) and re.match('^[0-9]+$', client):
             self.write(self.getCommand('tempban', cid=client, reason=reason))
             return
         elif admin:
-            banduration = b4_functions.minutesStr(duration)
+            banduration = b4.b4_functions.minutesStr(duration)
             variables = self.getMessageVariables(client=client, reason=reason, admin=admin, banduration=banduration)
             fullreason = self.getMessage('temp_banned_by', variables)
         else:
-            banduration = b4_functions.minutesStr(duration)
+            banduration = b4.b4_functions.minutesStr(duration)
             variables = self.getMessageVariables(client=client, reason=reason, banduration=banduration)
             fullreason = self.getMessage('temp_banned', variables)
 
@@ -757,7 +757,7 @@ class AbstractParser(b4_parser.Parser):
                         default_value = m.group('default')
                     except IndexError:
                         default_value = None
-                    return b4_cvar.Cvar(m.group('cvar'), value=m.group('value'), default=default_value)
+                    return b4.b4_cvar.Cvar(m.group('cvar'), value=m.group('value'), default=default_value)
             else:
                 return None
 

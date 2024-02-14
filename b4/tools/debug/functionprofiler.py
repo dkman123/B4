@@ -27,64 +27,57 @@
 # CHANGELOG:
 # 2010-09-22 - v0.4.3 - GrosBedo
 #   * added error handling if profile and pstats libraries can't be found
-# 2010-09-17 - v0.4.2 - GrosBedo
-#   * added an automatic calibration prior to profiling
-# 2010-09-17 - v0.4.1 - GrosBedo
-#   * fixed import bug
-# 2010-09-16 - v0.4 - GrosBedo
-#    * fallback to profile instead of cProfile : even if this pure python implementation is much slower, it at least work with threads (cProfile, alias hotshot, is not compatible with multi-threaded applications at the moment)
-# 2010-09-09 - v0.3 - GrosBedo
-#    * workaround for a bug with cProfile
-# 2010-09-08 - v0.2 - GrosBedo
-#    * added the parsestats, browsegui and browsenogui functions
-#    * centralized runprofile here
 # 2010-09-06 - v0.1 - GrosBedo
 #    * Initial version.
 
-__author__  = 'GrosBedo'
-__version__ = '0.4.3'
-
-
-noprofiler = False
+import cProfile
+import multiprocessing
+import pos
 try:
-	import profile, pstats
+	import profile
+	import pstats
+	noprofiler = False
 except:
 	noprofiler = True
-import sys, os
+import os
+import sys
 pathname = os.path.dirname(sys.argv[0])
-sys.path.append(os.path.join(pathname, 'b3','lib'))
+sys.path.append(os.path.join(pathname, 'b4', 'lib'))
 
 from kthread import *
 from profilebrowser import *
 try:
-	from runsnakerun import runsnake # runsnakerun needs wxPython lib, if it's not available then we pass
+	from runsnakerun import runsnake  # runsnakerun needs wxPython lib, if it's not available then we pass
 except:
 	pass
+
+__author__  = 'GrosBedo'
+__version__ = '0.4.3'
 
 
 def runprofile(mainfunction, output, timeout = 60):
 	if noprofiler == True:
 		print('ERROR: profiler and/or pstats library missing ! Please install it (probably package named python-profile) before running a profiling !')
 		return False
-	def profileb3():
-	    profile.run(mainfunction, output)
+	def profileb4():
+		profile.run(mainfunction, output)
 	# This is the main function for profiling
 	print('=> SAVING MODE\n\n')
 	print('Calibrating the profiler...')
 	cval = calibrateprofile()
 	#print('Found value : %s' % cval)
 	print('Initializing the profiler...')
-	b3main = KThread(target=profileb3) # we open b3 main function with the profiler, in a special killable thread (see below why)
+	b4main = KThread(target=profileb4) # we open b4 main function with the profiler, in a special killable thread (see below why)
 	print('Will now run the profiling and terminate it in %s seconds. Results will be saved in %s' % (str(timeout), str(output)))
 	print('\nCountdown:')
 	for i in range(0,5):
 		print(str(5-i))
 		time.sleep(1)
 	print('0\nStarting to profile...')
-	b3main.start() # starting the thread
-	time.sleep(float(timeout)) # after this amount of seconds, the b3 main function gets killed and the profiler will end its job
+	b4main.start() # starting the thread
+	time.sleep(float(timeout)) # after this amount of seconds, the b4 main function gets killed and the profiler will end its job
 	print('\n\nFinishing the profile and saving to the file %s' % str(output))
-	b3main.kill() # we must end the main function in order for the profiler to output its results (if we didn't launch a thread and just closed the process, it would have done no result)
+	b4main.kill() # we must end the main function in order for the profiler to output its results (if we didn't launch a thread and just closed the process, it would have done no result)
 	print('=> Profile done ! Exiting...')
 	return True
 
@@ -98,9 +91,9 @@ def calibrateprofile():
 	profile.Profile.bias = final # Apply computed bias to all Profile instances created hereafter
 	return final
 
-def subprocessprofileb3(profiler, mainfunction, output):
-	#b3thread = KThread(target=profileb3_timer)
-	#b3thread.start()
+def subprocessprofileb4(profiler, mainfunction, output):
+	#b4thread = KThread(target=profileb4_timer)
+	#b4thread.start()
 	profiler.run(mainfunction)
 
 def runprofilesubprocess(mainfunction, output, timeout = 60):
@@ -108,28 +101,28 @@ def runprofilesubprocess(mainfunction, output, timeout = 60):
 	try:
 		print('PROFILER SAVING MODE\n--------------------\n')
 		print('Preparing the profiler...')
-		#b3main = profileb3_thread()
-		#b3thread = KThread(target=profileb3_timer)
-		#b3thread.start()
+		#b4main = profileb4_thread()
+		#b4thread = KThread(target=profileb4_timer)
+		#b4thread.start()
 		profiler = cProfile.Profile()
-		b3main = multiprocessing.Process(target=subprocessprofileb3, args=(profiler, mainfunction,output))
+		b4main = multiprocessing.Process(target=subprocessprofileb4, args=(profiler, mainfunction,output))
 		print('Will now run the profiling and terminate it in %s seconds. Results will be saved in %s' % (str(timeout), str(output)))
 		print('\nCountdown:')
 		for i in range(0,6):
 			print(str(5-i))
 			time.sleep(1)
 		print('Starting to profile...')
-		#profileb3("""b3.tools.profile.subb3()""", output)
-		b3main.start() # b3main.start() # starting the thread
-		time.sleep(float(timeout)) # after this amount of seconds, the b3 main function gets killed and the profiler will end its job
+		#profileb4("""b4.tools.profile.subb4()""", output)
+		b4main.start() # b4main.start() # starting the thread
+		time.sleep(float(timeout)) # after this amount of seconds, the b4 main function gets killed and the profiler will end its job
 		print('\n\nFinishing the profile and saving to the file %s' % str(output))
-		#b3main.terminate() # b3main.kill() # we must end the main function in order for the profiler to output its results (if we didn't launch a thread and just closed the process, it would have done no result)
+		#b4main.terminate() # b4main.kill() # we must end the main function in order for the profiler to output its results (if we didn't launch a thread and just closed the process, it would have done no result)
 		print('=> Profile done ! Exiting...')
 		profiler2 = posh.share(profiler)
 		profiler2.dump_stats(output)
-		#signal.signal(signal.SIGABRT, b3main)
+		#signal.signal(signal.SIGABRT, b4main)
 		raise SystemExit(222)
-	except SystemExit, e:
+	except SystemExit as e:
 		print('SystemExit!')
 		sys.exit(223)
 
@@ -161,9 +154,9 @@ def browseprofile(profilelog):
 	print('Starting the pstats profile browser...\n')
 	try:
 		browser = ProfileBrowser(profilelog)
-		print >> browser.stream, "Welcome to the profile statistics browser. Type help to get started."
+		print("Welcome to the profile statistics browser. Type help to get started.", file=browser.stream)
 		browser.cmdloop()
-		print >> browser.stream, "Goodbye."
+		print("Goodbye.", file=browser.stream)
 	except KeyboardInterrupt:
 		pass
 

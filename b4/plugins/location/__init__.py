@@ -28,15 +28,15 @@ __version__ = '2.3'
 
 
 import b4
-import b4_plugin
-#import b4_events
+import b4.b4_plugin
+#import b4.b4_events
 import math
 
-from b4_functions import getCmd
+from b4.b4_functions import getCmd
 #from configparser import NoOptionError
 
 
-class LocationPlugin(b4_plugin.Plugin):
+class LocationPlugin(b4.b4_plugin.Plugin):
     
     _adminPlugin = None
     _announce = True

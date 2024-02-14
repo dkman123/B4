@@ -22,16 +22,16 @@
 #                                                                     #
 # ################################################################### #
 
-__author__ = "Thomas LEVEIL"
-__version__ = "1.10"
-
 
 from threading import Timer
 from time import time
 from b4 import TEAM_SPEC
-from b4_config import NoOptionError
-from b4_plugin import Plugin
+from b4.b4_config import NoOptionError
+from b4.b4_plugin import Plugin
 from weakref import WeakKeyDictionary
+
+__author__ = "Thomas LEVEIL"
+__version__ = "1.10"
 
 
 class AfkPlugin(Plugin):

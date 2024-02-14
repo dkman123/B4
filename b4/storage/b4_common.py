@@ -26,16 +26,10 @@ import b4
 import os
 import re
 import sys
-from threading import Thread
+import threading
 
-from ..b4_clients import Client
-from ..b4_clients import ClientBan
-from ..b4_clients import ClientKick
-from ..b4_clients import ClientNotice
-from ..b4_clients import ClientTempBan
-from ..b4_clients import ClientWarning
-from ..b4_clients import Penalty
-from b4_querybuilder import QueryBuilder
+import b4.b4_clients
+from b4.b4_querybuilder import QueryBuilder
 from b4_storage import Storage
 from b4_cursor import Cursor as DBCursor
 from contextlib import contextmanager
@@ -65,7 +59,8 @@ class DatabaseStorage(Storage):
         self.dsnDict = dsnDict
         self.console = console
         self.db = None
-        self._lock = Thread.allocate_lock()
+        self._lock = threading.Lock()
+        self._lock.acquire()
 
     ####################################################################################################################
     #                                                                                                                  #
@@ -197,7 +192,7 @@ class DatabaseStorage(Storage):
         clients = []
         while not cursor.EOF:
             g = cursor.getRow()
-            client = Client()
+            client = b4.b4_clients.Client()
             for k, v in g.iteritems():
                 setattr(client, self.getVar(k), v)
             clients.append(client)
@@ -305,7 +300,7 @@ class DatabaseStorage(Storage):
         aliases = []
         while not cursor.EOF:
             g = cursor.getRow()
-            alias = Client.Alias()
+            alias = b4.b4_clients.Alias()
             alias.id = int(g['id'])
             alias.alias = g['alias']
             alias.timeAdd = int(g['time_add'])
@@ -383,7 +378,7 @@ class DatabaseStorage(Storage):
         aliases = []
         while not cursor.EOF:
             row = cursor.getRow()
-            ip = Client.IpAlias()
+            ip = b4.b4_clients.IpAlias()
             ip.id = int(row['id'])
             ip.ip = row['ip']
             ip.timeAdd  = int(row['time_add'])
@@ -584,7 +579,7 @@ class DatabaseStorage(Storage):
             self._groups = []
             while not cursor.EOF:
                 row = cursor.getRow()
-                group = Client.Group()
+                group = b4.b4_clients.Group()
                 group.id = int(row['id'])
                 group.name = row['name']
                 group.keyword = row['keyword']
@@ -818,18 +813,18 @@ class DatabaseStorage(Storage):
         :param row: The result set row
         """
         constructors = {
-            'Warning': ClientWarning,
-            'TempBan': ClientTempBan,
-            'Kick': ClientKick,
-            'Ban': ClientBan,
-            'Notice': ClientNotice
+            'Warning': b4.b4_clients.ClientWarning,
+            'TempBan': b4.b4_clients.ClientTempBan,
+            'Kick': b4.b4_clients.ClientKick,
+            'Ban': b4.b4_clients.ClientBan,
+            'Notice': b4.b4_clients.ClientNotice
         }
 
         try:
             constructor = constructors[row['type']]
             penalty = constructor()
         except KeyError:
-            penalty = Penalty()
+            penalty = b4.b4_clients.Penalty()
 
         penalty.id = int(row['id'])
         penalty.type = row['type']

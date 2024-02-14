@@ -2,4 +2,4 @@
 # module. This is a sleazy hack and probably morally wrong, but it's
 # oh so convenient.
 # TODO: do this better.
-from plugins.netblocker.netblock.netblock import *
+from ..netblock import *

@@ -38,7 +38,8 @@ class Rcon(object):
 
     host = ()
     password = None
-    lock = Thread.allocate_lock()
+    lock = threading.Lock()
+    lock.acquire()
     socket = None
     queue = None
     console = None
@@ -85,7 +86,7 @@ class Rcon(object):
         self.socket.connect(self.host)
 
         self._stopEvent = threading.Event()
-        Thread.start_new_thread(self._writelines, ())
+        Thread(target=self._writelines, args=()).start()
 
     def encode_data(self, data, source):
         """
@@ -94,7 +95,7 @@ class Rcon(object):
         :param source: Who requested the encoding
         """
         try:
-            if isinstance(data, str):
+            if isinstance(data, bytes):
                 data = str(data, errors='ignore')
             data = data.encode(self.console.encoding, 'replace')
         except Exception as msg:
@@ -225,7 +226,7 @@ class Rcon(object):
         """
         Write multiple RCON commands on the socket.
         """
-        while not self._stopEvent.isSet():
+        while not self._stopEvent.is_set():
             lines = self.queue.get(True)
             for cmd in lines:
                 if not cmd:

@@ -23,20 +23,21 @@
 # 2010-09-17 - v0.1.1 - GrosBedo - fixed import bug
 # 2010-09-11 - v0.1   - GrosBedo - initial version
 
-__author__  = 'GrosBedo'
-__version__ = '0.1.1'
-
-import os, sys
-pathname = os.path.dirname(sys.argv[0])
-sys.path.append(os.path.join(pathname, 'b3','lib'))
-
+import os
+import sys
 import threading
 import time
+
+pathname = os.path.dirname(sys.argv[0])
+sys.path.append(os.path.join(pathname, 'b3','lib'))
 
 try:
     from guppy import hpy
 except:
     pass
+
+__author__  = 'GrosBedo'
+__version__ = '0.1.1'
 
 #from sizer import code
 #from sizer.sizer import scanner

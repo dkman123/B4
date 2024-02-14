@@ -29,8 +29,8 @@ import b4
 import os
 import time
 #import feedparser
-import b4_cron
-import b4_plugin
+import b4.b4_cron
+import b4.b4_plugin
 
 from configparser import NoOptionError
 
@@ -97,7 +97,7 @@ class MessageLoop(object):
         self.items = []
 
 
-class AdvPlugin(b4.plugin.Plugin):
+class AdvPlugin(b4.b4_plugin.Plugin):
 
     _adminPlugin = None
     _xlrstatsPlugin = None
@@ -105,7 +105,7 @@ class AdvPlugin(b4.plugin.Plugin):
     _msg = None
     _fileName = None
     _rate = '2'
-    _feed = b4.RSS
+    _feed = b4.B4_RSS
     _feedpre = u'News: '
     _feedmaxitems = 5
     _feeditemnr = 0
@@ -191,7 +191,7 @@ class AdvPlugin(b4.plugin.Plugin):
             self.console.cron - self._cronTab
 
         (m, s) = self._get_rate_minsec(self._rate)
-        self._cronTab = b4.cron.PluginCronTab(self, self.adv, second=s, minute=m)
+        self._cronTab = b4.b4_cron.PluginCronTab(self, self.adv, second=s, minute=m)
         self.console.cron + self._cronTab
 
     ####################################################################################################################
@@ -253,7 +253,7 @@ class AdvPlugin(b4.plugin.Plugin):
     def adv(self, first_try=True):
         """
         Display an advertisement message.
-        :param first_try: Whether or not it's the first time we try to display this ad
+        :param first_try: Whether it's the first time we try to display this ad
         """
         ad = self._msg.getnext()
         if ad:
@@ -266,18 +266,18 @@ class AdvPlugin(b4.plugin.Plugin):
                     ad = None
             elif ad == "@time":
                 ad = "^2Time: ^3" + self.console.formatTime(time.time())
-            elif ad[:5] == "@feed" and self._feed:
-                ad = self.get_feed(ad)
-                if not ad or ad == self._feedpre:
-                    # we didn't get an item from the feedreader, move on to the next ad
-                    self._replay += 1
-                    # prevent endless loop if only feeditems are used as adds
-                    if self._replay < 10:
-                        self.adv()
-                    else:
-                        self.debug('something wrong with the newsfeed: disabling it. Fix the feed and do !advload')
-                        self._feed = None
-                    return
+            # elif ad[:5] == "@feed" and self._feed:
+            #     ad = self.get_feed(ad)
+            #     if not ad or ad == self._feedpre:
+            #         # we didn't get an item from the feedreader, move on to the next ad
+            #         self._replay += 1
+            #         # prevent endless loop if only feeditems are used as adds
+            #         if self._replay < 10:
+            #             self.adv()
+            #         else:
+            #             self.debug('something wrong with the newsfeed: disabling it. Fix the feed and do !advload')
+            #             self._feed = None
+            #         return
             elif ad == "@topstats":
                 if self._xlrstatsPlugin:
                     self._xlrstatsPlugin.cmd_xlrtopstats(data='3', client=None, cmd=None, ext=True)

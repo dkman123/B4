@@ -23,9 +23,9 @@
 # ################################################################### #
 
 import b4
-#import b4_cron
-#import b4_events
-import b4_plugin
+#import b4.b4_cron
+#import b4.b4_events
+import b4.b4_plugin
 import datetime
 #import json
 import os
@@ -36,15 +36,15 @@ import urllib.request
 from threading import Thread
 import time
 
-from b4_clients import Client
-from b4_functions import getCmd
+from b4.b4_clients import Client
+from b4.b4_functions import getCmd
 from configparser import NoOptionError
 
 __version__ = '0.1'
 __author__  = 'isopropanol'
 
 
-class VpncheckPlugin(b4_plugin.Plugin):
+class VpncheckPlugin(b4.b4_plugin.Plugin):
     # requiresConfigFile = True
     # requiresPlugins = ['admin']
     _adminPlugin = None

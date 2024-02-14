@@ -26,16 +26,16 @@ __version__ = '2.1'
 __author__  = 'Ismael, SGT, Fenix'
 
 import b4
-import b4_config
-import b4_cron
-import b4_functions
-import b4_plugin
+import b4.b4_config
+import b4.b4_cron
+import b4.b4_functions
+import b4.b4_plugin
 import os
 from threading import Thread
 
-from b4_functions import clamp
+from b4.b4_functions import clamp
 
-class NickregPlugin(b4.plugin.Plugin):
+class NickregPlugin(b4.b4_plugin.Plugin):
 
     adminPlugin = None
     crontab = None
@@ -85,7 +85,7 @@ class NickregPlugin(b4.plugin.Plugin):
         self.registerEvent('EVT_GAME_MAP_CHANGE', self.on_map_change)
 
         # install crontab
-        self.crontab = b4.cron.PluginCronTab(self, self.execute_crontab, '*/%s' % self.interval)
+        self.crontab = b4.b4_cron.PluginCronTab(self, self.execute_crontab, '*/%s' % self.interval)
         self.console.cron + self.crontab
 
     ####################################################################################################################
@@ -105,7 +105,7 @@ class NickregPlugin(b4.plugin.Plugin):
         """
         Handle EVT_CLIENT_NAME_CHANGE.
         """
-        Thread.start_new_thread(self.check_client_for_nick_steal, (event.client,))
+        Thread(target=self.check_client_for_nick_steal, args=(event.client,))  .start()
 
     ####################################################################################################################
     #                                                                                                                  #
@@ -145,7 +145,7 @@ class NickregPlugin(b4.plugin.Plugin):
         escaping single quotes and making it lowercase.
         :param name: the name to normalize
         """
-        return b4.functions.escape(self.console.stripColors(name).lower(), "'")
+        return b4.b4_functions.escape(self.console.stripColors(name).lower(), "'")
 
     def warn_client_for_nick_steal(self, client):
         """

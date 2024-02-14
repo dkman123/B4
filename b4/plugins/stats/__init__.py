@@ -2,7 +2,7 @@
 
 # ################################################################### #
 #                                                                     #
-#  BigBrotherBot(B3) (www.bigbrotherbot.net)                          #
+#  BigBrotherBot(B4) (www.bigbrotherbot.net)                          #
 #  Copyright (C) 2005 Michael "ThorN" Thornton                        #
 #                                                                     #
 #  This program is free software; you can redistribute it and/or      #
@@ -23,18 +23,19 @@
 # ################################################################### #
 
 import b4
-import b4_events
-import b4_plugin
-import string
+import b4.b4_events
+import b4.b4_plugin
+#import string
 
-from b4_functions import getCmd
-from configparser import NoOptionError, NoSectionError
+from b4.b4_functions import getCmd
+from configparser import NoOptionError
+#from configparser import NoSectionError
 
 __author__ = 'ThorN, GrosBedo'
 __version__ = '1.5.1'
 
 
-class StatsPlugin(b4_plugin.Plugin):
+class StatsPlugin(b4.b4_plugin.Plugin):
 
     _adminPlugin = None
 
@@ -50,7 +51,7 @@ class StatsPlugin(b4_plugin.Plugin):
         :param console: The console instance
         :param config: The plugin configuration
         """
-        b4_plugin.Plugin.__init__(self, console, config)
+        b4.b4_plugin.Plugin.__init__(self, console, config)
         self.mapstatslevel = 0
         self.startPoints = 100
         self.resetscore = False
@@ -140,7 +141,7 @@ class StatsPlugin(b4_plugin.Plugin):
         self.registerEvent('EVT_GAME_EXIT', self.onShowAwards)
         self.registerEvent('EVT_GAME_MAP_CHANGE', self.onShowAwards)
         self.registerEvent('EVT_GAME_ROUND_START', self.onRoundStart)
-		
+
         if self.console.gameName == "iourt43":
             self.registerEvent('EVT_ASSIST', self.onAssist)
 
@@ -394,9 +395,9 @@ class StatsPlugin(b4_plugin.Plugin):
                 results.append('^3#%s^7 %s ^7[^3%s^7]' % (i, name, score))
                 
             if client:        
-                client.message('^3Top Stats:^7 %s' % string.join(results,', '))
+                client.message('^3Top Stats:^7 %s' % ', '.join(results))
             else:
-                self.console.say('^3Top Stats:^7 %s' % string.join(results,', '))
+                self.console.say('^3Top Stats:^7 %s' % ', '.join(results))
         else:
             client.message('^3Stats: ^7No top players')
 
@@ -425,8 +426,8 @@ class StatsPlugin(b4_plugin.Plugin):
                 results.append('^3#%s^7 %s ^7[^3%s^7]' % (i, name, score))
 
             if client:
-                client.message('^3Top Experienced Players:^7 %s' % string.join(results, ', '))
+                client.message('^3Top Experienced Players:^7 %s' % ', '.join(results))
             else:
-                self.console.say('^3Top Experienced Players:^7 %s' % string.join(results, ', '))
+                self.console.say('^3Top Experienced Players:^7 %s' % ', '.join(results))
         else:
             client.message('^3Stats: ^7No top experienced players')

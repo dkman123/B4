@@ -22,17 +22,16 @@
 #                                                                     #
 # ################################################################### #
 
+import b4
+import b4.b4_clients
+import b4.b4_events
+import b4.b4_plugin
+
 __author__  = 'Courgette'
 __version__ = '1.2'
 
 
-import b3
-import b3.clients
-import b3.events
-import b3.plugin
-
-
-class DuelPlugin(b3.plugin.Plugin):
+class DuelPlugin(b4.b4_plugin.Plugin):
 
     adminPlugin = None
     requiresConfigFile = False
@@ -285,9 +284,9 @@ class Duel(object):
         :param clientA: the client who proposed the duel
         :param clientB: the client who accepted the duel
         """
-        if not isinstance(clientA, b3.clients.Client):
+        if not isinstance(clientA, b4.b4_clients.Client):
             raise DuelError('clientA is not a client')
-        if not isinstance(clientB, b3.clients.Client):
+        if not isinstance(clientB, b4.b4_clients.Client):
             raise DuelError('opponent is not a client')
         if not clientA.connected:
             raise DuelError('clientA is not connected')
@@ -324,7 +323,7 @@ class Duel(object):
         """
         if self.status == Duel.STATUS_STARTED:
 
-            if not isinstance(event, b3.events.Event) or \
+            if not isinstance(event, b4.b4_events.Event) or \
                 (event.client != self.clientA and event.client != self.clientB) or \
                     (event.target != self.clientA and event.target != self.clientB):
                 raise DuelError('invalid kill event supplied')
@@ -336,7 +335,7 @@ class Duel(object):
     def announceScoreTo(self, client):
         """
         Announce duel score to the given client.
-        :param client: b3.client.Client instance
+        :param client: b4.client.Client instance
         """
         if self.status == Duel.STATUS_STARTED:
 

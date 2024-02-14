@@ -26,20 +26,21 @@ __author__ = 'xlr8or & ttlogic'
 __version__ = '3.0.0-beta.17'
 
 import b4
-import b4_events
-import b4_plugin
-import b4_cron
-import b4_timezones
+import b4.b4_events
+import b4.b4_plugin
+import b4.b4_cron
+import b4.b4_timezones
 import datetime
 import time
 import os
 import re
 import threading
 import urllib
+import urllib.request
 
-from b4_functions import escape
-from b4_functions import getCmd
-from b4_functions import right_cut
+from b4.b4_functions import escape
+from b4.b4_functions import getCmd
+from b4.b4_functions import right_cut
 from configparser import NoOptionError
 from threading import Thread
 
@@ -54,7 +55,7 @@ ASSISTER = "assister"
 #                                                                                                                      #
 ########################################################################################################################
 
-class XlrstatsPlugin(b4_plugin.Plugin):
+class XlrstatsPlugin(b4.b4_plugin.Plugin):
     _world_clientid = None
     _ffa = ['dm', 'ffa', 'syc-ffa']
 
@@ -105,8 +106,8 @@ class XlrstatsPlugin(b4_plugin.Plugin):
     _current_nr_players = 0  # current number of players present
     silent = False  # Disables the announcement when collecting stats = stealth mode
     provisional_ranking = True  # First Kswitch_confrontations will not alter opponents stats (unless both are under the limit)
-    auto_correct = True  # Auto correct skill points every two hours to maintain a healthy pool
-    _auto_correct_ignore_days = 60  # How many days before ignoring a players skill in the auto-correct calculation
+    auto_correct = True  # Autocorrect skill points every two hours to maintain a healthy pool
+    _auto_correct_ignore_days = 60  # How many days before ignoring a players skill in the autocorrect calculation
     auto_purge = False  # Purge players and associated data automatically (cannot be undone!)
     _purge_player_days = 365  # Number of days after which players will be auto-purged
 
@@ -160,7 +161,7 @@ class XlrstatsPlugin(b4_plugin.Plugin):
         self._xlrstatstables = []  # will contain a list of the xlrstats database tables
         self._cronTabCorrectStats = None
         self.query = None  # shortcut to the storage.query function
-        b4_plugin.Plugin.__init__(self, console, config)
+        b4.b4_plugin.Plugin.__init__(self, console, config)
 
     def onStartup(self):
         """
@@ -254,14 +255,14 @@ class XlrstatsPlugin(b4_plugin.Plugin):
 
         # Analyze the ELO pool of points
         self.correctStats()
-        self._cronTabCorrectStats = b4_cron.PluginCronTab(self, self.correctStats, 0, '0', '*/2')
+        self._cronTabCorrectStats = b4.b4_cron.PluginCronTab(self, self.correctStats, 0, '0', '*/2')
         self.console.cron + self._cronTabCorrectStats
 
         self.purgePlayers()
 
         # set proper kill_bonus and crontab
         self.calculateKillBonus()
-        self._cronTabKillBonus = b4_cron.PluginCronTab(self, self.calculateKillBonus, 0, '*/10')
+        self._cronTabKillBonus = b4.b4_cron.PluginCronTab(self, self.calculateKillBonus, 0, '*/10')
         self.console.cron + self._cronTabKillBonus
 
         # start the ctime subplugin
@@ -488,7 +489,7 @@ class XlrstatsPlugin(b4_plugin.Plugin):
         else:
             req = str(self.webfront_url.rstrip('/')) + '/' + str(self.webfront_config_nr) + '/pluginreq/index'
         try:
-            f = urllib.urlopen(req)
+            f = urllib.request.urlopen(req)
             res = f.readline().split(',')
             # Our webfront will present us 3 values ie.: 200,20,30 -> minKills,minRounds,maxDays
             if len(res) == 3:
@@ -800,7 +801,7 @@ class XlrstatsPlugin(b4_plugin.Plugin):
             target._attackers = {}
             ainfo = target._attackers
 
-        for k, v in ainfo.iteritems():
+        for k, v in ainfo.items():
             if k == client.cid:
                 # don't award the killer for the assist aswell
                 continue
@@ -1461,12 +1462,12 @@ class XlrstatsPlugin(b4_plugin.Plugin):
         try:
             self.query("""SELECT %s FROM %s limit 1;""" % (c1, t1))
         except Exception as e:
-            if e[0] == 1054:
-                self.console.debug('column does not yet exist: %s' % e)
-                self.query("""ALTER TABLE %s ADD %s %s ;""" % (t1, c1, specs))
-                self.console.info('created new column `%s` on %s' % (c1, t1))
-            else:
-                self.console.error('_addTableColumn query failed - %s: %s' % (type(e), e))
+            # if e[0] == 1054:
+            #     self.console.debug('column does not yet exist: %s' % e)
+            #     self.query("""ALTER TABLE %s ADD %s %s ;""" % (t1, c1, specs))
+            #     self.console.info('created new column `%s` on %s' % (c1, t1))
+            # else:
+            self.console.error('_addTableColumn query failed - %s: %s' % (type(e), e))
 
     def _updateTableColumns(self):
         try:
@@ -1692,7 +1693,7 @@ class XlrstatsPlugin(b4_plugin.Plugin):
         """
         [<#>] - list the top # players of the last 14 days.
         """
-        Thread.start_new_thread(self.doTopList, (data, client, cmd, ext))
+        Thread(target=self.doTopList, args=(data, client, cmd, ext)).start()
 
     def doTopList(self, data, client, cmd=None, ext=False):
         """
@@ -1924,7 +1925,7 @@ class XlrstatsPlugin(b4_plugin.Plugin):
 ##                                                                                                                    ##
 ########################################################################################################################
 
-class XlrstatshistoryPlugin(b4_plugin.Plugin):
+class XlrstatshistoryPlugin(b4.b4_plugin.Plugin):
     """
     This is a helper class/plugin that saves history snapshots
     It can not be called directly or separately from the XLRstats plugin!
@@ -1952,7 +1953,7 @@ class XlrstatshistoryPlugin(b4_plugin.Plugin):
         :param monthlyTable: The history monthly database table name
         :param playerstatsTable: The playerstats database table name
         """
-        b4_plugin.Plugin.__init__(self, console)
+        b4.b4_plugin.Plugin.__init__(self, console)
         self.history_weekly_table = weeklyTable
         self.history_monthly_table = monthlyTable
         self.playerstats_table = playerstatsTable
@@ -1962,12 +1963,12 @@ class XlrstatshistoryPlugin(b4_plugin.Plugin):
         self.query = self.console.storage.query
         # purge crontab
         tzName = self.console.config.get('b3', 'time_zone').upper()
-        tzOffest = b4_timezones.timezones[tzName]
+        tzOffest = b4.b4_timezones.timezones[tzName]
         hoursGMT = (self._hours - tzOffest) % 24
         self.debug(u'%02d:%02d %s => %02d:%02d UTC' % (self._hours, self._minutes, tzName, hoursGMT, self._minutes))
         self.info(u'everyday at %2d:%2d %s, history info older than %s months and %s weeks will be deleted' % (
             self._hours, self._minutes, tzName, self._max_months, self._max_weeks))
-        self._cronTab = b4_cron.PluginCronTab(self, self.purge, 0, self._minutes, hoursGMT, '*', '*', '*')
+        self._cronTab = b4.b4_cron.PluginCronTab(self, self.purge, 0, self._minutes, hoursGMT, '*', '*', '*')
         self.console.cron + self._cronTab
 
     def onStartup(self):
@@ -1988,9 +1989,9 @@ class XlrstatshistoryPlugin(b4_plugin.Plugin):
             pass
         try:
             # install crontabs
-            self._cronTabMonth = b4_cron.PluginCronTab(self, self.snapshot_month, 0, 0, 0, 1, '*', '*')
+            self._cronTabMonth = b4.b4_cron.PluginCronTab(self, self.snapshot_month, 0, 0, 0, 1, '*', '*')
             self.console.cron + self._cronTabMonth
-            self._cronTabWeek = b4_cron.PluginCronTab(self, self.snapshot_week, 0, 0, 0, '*', '*', 1)  # day 1 is monday
+            self._cronTabWeek = b4.b4_cron.PluginCronTab(self, self.snapshot_week, 0, 0, 0, '*', '*', 1)  # day 1 is monday
             self.console.cron + self._cronTabWeek
         except Exception as msg:
             self.error('unable to install history crontabs: %s', msg)
@@ -2086,7 +2087,7 @@ class TimeStats(object):
     client = None
 
 
-class CtimePlugin(b4_plugin.Plugin):
+class CtimePlugin(b4.b4_plugin.Plugin):
     """
     This is a helper class/plugin that saves client join and disconnect time info
     It can not be called directly or separately from the XLRstats plugin!
@@ -2110,19 +2111,19 @@ class CtimePlugin(b4_plugin.Plugin):
         :param console: The console instance
         :param cTimeTable: The ctime database table name
         """
-        b4_plugin.Plugin.__init__(self, console)
+        b4.b4_plugin.Plugin.__init__(self, console)
         self.ctime_table = cTimeTable
         # define a shortcut to the storage.query function
         self.query = self.console.storage.query
         tzName = self.console.config.get('b3', 'time_zone').upper()
-        tzOffest = b4_timezones.timezones[tzName]
+        tzOffest = b4.b4_timezones.timezones[tzName]
         hoursGMT = (self._hours - tzOffest) % 24
         self.debug(u'%02d:%02d %s => %02d:%02d UTC' % (self._hours, self._minutes, tzName, hoursGMT, self._minutes))
         self.info(u'everyday at %2d:%2d %s, connection info older than %s days will be deleted' % (self._hours,
                                                                                                    self._minutes,
                                                                                                    tzName,
                                                                                                    self._max_age_in_days))
-        self._cronTab = b4_cron.PluginCronTab(self, self.purge, 0, self._minutes, hoursGMT, '*', '*', '*')
+        self._cronTab = b4.b4_cron.PluginCronTab(self, self.purge, 0, self._minutes, hoursGMT, '*', '*', '*')
         self.console.cron + self._cronTab
 
     def onStartup(self):
@@ -2234,7 +2235,7 @@ class CtimePlugin(b4_plugin.Plugin):
 #                                                                                                                      #
 ########################################################################################################################
 
-class BattlestatsPlugin(b4_plugin.Plugin):
+class BattlestatsPlugin(b4.b4_plugin.Plugin):
     """
     This is a helper class/plugin that saves last played matches
     It can not be called directly or separately from the XLRstats plugin!
@@ -2253,7 +2254,7 @@ class BattlestatsPlugin(b4_plugin.Plugin):
         :param battlelogGamesTable: The battlelog games table
         :param battlelogClientsTable: The battlelog clients table
         """
-        b4_plugin.Plugin.__init__(self, console)
+        b4.b4_plugin.Plugin.__init__(self, console)
         self.battlelog_games_table = battlelogGamesTable
         self.battlelog_clients_table = battlelogClientsTable
         self.query = self.console.storage.query
@@ -2634,8 +2635,7 @@ class PlayerBattles(StatObject):
 
 
 if __name__ == '__main__':
-    print
-    '\nThis is version ' + __version__ + ' by ' + __author__ + ' for BigBrotherBot.\n'
+    print('\nThis is version ' + __version__ + ' by ' + __author__ + ' for BigBrotherBot.\n')
 
 """
 Crontab:

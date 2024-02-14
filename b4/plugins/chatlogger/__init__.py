@@ -20,14 +20,14 @@
 #                                                                     #
 # ################################################################### #
 
-import b3
+import b4
 import os
 import logging
 
-from b3.cron import PluginCronTab
-from b3.plugin import Plugin
-from b3.config import configparser
-from b3.timezones import timezones
+from b4.b4_cron import PluginCronTab
+from b4.b4_plugin import Plugin
+from b4.b4_config import configparser
+from b4.b4_timezones import timezones
 from logging.handlers import TimedRotatingFileHandler
 
 __version__ = '1.5'
@@ -201,7 +201,7 @@ class ChatloggerPlugin(Plugin):
 
         if self._max_age_in_days != 0 or self._max_age_cmd_in_days != 0:
             # get time_zone from main B3 config
-            tzName = self.console.config.get('b3', 'time_zone').upper()
+            tzName = self.console.config.get('b4', 'time_zone').upper()
             tzOffest = timezones[tzName]
             hoursGMT = (self._hours - tzOffest) % 24
             self.debug("%02d:%02d %s => %02d:%02d UTC" % (self._hours, self._minutes, tzName, hoursGMT, self._minutes))
@@ -221,7 +221,7 @@ class ChatloggerPlugin(Plugin):
         # create database tables (if needed)
         current_tables = self.console.storage.getTables()
         if 'chatlog' not in current_tables or 'cmdlog' not in current_tables:
-            sql_path_main = b3.getAbsolutePath('@b3/plugins/chatlogger/sql')
+            sql_path_main = b4.getAbsolutePath('@b4/plugins/chatlogger/sql')
             sql_path = os.path.join(sql_path_main, self.console.storage.dsnDict['protocol'], 'chatlogger.sql')
             self.console.storage.queryFromFile(sql_path)
 
@@ -369,8 +369,8 @@ class AbstractData(object):
             else:
                 self.plugin.warning("inserting into %s failed" % self._table)
         except Exception as e:
-            if e[0] == 1146:
-                self.plugin.error("could not save to database : %s" % e[1])
+            if e.args[0] == 1146:
+                self.plugin.error("could not save to database : %s" % e.args[1])
                 self.plugin.info("refer to this plugin readme file for instruction on how to create the required tables")
             else:
                 raise e

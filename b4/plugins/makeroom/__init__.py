@@ -30,9 +30,9 @@ __author__ = 'Thomas LÉVEIL'
 import time
 import threading
 
-from b4_functions import getCmd
-from b4_config import configparser
-from b4_plugin import Plugin
+from b4.b4_functions import getCmd
+from b4.b4_config import configparser
+from b4.b4_plugin import Plugin
 from configparser import NoOptionError
 
 

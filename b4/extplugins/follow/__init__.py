@@ -42,9 +42,9 @@
 
 #import b4
 import threading
-import b4_plugin
-#import b4_clients
-import b4_cron
+import b4.b4_plugin
+#import b4.b4_clients
+import b4.b4_cron
 import time
 import random
 
@@ -53,7 +53,7 @@ from threading import Thread
 __version__ = '1.2.0'
 __author__ = 'SGT'
 
-class FollowPlugin(b4_plugin.Plugin):
+class FollowPlugin(b4.b4_plugin.Plugin):
     _adminPlugin = None
     _following = {}
 
@@ -111,7 +111,7 @@ class FollowPlugin(b4_plugin.Plugin):
         rhour = random.randint(0, 23)
         rmin = random.randint(5, 59)
         self.debug("will perform cleanup at %02d:%02d every day" % (rhour, rmin))
-        self._crontab = b4_cron.PluginCronTab(self, self.cleanup, 0, rmin, rhour, '*', '*', '*')
+        self._crontab = b4.b4_cron.PluginCronTab(self, self.cleanup, 0, rmin, rhour, '*', '*', '*')
         self.console.cron + self._crontab
 
     def onLoadConfig(self):

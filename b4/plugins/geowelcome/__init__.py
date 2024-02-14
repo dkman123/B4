@@ -22,20 +22,20 @@
 #                                                                     #
 # ################################################################### #
 
-__version__ = '1.3.1'
-__author__  = 'SGT'
-
 import time
 import threading
 
-from b4_functions import getCmd
-from plugins.welcome import WelcomePlugin
-from plugins.welcome import F_FIRST
-from plugins.welcome import F_NEWB
-from plugins.welcome import F_USER
-from plugins.welcome import F_ANNOUNCE_FIRST
-from plugins.welcome import F_ANNOUNCE_USER
-from plugins.welcome import F_CUSTOM_GREETING
+from b4.b4_functions import getCmd
+from ..welcome import WelcomePlugin
+from ..welcome import F_FIRST
+from ..welcome import F_NEWB
+from ..welcome import F_USER
+from ..welcome import F_ANNOUNCE_FIRST
+from ..welcome import F_ANNOUNCE_USER
+from ..welcome import F_CUSTOM_GREETING
+
+__version__ = '1.3.1'
+__author__  = 'SGT'
 
 
 class GeowelcomePlugin(WelcomePlugin):

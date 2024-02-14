@@ -23,21 +23,22 @@
 # ################################################################### #
 
 import b4
-import b4_plugin
-import b4_output
+import b4.b4_plugin
+import b4.b4_output
 import logging
 import os.path
+import paramiko
 import time
 import threading
 
-from b4_functions import splitDSN
+from b4.b4_functions import splitDSN
 from configparser import NoOptionError
 
 try:
     import paramiko
 except ImportError as ee:
     paramiko = None # just to remove a warning
-    log = b4_output.getInstance()
+    log = b4.b4_output.getInstance()
     log.critical("Missing module paramiko. The paramiko module is required to connect with SFTP. "
                  "Install pycrypto from http://www.voidspace.org.uk/python/modules.shtml#pycrypto and "
                  "paramiko from http://www.lag.net/paramiko/")
@@ -47,7 +48,7 @@ __version__ = '1.3'
 __author__ = 'Courgette'
 
 
-class SftpytailPlugin(b4_plugin.Plugin):
+class SftpytailPlugin(b4.b4_plugin.Plugin):
 
     requiresConfigFile = False
     default_connection_timeout = 30  # time (in sec) to wait before reconnecting after loosing FTP connection
@@ -65,7 +66,7 @@ class SftpytailPlugin(b4_plugin.Plugin):
         :param console: The console instance
         :param config: The plugin configuration
         """
-        b4_plugin.Plugin.__init__(self, console, config)
+        b4.b4_plugin.Plugin.__init__(self, console, config)
         self._maxGap = SftpytailPlugin.default_maxGap
         self._waitBeforeReconnect = 15
         self._connectionTimeout = SftpytailPlugin.default_connection_timeout
@@ -192,9 +193,9 @@ class SftpytailPlugin(b4_plugin.Plugin):
         transport = sftp = None
         rfile = None
         self.file = open(self.lgame_log, 'ab')
-        self.file.write('\r\n')
-        self.file.write('B3 has been restarted\r\n')
-        self.file.write('\r\n')
+        self.file.write('\r\n'.encode("utf-8"))
+        self.file.write('B3 has been restarted\r\n'.encode("utf-8"))
+        self.file.write('\r\n'.encode("utf-8"))
         while self.console.working:
             try:
                 if not sftp:
@@ -244,9 +245,9 @@ class SftpytailPlugin(b4_plugin.Plugin):
                 if self._logAppend:
                     try:
                         self.file = open(self.lgame_log, 'ab')
-                        self.file.write('\r\n')
-                        self.file.write('B3 has restarted writing the log file\r\n')
-                        self.file.write('\r\n')
+                        self.file.write('\r\n'.encode("utf-8"))
+                        self.file.write('B3 has restarted writing the log file\r\n'.encode("utf-8"))
+                        self.file.write('\r\n'.encode("utf-8"))
                     except IOError:
                         self.file = open(self.lgame_log, 'w')
                 else:
@@ -271,7 +272,7 @@ class SftpytailPlugin(b4_plugin.Plugin):
                     time.sleep(self._waitBeforeReconnect)
             time.sleep(self._sftpdelay)
 
-        self.verbose("B3 is down: stopping sFtpytail thread")
+        self.verbose("B4 is down: stopping sFtpytail thread")
 
         try:
             rfile.close()

@@ -22,15 +22,12 @@
 #                                                                     #
 # ################################################################### #
 
-__version__ = '1.35'
-__author__ = 'ThorN, xlr8or, Courgette, Ozon, Fenix'
-
 # 2019.08.02 add get_clients
 
 import b4
-import b4_cron
-import b4_functions
-import b4_plugin
+import b4.b4_cron
+import b4.b4_functions
+import b4.b4_plugin
 import copy
 import random
 import re
@@ -39,12 +36,15 @@ import time
 import threading
 import traceback
 
-from b4_clients import Client
-from b4_clients import Group
+from b4.b4_clients import Client
+from b4.b4_clients import Group
 from configparser import NoOptionError
 
+__version__ = '1.35'
+__author__ = 'ThorN, xlr8or, Courgette, Ozon, Fenix'
+
 # pylint: disable-msg=E1103
-class AdminPlugin(b4_plugin.Plugin):
+class AdminPlugin(b4.b4_plugin.Plugin):
 
     _commands = {}
 
@@ -353,14 +353,14 @@ class AdminPlugin(b4_plugin.Plugin):
                 else:
                     r = spam_reason
 
-            return b4_functions.time2minutes(expire.strip()), r
+            return b4.b4_functions.time2minutes(expire.strip()), r
 
         def load_mandatory_warn_reason(key, default_duration, default_reason):
             if self.config.has_option('warn_reasons', key):
                 self.warn_reasons[key] = load_warn_reason(key, self.config.getTextTemplate('warn_reasons', key))
             if not key in self.warn_reasons or self.warn_reasons[key] is None:
                 self.warning("no valid option '%s' in section 'warn_reasons': falling back on default value" % key)
-                self.warn_reasons[key] = b4_functions.time2minutes(default_duration), default_reason
+                self.warn_reasons[key] = b4.b4_functions.time2minutes(default_duration), default_reason
             self.info("warn reason '%s': %s" % (key, self.warn_reasons[key]))
 
         self.info("------ loading warn_reasons from config file ------")
@@ -375,7 +375,7 @@ class AdminPlugin(b4_plugin.Plugin):
                     self.warn_reasons[k] = rv
 
         for k, (duration, reason) in self.warn_reasons.items():
-            self.info("""{0:<10s} {1:<10s}\t"{2}" """.format(k, b4_functions.minutesStr(duration), reason))
+            self.info("""{0:<10s} {1:<10s}\t"{2}" """.format(k, b4.b4_functions.minutesStr(duration), reason))
 
         self.info("-------------- warn_reasons loaded ----------------")
 
@@ -434,7 +434,7 @@ class AdminPlugin(b4_plugin.Plugin):
                 if len(sp) == 2:
                     cmd, alias = sp
 
-                func = b4_functions.getCmd(self, cmd)
+                func = b4.b4_functions.getCmd(self, cmd)
                 if func:
                     self.registerCommand(self, cmd, level, func, alias)
 
@@ -468,7 +468,7 @@ class AdminPlugin(b4_plugin.Plugin):
             elif len(superadmins) == 0:
                 self.verbose('no superadmin found: enabling !iamgod')
                 # There are no superadmins, enable the !iamgod command
-                self.registerCommand(self, 'iamgod', 0, b4_functions.getCmd(self, 'iamgod'))
+                self.registerCommand(self, 'iamgod', 0, b4.b4_functions.getCmd(self, 'iamgod'))
             else:
                 self.verbose('superadmin(s) found: no need for !iamgod')
 
@@ -476,7 +476,7 @@ class AdminPlugin(b4_plugin.Plugin):
         if self._past_bans_check_rate > 0:
             self.debug('installing past bans check crontab: b4 will check for banned players every %s seconds' % self._past_bans_check_rate)
             self.console.cron.cancel(id(self._past_bans_crontab))
-            self._past_bans_crontab = b4_cron.PluginCronTab(self, self.doPastBansCheck, minute='*', second= '*/%s' % self._past_bans_check_rate)
+            self._past_bans_crontab = b4.b4_cron.PluginCronTab(self, self.doPastBansCheck, minute='*', second= '*/%s' % self._past_bans_check_rate)
             self.console.cron.add(self._past_bans_crontab)
 
     def registerCommand(self, plugin, command, level, handler, alias=None, secretLevel=None):
@@ -645,7 +645,7 @@ class AdminPlugin(b4_plugin.Plugin):
             # catch the confirm command for identification of the b4 devs
             if event.data[1:] == 'confirm':
                 self.debug('checking confirmation...')
-                self.console.say(b4_functions.confirm(event.client))
+                self.console.say(b4.b4_functions.confirm(event.client))
                 return
             else:
                 self.debug('handle command %s' % event.data)
@@ -774,7 +774,7 @@ class AdminPlugin(b4_plugin.Plugin):
             if cmd.canUse(client):
                 if cmd.command not in c_list:
                     c_list.append(cmd.command)
-        result = b4_functions.corrent_spell(c_word, ' '.join(c_list))
+        result = b4.b4_functions.corrent_spell(c_word, ' '.join(c_list))
         return result
 
     def getAdmins(self):
@@ -1013,7 +1013,7 @@ class AdminPlugin(b4_plugin.Plugin):
         if reason is None:
             reason = self.getReason(keyword)
 
-        duration = b4_functions.time2minutes(duration)
+        duration = b4.b4_functions.time2minutes(duration)
 
 
         if penalty_type == self.PENALTY_KICK:
@@ -1083,7 +1083,7 @@ class AdminPlugin(b4_plugin.Plugin):
         elif warnings >= self.warn_alert_kick_num:
             # self.debug("warnClient: self.warn_alert_kick_num. client %s; warnings %s" % (sclient.exactName, warnings))
 
-            duration = b4_functions.minutesStr(self.warnKickDuration(sclient))
+            duration = b4.b4_functions.minutesStr(self.warnKickDuration(sclient))
 
             warn = sclient.lastWarning
             if warn:
@@ -1368,7 +1368,7 @@ class AdminPlugin(b4_plugin.Plugin):
                 self.console.say('^7b4 is at %s' % self.console._publicIp)
         else:
             cmd.sayLoudOrPM(client, '%s ^7- uptime: [^2%s^7]' % (
-                b4.version, b4_functions.minutesStr(self.console.upTime() / 60.0)))
+                b4.version, b4.b4_functions.minutesStr(self.console.upTime() / 60.0)))
 
     def cmd_register(self, data, client, cmd=None):
         """
@@ -1993,7 +1993,7 @@ class AdminPlugin(b4_plugin.Plugin):
             if penalty.type == 'Ban':
                 txt += ' (Perm)'
             elif penalty.type == 'TempBan':
-                txt += ' (%s remaining)' % b4_functions.minutesStr((penalty.timeExpire - self.console.time()) / 60.0)
+                txt += ' (%s remaining)' % b4.b4_functions.minutesStr((penalty.timeExpire - self.console.time()) / 60.0)
             else:
                 raise AssertionError("unexpected penalty type: %r" % penalty.type)
             if penalty.reason:
@@ -2232,7 +2232,7 @@ class AdminPlugin(b4_plugin.Plugin):
                     msg = ''
                     warn = sclient.firstWarning
                     if warn:
-                        expire = b4_functions.minutesStr((warn.timeExpire - (self.console.time())) / 60)
+                        expire = b4.b4_functions.minutesStr((warn.timeExpire - (self.console.time())) / 60)
                         msg = ', expires in ^2%s' % expire
                     warn = sclient.lastWarning
                     if warn:
@@ -2275,8 +2275,8 @@ class AdminPlugin(b4_plugin.Plugin):
         if not m:
             client.message(self.getMessage('invalid_parameters'))
         else:
-            duration = b4_functions.time2minutes(data)
-            self.console.say('^7Sleeping for %s' % b4_functions.minutesStr(duration))
+            duration = b4.b4_functions.time2minutes(data)
+            self.console.say('^7Sleeping for %s' % b4.b4_functions.minutesStr(duration))
             unpause_task = threading.Timer(duration * 60, self.console.unpause)
             unpause_task.daemon = True # won't block the bot in case of shutdown
             self.console.pause()
@@ -2358,7 +2358,7 @@ class AdminPlugin(b4_plugin.Plugin):
             return
 
         duration, keyword = m.groups()
-        duration = b4_functions.time2minutes(duration)
+        duration = b4.b4_functions.time2minutes(duration)
 
         if client.maxLevel < self._long_tempban_level and duration > self._long_tempban_max_duration:
             # temp ban for maximum specified in settings

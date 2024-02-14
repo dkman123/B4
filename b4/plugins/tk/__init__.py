@@ -23,10 +23,10 @@
 # ################################################################### #
 
 import b4
-import b4_events
-import b4_plugin
-import b4_cron
-import string
+import b4.b4_events
+import b4.b4_plugin
+import b4.b4_cron
+#import string
 import re
 import threading
 import time
@@ -139,7 +139,7 @@ class TkInfo(object):
     points = property(_get_points)
 
 
-class TkPlugin(b4_plugin.Plugin):
+class TkPlugin(b4.b4_plugin.Plugin):
 
     loadAfterPlugins = ['spawnkill']
 
@@ -155,7 +155,7 @@ class TkPlugin(b4_plugin.Plugin):
         :param console: The console instance
         :param config: The plugin configuration
         """
-        b4_plugin.Plugin.__init__(self, console, config)
+        b4.b4_plugin.Plugin.__init__(self, console, config)
         self._adminPlugin = self.console.getPlugin('admin')
 
         # game types that have no team based game play and for which there should be no tk detected
@@ -225,7 +225,7 @@ class TkPlugin(b4_plugin.Plugin):
                          'using default: %s' % ','.join(map(str, self._levels.keys())))
         except ValueError as e:
             self.error('could not load levels from config value: %s' % e)
-            self.debug('using default levels' % ','.join(map(str, self._levels.keys())))
+            self.debug('using default levels: %s' % ','.join(map(str, self._levels.keys())))
 
         self._maxLevel = max(self._levels.keys())
         self.debug('teamkill max level is %s', self._maxLevel)
@@ -338,7 +338,7 @@ class TkPlugin(b4_plugin.Plugin):
 
         if self._tkpointsHalflife > 0:
             minute, sec = self.crontab_time()
-            self._cronTab_tkhalflife = b4_cron.OneTimeCronTab(self.halveTKPoints, second=sec, minute=minute)
+            self._cronTab_tkhalflife = b4.b4_cron.OneTimeCronTab(self.halveTKPoints, second=sec, minute=minute)
             self.console.cron + self._cronTab_tkhalflife
             self.debug('TK Crontab started')
 
@@ -371,7 +371,8 @@ class TkPlugin(b4_plugin.Plugin):
                 (event.type == self.console.getEventID('EVT_GAME_ROUND_END') and self._use_round_end):
             if self._cronTab_tkhalflife:
                 # remove existing crontab
-                self.console.cron - self._cronTab_tkhalflife
+                self.console.cron.cancel(self._cronTab_tkhalflife)
+                #self.console.cron - self._cronTab_tkhalflife
             self.halveTKPoints('map end: cutting all teamkill points in half')
             return
 
@@ -379,10 +380,12 @@ class TkPlugin(b4_plugin.Plugin):
             if self._tkpointsHalflife > 0:
                 if self._cronTab_tkhalflife:
                     # remove existing crontab
-                    self.console.cron - self._cronTab_tkhalflife
+                    self.console.cron.cancel(self._cronTab_tkhalflife)
+                    #self.console.cron - self._cronTab_tkhalflife
                 (m, s) = self.crontab_time()
-                self._cronTab_tkhalflife = b4_cron.OneTimeCronTab(self.halveTKPoints, second=s, minute=m)
-                self.console.cron + self._cronTab_tkhalflife
+                self._cronTab_tkhalflife = b4.b4_cron.OneTimeCronTab(self.halveTKPoints, second=s, minute=m)
+                self.console.cron.add(self._cronTab_tkhalflife)
+                #self.console.cron + self._cronTab_tkhalflife
                 self.debug('TK crontab started')
 
             return
@@ -465,10 +468,12 @@ class TkPlugin(b4_plugin.Plugin):
         if self._tkpointsHalflife > 0: 
             if self._cronTab_tkhalflife:
                 # remove existing crontab
-                self.console.cron - self._cronTab_tkhalflife
+                self.console.cron.cancel(self._cronTab_tkhalflife)
+                #self.console.cron - self._cronTab_tkhalflife
             (m, s) = self.crontab_time()
-            self._cronTab_tkhalflife = b4_cron.OneTimeCronTab(self.halveTKPoints, second=s, minute=m)
-            self.console.cron + self._cronTab_tkhalflife
+            self._cronTab_tkhalflife = b4.b4_cron.OneTimeCronTab(self.halveTKPoints, second=s, minute=m)
+            self.console.cron.add(self._cronTab_tkhalflife)
+            #self.console.cron + self._cronTab_tkhalflife
             #self.console.say('TK Crontab re-started')
             self.debug('TK crontab re-started')
             
@@ -485,7 +490,7 @@ class TkPlugin(b4_plugin.Plugin):
     
     def getMultipliers(self, client):
         level = ()
-        for lev, mult in self._levels.iteritems():
+        for lev, mult in self._levels.items():
             if lev <= client.maxLevel:
                 level = mult
 
@@ -507,7 +512,7 @@ class TkPlugin(b4_plugin.Plugin):
         v = self.getClientTkInfo(victim)
 
         # 10/20/2008 - 1.1.6b0 - mindriot
-        # * in clientDamage, kill and damage mutlipliers were reversed - changed if killed: to [0] and else: to [1]
+        # * in clientDamage, kill and damage multipliers were reversed - changed if killed: to [0] and else: to [1]
         if killed:        
             points = int(round(points * self.getMultipliers(attacker)[0]))
         else:
@@ -546,9 +551,9 @@ class TkPlugin(b4_plugin.Plugin):
     def forgive(self, acid, victim, silent=False):
         """
         Forgive a client.
-        :param acid: The attacket slot number
+        :param acid: The attacker slot number
         :param victim: The victim client object instance
-        :param silent: Whether or not to announce the forgive
+        :param silent: Whether to announce the forgiveness
         """
         v = self.getClientTkInfo(victim)
         points = v.forgive(acid)
@@ -716,10 +721,10 @@ class TkPlugin(b4_plugin.Plugin):
 
             if len(forgave):
                 if self._private_messages:
-                    variables = {'vname': client.exactName, 'attackers': string.join(forgave, ', ')}
+                    variables = {'vname': client.exactName, 'attackers': ", ".join(forgave)}
                     client.message(self.getMessage('forgive_many', variables))
                 else:
-                    variables = {'vname': client.exactName, 'attackers': string.join(forgave, ', ')}
+                    variables = {'vname': client.exactName, 'attackers': ", ".join(forgave)}
                     self.console.say(self.getMessage('forgive_many', variables))
             else:
                 client.message(self.getMessage('no_forgive'))

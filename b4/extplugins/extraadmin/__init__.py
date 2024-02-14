@@ -30,9 +30,9 @@
 #numbers of slots
 
 import b4
-#import b4_events
-import b4_plugin
-#import b4_clients
+#import b4.b4_events
+import b4.b4_plugin
+#import b4.b4_clients
 import threading
 #import time
 
@@ -45,7 +45,7 @@ class Vote:
 
 
 #--------------------------------------------------------------------------------------------------
-class ExtraadminPlugin(b4_plugin.Plugin):
+class ExtraadminPlugin(b4.b4_plugin.Plugin):
     clientAFK = ''
     RAZ = 0
     clientautonuke = None

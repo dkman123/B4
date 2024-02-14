@@ -30,11 +30,11 @@ import re
 import traceback
 import sys
 import threading
-import b4_events
-import b4_functions
-import b4_plugin
+import b4.b4_events
+import b4.b4_functions
+import b4.b4_plugin
 
-from b4_config import Xmlconfigparser
+from b4.b4_config import Xmlconfigparser
 from configparser import NoOptionError
 
 
@@ -72,7 +72,7 @@ class CensorData:
         return """CensorData(name=%r, penalty=%r, regexp=%r)""" % (self.name, self.penalty, self.regexp)
 
 
-class CensorPlugin(b4_plugin.Plugin):
+class CensorPlugin(b4.b4_plugin.Plugin):
 
     _adminPlugin = None
     _reClean = re.compile(r'[^0-9a-z ]+', re.I)
@@ -134,7 +134,7 @@ class CensorPlugin(b4_plugin.Plugin):
             self._defaultBadWordPenalty = PenaltyData(type=penalty.get('type'),
                                                       reason=penalty.get('reason'),
                                                       keyword=penalty.get('reasonkeyword'),
-                                                      duration=b4_functions.time2minutes(penalty.get('duration')))
+                                                      duration=b4.b4_functions.time2minutes(penalty.get('duration')))
         else:
             self.warning('no default badwords penalty found in configuration file: '
                          'using default (%s)' % self._defaultBadNamePenalty)
@@ -145,7 +145,7 @@ class CensorPlugin(b4_plugin.Plugin):
             self._defaultBadNamePenalty = PenaltyData(type=penalty.get('type'),
                                                       reason=penalty.get('reason'),
                                                       keyword=penalty.get('reasonkeyword'),
-                                                      duration=b4_functions.time2minutes(penalty.get('duration')))
+                                                      duration=b4.b4_functions.time2minutes(penalty.get('duration')))
         else:
             self.warning('no default badnames penalty found in configuration file: '
                          'using default (%s)' % self._defaultBadNamePenalty)
@@ -227,7 +227,7 @@ class CensorPlugin(b4_plugin.Plugin):
             pd = PenaltyData(type=penalty.get('type'),
                              reason=penalty.get('reason'),
                              keyword=penalty.get('reasonkeyword'),
-                             duration=b4_functions.time2minutes(penalty.get('duration')))
+                             duration=b4.b4_functions.time2minutes(penalty.get('duration')))
         else:
             pd = default
 
@@ -265,7 +265,7 @@ class CensorPlugin(b4_plugin.Plugin):
                    event.type == self.console.getEventID('EVT_CLIENT_TEAM_SAY'):
                     self.checkBadWord(event.data, event.client)
 
-        except b4_events.VetoEvent:
+        except b4.b4_events.VetoEvent:
             raise
         except Exception as msg:
             self.error('censor plugin error: %s - %s', msg, traceback.extract_tb(sys.exc_info()[2]))
@@ -332,11 +332,11 @@ class CensorPlugin(b4_plugin.Plugin):
             if w.regexp.search(text):
                 self.debug("badword rule [%s] matches '%s'" % (w.name, text))
                 self.penalizeClient(w.penalty, client, text)
-                raise b4_events.VetoEvent
+                raise b4.b4_events.VetoEvent
             if w.regexp.search(cleaned):
                 self.debug("badword rule [%s] matches cleaned text '%s'" % (w.name, cleaned))
                 self.penalizeClient(w.penalty, client, '%s => %s' % (text, cleaned))
-                raise b4_events.VetoEvent
+                raise b4.b4_events.VetoEvent
 
     def clean(self, data):
         return re.sub(self._reClean, ' ', self.console.stripColors(data.lower()))

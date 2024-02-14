@@ -23,16 +23,16 @@
 # ################################################################### #
 
 import b4
-#import b4_events
-import b4_plugin
+#import b4.b4_events
+import b4.b4_plugin
 import datetime
 import random
 import threading
 import time
 
-from b4_functions import getCmd
+from b4.b4_functions import getCmd
+from b4.storage.b4_storage import mapresult
 from configparser import NoOptionError
-from storage.b4_storage import mapresult
 
 __version__ = '0.2'
 __author__  = 'isopropanol'
@@ -55,7 +55,7 @@ def randomshuffle_thread(self):
     self.debug("Thread randomshuffle_thread: finishing")
 
 
-class FlagannouncePlugin(b4_plugin.Plugin):
+class FlagannouncePlugin(b4.b4_plugin.Plugin):
     # requiresConfigFile = True
     # requiresPlugins = ['admin']
     _adminPlugin = None

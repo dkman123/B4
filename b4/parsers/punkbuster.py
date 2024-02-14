@@ -22,10 +22,10 @@
 #                                                                     #
 # ################################################################### #
 
+import re
+
 __author__  = 'ThorN'
 __version__ = '1.3'
-
-import re
 
 
 class PunkBuster(object):

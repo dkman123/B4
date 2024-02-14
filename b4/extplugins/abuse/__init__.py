@@ -22,22 +22,22 @@
 #                                                                     #
 # ################################################################### #
 
-__version__ = '0.2'
-__author__  = 'isopropanol'
-
 #import b4
-#import b4_events
-import b4_plugin
+#import b4.b4_events
+import b4.b4_plugin
 #import datetime
 #import threading
 #import time
 
-from b4_functions import getCmd
+from b4.b4_functions import getCmd
 from configparser import NoOptionError
 # from b4_storage import abuseresult
 
+__version__ = '0.2'
+__author__  = 'isopropanol'
 
-class AbusePlugin(b4_plugin.Plugin):
+
+class AbusePlugin(b4.b4_plugin.Plugin):
     # requiresConfigFile = True
     # requiresPlugins = ['admin']
     _adminPlugin = None

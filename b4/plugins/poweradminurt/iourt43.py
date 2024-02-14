@@ -26,7 +26,7 @@ import b4
 import re
 
 from .iourt41 import Poweradminurt41Plugin
-from b4_functions import clamp
+from b4.b4_functions import clamp
 
 class Poweradminurt43Plugin(Poweradminurt41Plugin):
 

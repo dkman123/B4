@@ -22,17 +22,17 @@
 #                                                                     #
 # ################################################################### #
 
+import b4
+import b4.b4_plugin
+import b4.b4_events
+
+from b4.b4_functions import getCmd
+
 __author__  = 'PtitBigorneau - www.ptitbigorneau.fr'
 __version__ = '1.5.2'
 
-import b3
-import b3.plugin
-import b3.events
 
-from b3.functions import getCmd
-
-
-class FirstkillPlugin(b3.plugin.Plugin):
+class FirstkillPlugin(b4.b4_plugin.Plugin):
 
     _adminPlugin = None
 
@@ -60,10 +60,10 @@ class FirstkillPlugin(b3.plugin.Plugin):
         """
         Load plugin configuration.
         """
-        self._firstkill = self.getSetting('settings', 'firstkill', b3.BOOL, self._firstkill)
-        self._firsttk = self.getSetting('settings', 'firsttk', b3.BOOL, self._firsttk)
+        self._firstkill = self.getSetting('settings', 'firstkill', b4.BOOL, self._firstkill)
+        self._firsttk = self.getSetting('settings', 'firsttk', b4.BOOL, self._firsttk)
         if self.console.gameName in ('iourt41', 'iourt42', 'iourt43'):
-            self._firsths = self.getSetting('settings', 'firsths', b3.BOOL, self._firsths)
+            self._firsths = self.getSetting('settings', 'firsths', b4.BOOL, self._firsths)
 
     def onStartup(self):
         """

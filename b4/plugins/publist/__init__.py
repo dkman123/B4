@@ -26,21 +26,23 @@ __author__ = 'ThorN, Courgette'
 __version__ = '1.14'
 
 import b4
-import b4_cron
-import b4_events
-import b4_functions
-import b4_plugin
-import sys
-import urllib
-import socket
+import b4.b4_cron
+import b4.b4_events
+import b4.b4_functions
+import b4.b4_plugin
 import os
 import random
+import socket
+import sys
+import urllib
+import urllib.parse
+import urllib.request
 
 from configparser import NoOptionError
 from time import strftime
 
 
-class PublistPlugin(b4_plugin.Plugin):
+class PublistPlugin(b4.b4_plugin.Plugin):
 
     requiresConfigFile = False
 
@@ -92,7 +94,7 @@ class PublistPlugin(b4_plugin.Plugin):
         rmin = random.randint(0, 59)
         rhour = random.randint(0, 23)
         self.debug("publist will send heartbeat at %02d:%02d every day" % (rhour, rmin))
-        self._cronTab = b4_cron.PluginCronTab(self, self.update, 0, rmin, rhour, '*', '*', '*')
+        self._cronTab = b4.b4_cron.PluginCronTab(self, self.update, 0, rmin, rhour, '*', '*', '*')
         self.console.cron + self._cronTab
         
         # planning initial heartbeat
@@ -102,7 +104,7 @@ class PublistPlugin(b4_plugin.Plugin):
             _im -= 60
 
         self.info('initial heartbeat will be sent to B3 master server at %s minutes' % (str(_im).zfill(2)))
-        self._cronTab = b4_cron.OneTimeCronTab(self.update, 0, _im, '*', '*', '*', '*')
+        self._cronTab = b4.b4_cron.OneTimeCronTab(self.update, 0, _im, '*', '*', '*', '*')
         self.console.cron + self._cronTab
 
     ####################################################################################################################
@@ -158,20 +160,20 @@ class PublistPlugin(b4_plugin.Plugin):
         for pname in self.console._plugins:
             try:
                 pl = self.console.getPlugin(pname)
-                p_module = b4_functions.getModule(pl.__module__)
+                p_module = b4.b4_functions.getModule(pl.__module__)
                 p_version = getattr(p_module, '__version__', 'unknown')
                 plugins.append("%s/%s" % (pname, p_version))
             except Exception as e:
                 self.warning("could not get version for plugin named '%s'" % pname, exc_info=e)
           
         try:
-            database = b4_functions.splitDSN(self.console.storage.dsn)['protocol']
+            database = b4.b4_functions.splitDSN(self.console.storage.dsn)['protocol']
         except Exception:
             database = "unknown"
 
         version = getattr(b4, '__version__', 'unknown')
-        if b4_functions.main_is_frozen():
-            version_info = b4.getB3versionInfo()
+        if b4.b4_functions.main_is_frozen():
+            version_info = b4.getB4versionInfo()
             version = '%s %s%s' % (version, version_info[1], version_info[2])
             
         info = {
@@ -181,7 +183,7 @@ class PublistPlugin(b4_plugin.Plugin):
             'rconPort': self.console._rconPort,
             'version': version,
             'parser': self.console.gameName,
-            'parserversion': getattr(b4_functions.getModule(self.console.__module__), '__version__', 'unknown'),
+            'parserversion': getattr(b4.b4_functions.getModule(self.console.__module__), '__version__', 'unknown'),
             'database': database,
             'plugins': ','.join(plugins),
             'os': os.name,
@@ -221,12 +223,11 @@ class PublistPlugin(b4_plugin.Plugin):
         if info is None:
             info = {}
         try:
-            request = urllib.Request('%s?%s' % (url, urllib.urlencode(info)))
+            request = urllib.request.Request('%s?%s' % (url, urllib.parse.urlencode(info)))
             request.add_header('User-Agent', "B3 Publist plugin/%s" % __version__)
-            opener = urllib.build_opener()
-            replybody = opener.open(request).read()
-            if len(replybody) > 0:
-                self.debug("master replied: %s" % replybody)
+            response = urllib.request.urlopen(request)
+            if len(response) > 0:
+                self.debug("master replied: %s" % response)
         except IOError as e:
             if hasattr(e, 'reason'):
                 self.error('unable to reach B3 masterserver: maybe the service is down or internet was unavailable')

@@ -6,7 +6,7 @@
 # NOTEZ BIEN: use of long integers is deliberate, because it insures that
 # various comparisons work right (eg 'low < high', when low has the high
 # bit clear and high has it set).
-from plugins.netblocker.netblock import ranges
+from ..netblock import ranges
 
 __doc__ = """This module implements sets of IP address ranges,
 supporting various notation for them and various routines for

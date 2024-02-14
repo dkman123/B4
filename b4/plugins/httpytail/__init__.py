@@ -26,9 +26,9 @@ __author__ = 'GrosBedo, 82ndab-Bravo17, Courgette'
 __version__ = '1.6.1'
 
 import b4
-#import b4_events
-import b4_functions
-import b4_plugin
+#import b4.b4_events
+import b4.b4_functions
+import b4.b4_plugin
 import os.path
 import threading
 import time
@@ -39,7 +39,7 @@ from configparser import NoOptionError
 user_agent = "b4 Httpytail plugin/%s" % __version__
 
 
-class HttpytailPlugin(b4_plugin.Plugin):
+class HttpytailPlugin(b4.b4_plugin.Plugin):
 
     requiresConfigFile = False
     httpconfig = None
@@ -72,7 +72,7 @@ class HttpytailPlugin(b4_plugin.Plugin):
         """
         self.thread1 = None
         self.stop_event = threading.Event()
-        b4_plugin.Plugin.__init__(self, console=console, config=config)
+        b4.b4_plugin.Plugin.__init__(self, console=console, config=config)
 
     def onStartup(self):
         """
@@ -124,7 +124,7 @@ class HttpytailPlugin(b4_plugin.Plugin):
                 self.debug('using default value (%s) for settings/maxGapBytes' % self._maxGap)
 
     def initThread(self, httpfileDSN):
-        self.httpconfig = b4_functions.splitDSN(httpfileDSN)
+        self.httpconfig = b4.b4_functions.splitDSN(httpfileDSN)
         self.url = httpfileDSN
         self.stop_event.clear()
         self.thread1 = threading.Thread(target=self.update)

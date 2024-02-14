@@ -23,7 +23,7 @@
 # ################################################################### #
 
 #import b4
-import b4_clients
+import b4.b4_clients
 import re
 import os
 import os.path
@@ -55,7 +55,7 @@ class Geolocator(object):
         if isinstance(data, str):
             if not re.match(r'''^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}''', str(data)):
                 raise GeolocalizationError('invalid ip address string supplied: %s' % data)
-        elif isinstance(data, b4_clients.Client):
+        elif isinstance(data, b4.b4_clients.Client):
             client = data
             if not client.ip:
                 raise GeolocalizationError('b4.clients.Client object instance has not ip attribute set')

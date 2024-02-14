@@ -23,7 +23,7 @@
 import sys
 
 # look ma, netblock caculations:
-from plugins.netblocker.netblock import netblock
+from ..netblock import netblock
 
 
 def die(str):

@@ -26,9 +26,9 @@ __version__ = '2.8'
 __author__  = 'Courgette'
 
 import b4
-import b4_cron
-#import b4_events
-import b4_plugin
+import b4.b4_cron
+#import b4.b4_events
+import b4.b4_plugin
 import codecs
 import datetime
 import gzip
@@ -42,14 +42,14 @@ import time
 import urllib.error
 import urllib.request
 
-from b4_functions import getCmd
+from b4.b4_functions import getCmd
 from configparser import NoOptionError
 
 
 user_agent =  "b4 Banlist plugin/%s" % __version__
 
 
-class BanlistPlugin(b4_plugin.Plugin):
+class BanlistPlugin(b4.b4_plugin.Plugin):
 
     _adminPlugin = None
     _banlists = None
@@ -201,7 +201,7 @@ class BanlistPlugin(b4_plugin.Plugin):
         if run_minutes > 59:
             run_minutes = 59
         if run_minutes > 0:
-            self._cronTab = b4_cron.PluginCronTab(self, self.cmd_banlistcleanup, 0, '*/%s' % run_minutes)
+            self._cronTab = b4.b4_cron.PluginCronTab(self, self.cmd_banlistcleanup, 0, '*/%s' % run_minutes)
             self.console.cron.add(self._cronTab)
             #self.console.cron + self._cronTab
             self.debug("cron set for every %d minutes" % run_minutes)
@@ -485,7 +485,7 @@ class Banlist(object):
         if self.url is not None and self.plugin._auto_update:
             rmin = random.randint(0,59)
             self.plugin.debug("[%s] will be autoupdated at %s min of every hour" % (self.name, rmin))
-            self._cronTab = b4_cron.PluginCronTab(self.plugin, self.autoUpdateFromUrl, 0, rmin, '*', '*', '*', '*')
+            self._cronTab = b4.b4_cron.PluginCronTab(self.plugin, self.autoUpdateFromUrl, 0, rmin, '*', '*', '*', '*')
             self.plugin.console.cron + self._cronTab
 
         self.plugin.info("loading %s [%s], file:[%s], url:[%s], message:[%s]" % (self.__class__.__name__, self.name,

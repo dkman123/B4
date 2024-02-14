@@ -26,22 +26,22 @@ __author__ = 'ThorN'
 __version__ = '1.6.5'
 
 #import b4
-import b4_cron
-import b4_plugin
+import b4.b4_cron
+import b4.b4_plugin
 #import b4_events
+import io
 import os
 import re
 import time
 
-from b4_functions import sanitizeMe
-from b4_functions import splitDSN
+from b4.b4_functions import sanitizeMe
+from b4.b4_functions import splitDSN
 from configparser import NoOptionError
 from ftplib import FTP
-from io import StringIO
 from xml.dom.minidom import Document
 
 
-class StatusPlugin(b4_plugin.Plugin):
+class StatusPlugin(b4.b4_plugin.Plugin):
 
     _tkPlugin = None
     _cronTab = None
@@ -214,10 +214,12 @@ class StatusPlugin(b4_plugin.Plugin):
         self.build_schema()
 
         if self._cronTab:
-            self.console.cron - self._cronTab
+            self.console.cron.cancel((self._cronTab))
+            #self.console.cron - self._cronTab
 
-        self._cronTab = b4_cron.PluginCronTab(self, self.update, '*/%s' % self._interval)
-        self.console.cron + self._cronTab
+        self._cronTab = b4.b4_cron.PluginCronTab(self, self.update, '*/%s' % self._interval)
+        self.console.cron.add(self._cronTab)
+        #self.console.cron + self._cronTab
 
     ####################################################################################################################
     #                                                                                                                  #
@@ -499,7 +501,7 @@ class StatusPlugin(b4_plugin.Plugin):
         """
         if self._ftpstatus:
             self.debug('uploading XML status to FTP server')
-            ftp_file = StringIO.StringIO()
+            ftp_file = io.BytesIO()
             ftp_file.write(xml)
             ftp_file.seek(0)
             ftp = FTP(self._ftpinfo['host'], self._ftpinfo['user'], passwd=self._ftpinfo['password'])

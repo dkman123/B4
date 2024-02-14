@@ -26,9 +26,9 @@ __version__ = '1.10'
 __author__ = 'Bakes, Courgette'
 
 import b4
-import b4_config
-import b4_functions
-import b4_plugin
+import b4.b4_config
+import b4.b4_functions
+import b4.b4_plugin
 import os.path
 import threading
 import ftplib
@@ -38,7 +38,7 @@ from configparser import NoOptionError
 from ftplib import FTP
 
 
-class FtpytailPlugin(b4_plugin.Plugin):
+class FtpytailPlugin(b4.b4_plugin.Plugin):
 
     requiresConfigFile = False
     buffer = None
@@ -183,7 +183,7 @@ class FtpytailPlugin(b4_plugin.Plugin):
                                                                      self._short_delay, self._long_delay))
 
     def init_thread(self, ftpfiledsn):
-        self.ftpconfig = b4_functions.splitDSN(ftpfiledsn)
+        self.ftpconfig = b4.b4_functions.splitDSN(ftpfiledsn)
         # the '/' is not part of the uri-path according to RFC 1738 3.1. Common Internet Scheme Syntax
         self.url_path = self.ftpconfig['path'][1:]
         thread1 = threading.Thread(target=self.update)
@@ -330,10 +330,10 @@ class FtpytailPlugin(b4_plugin.Plugin):
     
     
 if __name__ == '__main__':
-    from b4_fake import fakeConsole
+    from b4.b4_fake import fakeConsole
     
     print("------------------------------------")
-    config = b4_config.Xmlconfigparser()
+    config = b4.b4_config.Xmlconfigparser()
     config.setXml("""
     <configuration plugin="ftpytail">
         <settings name="settings">

@@ -37,14 +37,14 @@
 ## @file
 #  This plugin checks for possible cheaters using aimbot.
 
-__author__ = 'Freelander'
-__version__ = '1.2'
-
 #import b4
-import b4_events
-import b4_plugin
+#import b4.b4_events
+import b4.b4_plugin
 import time
 import smtplib
+
+__author__ = 'Freelander'
+__version__ = '1.2'
 
 
 class HitlocStats:
@@ -62,7 +62,7 @@ class Hitlocations:
 
 # -------------------------------------------------------------------------------------
 
-class AimbotdetectorPlugin(b4_plugin.Plugin):
+class AimbotdetectorPlugin(b4.b4_plugin.Plugin):
     _adminPlugin = None
     _clientvar_name = 'hitloc_killstreak'
     _hitlocs = []
@@ -173,7 +173,7 @@ class AimbotdetectorPlugin(b4_plugin.Plugin):
 
         # listen for client events
         self.verbose('Registering events')
-        self.registerEvent(b4_events.EVT_CLIENT_KILL)
+        self.registerEvent(self.console.getEventID('EVT_CLIENT_KILL'))
 
         self.console.debug('Started')
 
@@ -182,7 +182,7 @@ class AimbotdetectorPlugin(b4_plugin.Plugin):
         Handle intercepted events
         """
 
-        if event.type == b4_events.EVT_CLIENT_KILL:
+        if event.type == self.console.getEventID('EVT_CLIENT_KILL'):
             damage_location = event.data[2]
             self.checkHitlocKills(event.client, event.target, damage_location)
 

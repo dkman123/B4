@@ -28,14 +28,13 @@
 # import b4
 # from b4_clients import Client
 # import b4_events
-import b4_plugin
+import b4.b4_plugin
 import os
 #import platform
 import random
 
-# from b3 import functions
-# from b4_clients import Client
-from b4_functions import getCmd
+# from b4.b4_clients import Client
+from b4.b4_functions import getCmd
 from configparser import NoOptionError
 
 __version__ = '0.1'
@@ -53,7 +52,7 @@ except ImportError:
             return func
         return None
 
-class MapconfigPlugin(b4_plugin.Plugin):
+class MapconfigPlugin(b4.b4_plugin.Plugin):
     # requiresConfigFile = False
 
     _adminPlugin = None

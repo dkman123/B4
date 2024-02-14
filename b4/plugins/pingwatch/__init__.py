@@ -26,15 +26,15 @@ __author__ = 'ThorN'
 __version__ = '1.4'
 
 import b4
-import b4_events
-import b4_plugin
-import b4_cron
+import b4.b4_events
+import b4.b4_plugin
+import b4.b4_cron
 
-from b4_functions import getCmd
+from b4.b4_functions import getCmd
 from configparser import NoOptionError
 
 
-class PingwatchPlugin(b4.plugin.Plugin):
+class PingwatchPlugin(b4.b4_plugin.Plugin):
 
     _adminPlugin = None
     _cronTab = None
@@ -123,8 +123,8 @@ class PingwatchPlugin(b4.plugin.Plugin):
         if self._cronTab:
             self.console.cron - self._cronTab
 
-        # setup the new crontab
-        self._cronTab = b4.cron.PluginCronTab(self, self.check, '*/%s' % self._interval)
+        # set up the new crontab
+        self._cronTab = b4.b4_cron.PluginCronTab(self, self.check, '*/%s' % self._interval)
         self.console.cron + self._cronTab
 
     ####################################################################################################################

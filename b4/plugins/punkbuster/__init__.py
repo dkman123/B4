@@ -22,21 +22,21 @@
 #                                                                     #
 # ################################################################### #
 
-__author__ = 'ThorN'
-__version__ = '1.3'
-
 #import b4
-import b4_cron
-import b4_functions
-import b4_plugin
+import b4.b4_cron
+import b4.b4_functions
+import b4.b4_plugin
 import ftplib
 import time
 
 from configparser import NoOptionError
 from io import StringIO
 
+__author__ = 'ThorN'
+__version__ = '1.3'
 
-class PunkbusterPlugin(b4_plugin.Plugin):
+
+class PunkbusterPlugin(b4.b4_plugin.Plugin):
 
     _adminPlugin = None
     _cronTab = None
@@ -70,7 +70,7 @@ class PunkbusterPlugin(b4_plugin.Plugin):
                 if len(sp) == 2:
                     cmd, alias = sp
 
-                func = b4_functions.getCmd(self, cmd)
+                func = b4.b4_functions.getCmd(self, cmd)
                 if func:
                     self._adminPlugin.registerCommand(self, cmd, level, func, alias)
 
@@ -87,7 +87,7 @@ class PunkbusterPlugin(b4_plugin.Plugin):
 
         if self._bansFile[0:6] == 'ftp://':
             self._remoteBansFile = True
-            self._ftpConfig = b4_functions.splitDSN(self._bansFile)
+            self._ftpConfig = b4.b4_functions.splitDSN(self._bansFile)
             self.info('accessing pbbans.dat file in remote mode')
         else:
             self._bansFile = self.console.getAbsolutePath(self._bansFile)
@@ -101,12 +101,14 @@ class PunkbusterPlugin(b4_plugin.Plugin):
 
         if self._cronTab:
             # remove old crontab
-            self.console.cron - self._cronTab
+            self.console.cron.cancel(self._cronTab)
+            #self.console.cron - self._cronTab
 
         if self._rebuildBans != '0':
             minute, hour, day, month, dow = self._rebuildBans.split(' ')
-            self._cronTab = b4_cron.PluginCronTab(self, self.rebuild_bans, '0', minute, hour, day, month, dow)
-            self.console.cron + self._cronTab
+            self._cronTab = b4.b4_cron.PluginCronTab(self, self.rebuild_bans, '0', minute, hour, day, month, dow)
+            self.console.cron.add(self._cronTab)
+            #self.console.cron + self._cronTab
 
     ####################################################################################################################
     #                                                                                                                  #
@@ -127,7 +129,7 @@ class PunkbusterPlugin(b4_plugin.Plugin):
 
         i = 0
         if self._remoteBansFile:
-            f = StringIO.StringIO()
+            f = StringIO()
         else:
             f = open(self._bansFile, 'w')
 

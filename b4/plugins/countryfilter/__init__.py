@@ -22,15 +22,15 @@
 #                                                                     #
 # ################################################################### #
 
+import b4
+import b4.b4_events
+import b4.b4_plugin
+
 __version__ = '1.7'
 __author__ = 'guwashi / xlr8or'
 
-import b3
-import b3.events
-import b3.plugin
 
-
-class CountryfilterPlugin(b3.plugin.Plugin):
+class CountryfilterPlugin(b4.b4_plugin.Plugin):
 
     requiresPlugins = ['geolocation']
 
@@ -70,13 +70,13 @@ class CountryfilterPlugin(b3.plugin.Plugin):
         """
         # settings section
 
-        self.cf_announce_accept = self.getSetting('settings', 'cf_announce_accept', b3.BOOL, self.cf_announce_accept)
-        self.cf_announce_reject = self.getSetting('settings', 'cf_announce_reject', b3.BOOL, self.cf_announce_reject)
-        self.cf_message_exclude_from = self.getSetting('settings', 'cf_message_exclude_from', b3.STR, self.cf_message_exclude_from)
-        self.cf_order = self.getSetting('settings', 'cf_order', b3.STR, self.cf_order)
-        self.cf_deny_from = self.getSetting('settings', 'cf_deny_from', b3.STR, self.cf_deny_from)
-        self.cf_allow_from = self.getSetting('settings', 'cf_allow_from', b3.STR, self.cf_allow_from)
-        self.maxLevel = self.getSetting('settings', 'maxlevel', b3.LEVEL, self.maxLevel)
+        self.cf_announce_accept = self.getSetting('settings', 'cf_announce_accept', b4.BOOL, self.cf_announce_accept)
+        self.cf_announce_reject = self.getSetting('settings', 'cf_announce_reject', b4.BOOL, self.cf_announce_reject)
+        self.cf_message_exclude_from = self.getSetting('settings', 'cf_message_exclude_from', b4.STR, self.cf_message_exclude_from)
+        self.cf_order = self.getSetting('settings', 'cf_order', b4.STR, self.cf_order)
+        self.cf_deny_from = self.getSetting('settings', 'cf_deny_from', b4.STR, self.cf_deny_from)
+        self.cf_allow_from = self.getSetting('settings', 'cf_allow_from', b4.STR, self.cf_allow_from)
+        self.maxLevel = self.getSetting('settings', 'maxlevel', b4.LEVEL, self.maxLevel)
 
         # ignore section
         try:
@@ -127,7 +127,7 @@ class CountryfilterPlugin(b3.plugin.Plugin):
             if self.cf_announce_reject and not self.isMessageExcludeFrom(client.location.cc):
                 self.console.say(self.getMessage('cf_deny_message', {'name': client.name, 'country': client.location.country}))
             client.kick(silent=True)
-            raise b3.events.VetoEvent
+            raise b4.b4_events.VetoEvent
         self.debug('checking done')
 
     def isAllowConnect(self, cc, client):

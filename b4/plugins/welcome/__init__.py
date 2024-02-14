@@ -22,14 +22,14 @@
 #                                                                     #
 # ################################################################### #
 
-import b4
-import b4_events
-import b4_plugin
+#import b4
+#import b4.b4_events
+import b4.b4_plugin
 import threading
 import time
 import re
 
-from b4_functions import getCmd
+from b4.b4_functions import getCmd
 from configparser import NoOptionError
 
 __version__ = '1.4'
@@ -43,7 +43,7 @@ F_ANNOUNCE_USER = 2
 F_CUSTOM_GREETING = 32
 
 
-class WelcomePlugin(b4_plugin.Plugin):
+class WelcomePlugin(b4.b4_plugin.Plugin):
 
     _adminPlugin = None
     _newbConnections = 15
@@ -121,7 +121,7 @@ class WelcomePlugin(b4_plugin.Plugin):
             self.error('could not load settings/delay config value: %s' % e)
             self.debug('using default value (%s) for settings/delay' % self._welcomeDelay)
 
-        self.info('welcomer delay set to %s: the bot will wait %ss after a player connects '
+        self.info('welcome delay set to %s: the bot will wait %ss after a player connects '
                   'to write the welcome message' % (self._welcomeDelay, self._welcomeDelay))
 
         try:
@@ -151,7 +151,7 @@ class WelcomePlugin(b4_plugin.Plugin):
             ("show_user_greeting", F_CUSTOM_GREETING)
         ]
 
-        config_options = zip(*flag_options)[0]
+        config_options = list(zip(*flag_options))[0]
 
         def set_flag(flag):
             self._welcomeFlags |= flag

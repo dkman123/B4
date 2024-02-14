@@ -22,29 +22,29 @@
 #                                                                     #
 # ################################################################### #
 
-__author__ = 'Fenix'
-__version__ = '1.4'
-
-import b3
-import b3.plugin
-import b3.plugins.admin
-import b3.events
-import new
+import b4
+import b4.b4_plugin
+import b4.plugins.admin
+import b4.b4_events
 import os
 import re
 
-from configparser import configparser
-from configparser import NoOptionError
+from configparser import ConfigParser
+#from configparser import NoOptionError
 from configparser import NoSectionError
-from b3.config import Xmlconfigparser
-from b3.functions import getCmd
-from b3.querybuilder import QueryBuilder
+from b4.b4_config import Xmlconfigparser
+from b4.b4_functions import getCmd
+from b4.b4_querybuilder import QueryBuilder
+from types import MethodType as instancemethod
 from xml.dom import minidom
+
+__author__ = 'Fenix'
+__version__ = '1.4'
 
 GRANT_SET_JOIN = ','
 GRANT_SET_ATTR = 'cmdgrantset'
 
-class CmdmanagerPlugin(b3.plugin.Plugin):
+class CmdmanagerPlugin(b4.b4_plugin.Plugin):
 
     _adminPlugin = None
     _update_config_file = True
@@ -59,7 +59,7 @@ class CmdmanagerPlugin(b3.plugin.Plugin):
         """
         Load the configuration file.
         """
-        self._update_config_file = self.getSetting('settings', 'update_config_file', b3.BOOL, self._update_config_file)
+        self._update_config_file = self.getSetting('settings', 'update_config_file', b4.BOOL, self._update_config_file)
 
     def onStartup(self):
         """
@@ -72,7 +72,7 @@ class CmdmanagerPlugin(b3.plugin.Plugin):
 
         # create database tables (if needed)
         if 'cmdgrants' not in self.console.storage.getTables():
-            sql_path_main = b3.getAbsolutePath('@b3/plugins/cmdmanager/sql')
+            sql_path_main = b4.getAbsolutePath('@b4/plugins/cmdmanager/sql')
             sql_path = os.path.join(sql_path_main, self.console.storage.dsnDict['protocol'], 'cmdmanager.sql')
             self.console.storage.queryFromFile(sql_path)
 
@@ -169,7 +169,7 @@ class CmdmanagerPlugin(b3.plugin.Plugin):
         Write the new command configuration in the plugin configuration file
         """
         # read the config file
-        config = configparser()
+        config = ConfigParser()
         config.read(command.plugin.config.fileName)
 
         # if there is no commands section
@@ -643,8 +643,8 @@ def patch_admin_module(adminPlugin):
             return self.command in getattr(client, GRANT_SET_ATTR, set())
 
     # patch the Command class for future object instances
-    b3.plugins.admin.Command.canUse = new_canUse
+    b4.b4_plugins.admin.Command.canUse = new_canUse
 
     # patch all the Command objects already instantiated
     for key in adminPlugin._commands:
-        adminPlugin._commands[key].canUse = new.instancemethod(new_canUse, adminPlugin._commands[key])
+        adminPlugin._commands[key].canUse = instancemethod(new_canUse, adminPlugin._commands[key])

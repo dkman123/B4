@@ -26,15 +26,15 @@ __author__ = 'Fenix'
 __version__ = '1.13'
 
 import b4
-import b4_plugin
-import b4_events
+import b4.b4_plugin
+import b4.b4_events
 import os
 import re
 
-from b4_functions import getCmd
+from b4.b4_functions import getCmd
 
 
-class CallvotePlugin(b4.plugin.Plugin):
+class CallvotePlugin(b4.b4_plugin.Plugin):
 
     adminPlugin = None
     requiresParsers = ['iourt42', 'iourt43']

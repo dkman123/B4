@@ -27,9 +27,9 @@ import re
 from threading import Timer
 from threading import Thread
 from threading import Event as TEvent
-from b4_plugin import Plugin
-from b4_functions import minutesStr
-from b4_functions import getCmd
+from b4.b4_plugin import Plugin
+from b4.b4_functions import minutesStr
+from b4.b4_functions import getCmd
 
 __version__ = '2.2'
 __author__ = 'Courgette'

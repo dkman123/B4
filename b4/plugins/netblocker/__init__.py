@@ -25,15 +25,15 @@
 # netblocker module provided by siebenmann: https://github.com/siebenmann/python-netblock
 
 
+import b4
+#import b4.b4_events
+import b4.b4_plugin
+import netblock.netblock as netblock
+
 __version__ = '1.0.2beta'
 __author__ = 'xlr8or'
 
-import b4
-#import b4_events
-import b4_plugin
-import plugins.netblocker.netblock as netblock
-
-class NetblockerPlugin(b4_plugin.Plugin):
+class NetblockerPlugin(b4.b4_plugin.Plugin):
 
     _adminPlugin = None
     _blocks = []

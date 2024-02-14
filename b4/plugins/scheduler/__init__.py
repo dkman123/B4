@@ -27,14 +27,14 @@ __author__  = 'Courgette'
 
 
 import b4
-import b4_cron
-import b4_functions
-import b4_plugin
-import b4_timezones
+import b4.b4_cron
+import b4.b4_functions
+import b4.b4_plugin
+import b4.b4_timezones
 import threading
 
 
-class SchedulerPlugin(b4_plugin.Plugin):
+class SchedulerPlugin(b4.b4_plugin.Plugin):
 
     _tasks = None
     _tzOffset = 0
@@ -57,7 +57,7 @@ class SchedulerPlugin(b4_plugin.Plugin):
     
         # get time_zone from main B3 config
         tzName = self.console.config.get('b3', 'time_zone').upper()
-        self._tzOffset = b4_timezones.timezones[tzName]
+        self._tzOffset = b4.b4_timezones.timezones[tzName]
     
         # load cron tasks from config
         self._tasks = []
@@ -287,7 +287,7 @@ class RestartTask(Task):
 
     def runcommands(self):
         if 'delay' in self.config.attrib:
-            delay_minutes = b4_functions.time2minutes(self.config.attrib['delay'])
+            delay_minutes = b4.b4_functions.time2minutes(self.config.attrib['delay'])
             threading.Timer(delay_minutes * 60, Task.runcommands, [self]).start()
         else:
             Task.runcommands(self)
@@ -312,7 +312,7 @@ class CronTask(Task):
         schedule this task
         """
         self._getScheduledTime(self.config.attrib)
-        self.cronTab = b4_cron.PluginCronTab(self.plugin, self.runcommands, 
+        self.cronTab = b4.b4_cron.PluginCronTab(self.plugin, self.runcommands,
             self.seconds, self.minutes, self.plugin._convertCronHourToUTC(self.hour), self.day, self.month, self.dow)
         self.plugin.console.cron + self.cronTab
         

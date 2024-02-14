@@ -2,19 +2,20 @@
 #
 # BadWeaponForYou for UrbanTerror plugin for BigBrotherBot(B3) (www.bigbrotherbot.net)
 
-__author__  = 'PtitBigorneau www.ptitbigorneau.fr'
-__version__ = '1.5.3'
-
 #import b4
-import b4_clients
-#import b4_events
-import b4_plugin
+import b4.b4_clients
+#import b4.b4_events
+import b4.b4_plugin
 #import re
 #import threading
 
 from threading import Thread
 
-class BadweaponforyouPlugin(b4_plugin.Plugin):
+__author__  = 'PtitBigorneau www.ptitbigorneau.fr'
+__version__ = '1.5.3'
+
+
+class BadweaponforyouPlugin(b4.b4_plugin.Plugin):
 
     _adminPlugin = None
 
@@ -352,7 +353,7 @@ class BadweaponforyouPlugin(b4_plugin.Plugin):
             return
         
         if input[0] == "all":
-            lclient = b4_clients.Client()
+            lclient = b4.b4_clients.Client()
             lclient.id = -1  # "all"
         else:
             lclient = self._adminPlugin.findClientPrompt(input[0], client)                

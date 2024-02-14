@@ -28,8 +28,8 @@ __version__ = '3.2'
 #from imp import reload
 
 import b4
-import b4_plugin
-#import b4_events
+import b4.b4_plugin
+#import b4.b4_events
 
 # translate utility that utilize google translator, support python2 & python3
 # Note that the order or arguments in the URL matters.
@@ -72,7 +72,7 @@ except ImportError:
         return None
 
 
-class TranslatorPlugin(b4_plugin.Plugin):
+class TranslatorPlugin(b4.b4_plugin.Plugin):
     
     adminPlugin = None
     cmdPrefix = None

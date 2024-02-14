@@ -26,17 +26,17 @@ __author__ = 'xlr8or, Courgette, Fenix'
 __version__ = '1.28'
 
 import b4
-import b4_events
-import b4_clients
-import b4_parser
+import b4.b4_events
+import b4.b4_clients
+import b4.b4_parser
 import re
-import string
+#import string
 import time
 from threading import Thread
 
-from b4_functions import getStuffSoundingLike
-from b4_functions import prefixText
-from b4_functions import time2minutes
+from b4.b4_functions import getStuffSoundingLike
+from b4.b4_functions import prefixText
+from b4.b4_functions import time2minutes
 from q3a.abstractParser import AbstractParser
 
 
@@ -393,7 +393,7 @@ class Iourt41Parser(AbstractParser):
         """
         self.pluginsStarted()  # so we get teams refreshed
         self.clients.sync()
-        b4_parser.Parser.unpause(self)
+        b4.b4_parser.Parser.unpause(self)
 
     ####################################################################################################################
     #                                                                                                                  #
@@ -432,7 +432,7 @@ class Iourt41Parser(AbstractParser):
         # 2 \ip\145.99.135.227:27960\challenge\-232198920\qport\2781\protocol\68\battleye\1\name\[SNT]^1XLR^78or...
         # 7 n\[SNT]^1XLR^78or\t\3\r\2\tl\0\f0\\f1\\f2\\a0\0\a1\0\a2\0
         # NOTE: player_id is slot number
-        player_id, info = string.split(info, ' ', 1)
+        player_id, info = info.split(' ', 1)
 
         if info[:1] != '\\':
             info = '\\' + info
@@ -464,7 +464,7 @@ class Iourt41Parser(AbstractParser):
         # 19:42.36 ClientBegin: 4
         client = self.getByCidOrJoinPlayer(data)
         if client:
-            return b4_events.Event(self.getEventID('EVT_CLIENT_JOIN'), data=data, client=client)
+            return b4.b4_events.Event(self.getEventID('EVT_CLIENT_JOIN'), data=data, client=client)
 
     def OnClientuserinfo(self, action, data, match=None):
         # 2 \ip\145.99.135.227:27960\challenge\-232198920\qport\2781\protocol\68\battleye\1\name\[SNT]^1XLR^78or...
@@ -486,7 +486,7 @@ class Iourt41Parser(AbstractParser):
 
         # split port from ip field
         if 'ip' in bclient:
-            ip_port_data = string.split(bclient['ip'], ':', 1)
+            ip_port_data = bclient['ip'].split(':', 1)
             bclient['ip'] = ip_port_data[0]
             if len(ip_port_data) > 1:
                 bclient['port'] = ip_port_data[1]
@@ -494,7 +494,7 @@ class Iourt41Parser(AbstractParser):
         if 'team' in bclient:
             bclient['team'] = self.getTeam(bclient['team'])
 
-        if 'cl_guid' in bclient and not 'pbid' in bclient and self.PunkBuster:
+        if 'cl_guid' in bclient and 'pbid' not in bclient and self.PunkBuster:
             bclient['pbid'] = bclient['cl_guid']
 
         self.verbose('Parsed user info2: %s' % bclient)
@@ -503,9 +503,9 @@ class Iourt41Parser(AbstractParser):
             client = self.clients.getByCID(bclient['cid'])
             if client:
                 # update existing client
-                for k, v in bclient.iteritems():
+                for k, v in bclient.items():
                     if hasattr(client, 'gear') and k == 'gear' and client.gear != v:
-                        self.queueEvent(b4_events.Event(self.getEventID('EVT_CLIENT_GEAR_CHANGE'), v, client))
+                        self.queueEvent(b4.b4_events.Event(self.getEventID('EVT_CLIENT_GEAR_CHANGE'), v, client))
                     if not k.startswith('_') and k not in ('login', 'password', 'groupBits', 'maskLevel',
                                                            'autoLogin', 'greeting'):
                         setattr(client, k, v)
@@ -793,7 +793,7 @@ class Iourt41Parser(AbstractParser):
     def OnItem(self, action, data, match=None):
         # Item: 3 ut_item_helmet
         # Item: 0 team_CTF_redflag
-        cid, item = string.split(data, ' ', 1)
+        cid, item = data.split(' ', 1)
         client = self.getByCidOrJoinPlayer(cid)
         if client:
             # correct flag/bomb-pickups
@@ -938,7 +938,7 @@ class Iourt41Parser(AbstractParser):
         self.verbose('...self.console.game.gameType: %s' % self.game.gameType)
         self.game.startMap()
         self.game.rounds = 0
-        Thread.start_new_Thread(self.clients.sync, ())
+        Thread(target=self.clients.sync, args=()).start()
         return self.getEvent('EVT_GAME_ROUND_START', data=self.game)
 
     def OnWarmup(self, action, data=None, match=None):
@@ -967,7 +967,7 @@ class Iourt41Parser(AbstractParser):
         self.verbose('...self.console.game.gameType: %s' % self.game.gameType)
         self.game.startMap()
         self.game.rounds = 0
-        Thread.start_new_Thread(self.clients.sync, ())
+        Thread(target=self.clients.sync, args=()).start()
         return self.getEvent('EVT_GAME_ROUND_START', data=self.game)
 
     ####################################################################################################################
@@ -988,7 +988,7 @@ class Iourt41Parser(AbstractParser):
             lines.append(self.getCommand('broadcast', message=line))
         self.writelines(lines)
 
-    def saybig(self, text):
+    def saybig(self, text, *args):
         """
         Print a message in the center screen.
         :param text: The message to be sent.
@@ -1006,10 +1006,10 @@ class Iourt41Parser(AbstractParser):
         :param client: The client to ban
         :param reason: The reason for this ban
         :param admin: The admin who performed the ban
-        :param silent: Whether or not to announce this ban
+        :param silent: Whether to announce this ban
         """
         self.debug('BAN : client: %s, reason: %s', client, reason)
-        if isinstance(client, b4_clients.Client) and not client.guid:
+        if isinstance(client, b4.b4_clients.Client) and not client.guid:
             return self.kick(client, reason, admin, silent)
         elif isinstance(client, str) and re.match('^[0-9]+$', client):
             self.write(self.getCommand('ban', cid=client, reason=reason))
