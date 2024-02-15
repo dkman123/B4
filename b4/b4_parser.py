@@ -53,7 +53,7 @@ from b4.b4_clients import Group
 from b4.b4_decorators import Memoize
 from b4.b4_exceptions import MissingRequirement
 from b4.b4_plugin import PluginData
-from b4.b4_update import B4version
+import b4_update
 from collections import OrderedDict
 from configparser import NoOptionError
 from textwrap import TextWrapper
@@ -730,7 +730,7 @@ class Parser(object):
             if p_data.clazz:
 
                 # check for correct B3 version
-                if p_data.clazz.requiresVersion and B4version(p_data.clazz.requiresVersion) > B4version(currentVersion):
+                if p_data.clazz.requiresVersion and b4.b4_update.B4version(p_data.clazz.requiresVersion) > b4.b4_update.B4version(currentVersion):
                     raise MissingRequirement(
                         'plugin %s requires B3 version %s (you have version %s) : please update your '
                         'B3 if you want to run this plugin' % (

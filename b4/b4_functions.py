@@ -241,7 +241,10 @@ def decode(text):
     :param text: the text to decode
     :return: string
     """
-    return text.decode(sys.getfilesystemencoding())
+    if type(text) == bytes:
+        return text.decode(sys.getfilesystemencoding())
+    else:
+        return text.encode(sys.getfilesystemencoding())
 
 
 def clamp(value, minv=None, maxv=None):

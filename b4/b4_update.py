@@ -362,7 +362,7 @@ class DBUpdate(object):
 
         dsn = self.config.get('b3', 'database')
         dsndict = splitDSN(dsn)
-        database = getStorage(dsn, dsndict, StubParser())
+        database = getStorage(dsn, dsndict, b4.b4_parser.StubParser())
 
         _update_database(database, '1.3.0')
         _update_database(database, '1.6.0')
@@ -376,5 +376,5 @@ class DBUpdate(object):
 
 from b4 import B4_CONFIG_GENERATOR, HOMEDIR
 from b4.b4_functions import console_exit, splitDSN, clearscreen
-from b4.b4_parser import StubParser
+import b4.b4_parser
 from b4.storage.b4_storage import getStorage

@@ -29,6 +29,7 @@ import time
 import b4
 import b4.b4_functions
 import b4.b4_exceptions
+##import b4.parsers
 import b4.storage.b4_storage
 import configparser
 
@@ -502,7 +503,7 @@ class MainConfig(B4configparserMixin):
     def analyze(self):
         """
         Analyze the main configuration file checking for common mistakes.
-        This will mostly check configuration file values and will not perform any futher check related,
+        This will mostly check configuration file values and will not perform any further check related,
         i.e: connection with the database can be established using the provided dsn, rcon password is valid etc.
         Such validations needs to be handled somewhere else.
         :return: A list of strings highlighting problems found (so they can be logged/displayed easily)
@@ -520,7 +521,8 @@ class MainConfig(B4configparserMixin):
         ## PARSER CHECK
         if self.has_option('b4', 'parser'):
             try:
-                b4.b4_functions.getModule('b4_parsers.%s' % self.get('b4', 'parser'))
+                # read config [b4] section, parser option
+                b4.b4_functions.getModule('b4.parsers.%s' % self.get('b4', 'parser'))
             except ImportError:
                 analysis.append('invalid parser specified in b4::parser (%s)' % self.get('b4', 'parser'))
 
