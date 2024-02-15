@@ -44,7 +44,7 @@
 #    * change: show_results_yaml() -> save_data_yaml()
 #    * fixed: save_data_yaml() now saves in a properly formatted yaml standard when saving multiple objects at once
 #    * added: load_data_yaml(), can load several yaml objects from several files at once
-#    * change: paths to b3/lib are now generalized via sys module
+#    * change: paths to b4/lib are now generalized via sys module
 # 2010-09-14 - 0.9.2 - GrosBedo
 #    * added: save_data_csv and load_data_csv which are much more efficient and quick
 #    * change: replaced pickler by cPickler which should be 1000 times faster (finally cPickler is a little faster than new save_data_csv and load_data_csv functions)
@@ -67,7 +67,7 @@
 #    * added: show_results_yaml to show a better human readable format (YAML)
 # 2010-09-08 - 0.5 - GrosBedo
 #    * renamed DiagPlugin -> LogDiagnostic
-#    * integrated in b3 debug mode
+#    * integrated in b4 debug mode
 # 2010-09-07 - 0.4 - GrosBedo
 #    * added a facility to save and load stats and matrix
 # 2010-09-07 - 0.3 - GrosBedo
@@ -81,7 +81,7 @@ __author__ = 'GrosBedo'
  
 import os.path, time, re, sys
 pathname = os.path.dirname(sys.argv[0])
-sys.path.append(os.path.join(pathname, 'b3','lib'))
+sys.path.append(os.path.join(pathname, 'b4', 'lib'))
 
 # Maths functions
 import math
@@ -121,10 +121,10 @@ class LogDiagnostic():
     def lines_per_second(self, *args):
         self.supermatrix = []
         for game_log in args:
-            matrix = [] # we will store the count of each lines in this matrix
-            previoustime = None # this var will permit us to know what to do and fill the gaps in the matrix
+            matrix = []  # we will store the count of each lines in this matrix
+            previoustime = None  # this var will permit us to know what to do and fill the gaps in the matrix
             f = re.compile(self._lineFormat, re.IGNORECASE)
-            previouscursor = 0 # keeps track of the current positionning in the file (useless technically, only used for user's feedback)
+            previouscursor = 0  # keeps track of the current positionning in the file (useless technically, only used for user's feedback)
             try:
                 # Opening the game file
                 self.file = open(game_log, 'r')
@@ -135,7 +135,7 @@ class LogDiagnostic():
                     i += 1
                     m = re.match(f, line)
                     if m:
-                        gametime = int(m.group('seconds')) + (int(m.group('minutes')) * 60) # game time at the time this line was outputted
+                        gametime = int(m.group('seconds')) + (int(m.group('minutes')) * 60)  # game time at the time this line was outputted
                         if self.debug: print('%i- gametime %s %s:%s' % (i, str(gametime), str(m.group('minutes')), str(m.group('seconds'))))
                         if previoustime is None:
                             matrix.append(1)
@@ -227,7 +227,7 @@ class LogDiagnostic():
         sys.stdout = restorestdout
 
     def save_data_yaml(self, filename=None, *args):
-        ''' Save or show the results in YAML '''
+        """ Save or show the results in YAML """
         if filename:
             self.stream = open(filename, 'w')
         else:
@@ -242,7 +242,7 @@ class LogDiagnostic():
             print(yaml.dump_all(args, default_flow_style=False, Dumper=Dumper), file=self.stream)
 
     def load_data_yaml(self, *args):
-        ''' Load one or several YAML stats files and merge them with current results '''
+        """ Load one or several YAML stats files and merge them with current results """
         superstats = []
         for filename in args:
             self.stream = open(filename, 'r')
@@ -250,7 +250,7 @@ class LogDiagnostic():
         return superstats
 
     def save_data_csv(self, filename, *args):
-        ''' much more ressource efficient function but can only save matrixes (better than pickler but not cPickler) '''
+        """ much more resource efficient function but can only save matrices (better than pickler but not cPickler) """
         try:
             file = open(filename, 'w')
             csvWriter = csv.writer(file, delimiter='\n', quotechar='|', quoting=csv.QUOTE_MINIMAL)
@@ -262,7 +262,7 @@ class LogDiagnostic():
             return False        
 
     def load_data_csv(self, *args):
-        ''' load the stats in a simple format and preallocate memory, faster than pickler but slower than cPickler '''
+        """ load the stats in a simple format and preallocate memory, faster than pickler but slower than cPickler """
         def count(file):
             while 1:
                 block = file.read(65536)
@@ -295,7 +295,7 @@ class LogDiagnostic():
         return superstats
 
     def save_data(self, filename, *args):
-        ''' an all-round saving to file function, it can dump any python object and restore it later, but it's not very ressource efficient '''
+        """ an all-round saving to file function, it can dump any python object and restore it later, but it's not very ressource efficient """
         try:
             file = open(filename, 'w')
             for object in args:
@@ -307,7 +307,7 @@ class LogDiagnostic():
             return False
 
     def load_data(self, merge=False, *args):
-        ''' merge will directly merge the stats asap if enabled, this saves us a lot of memory '''
+        """ merge will directly merge the stats asap if enabled, this saves us a lot of memory """
         #try:
             #superstats = numpy.array([])
         #except:
@@ -354,7 +354,7 @@ class LogDiagnostic():
                 print('Notice: one of the loaded stat file seems to have been generated by an older version of the Diagnostic tool ! You may miss some important new parameters !')
                 pass
             for key, value in stats.iteritems():
-                if key is not 'count' and key is not 'skewmeaning' and key is not 'cumfreq':
+                if key != 'count' and key != 'skewmeaning' and key != 'cumfreq':
                     newstat[key] = value * count  # multiply by the count of lines
                     try:  # doing the sum of all the stats (one stat at a time)
                         superstats[key] += newstat[key]

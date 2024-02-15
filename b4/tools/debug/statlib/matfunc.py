@@ -52,7 +52,7 @@ class Table(list):
             return self.__class__([op(self,e) for e in rhs] )
         return self.__class__([op(e,rhs) for e in self])         # Matrix / Vec
     def __mul__(self, rhs):  return self.map(operator.mul, rhs)
-    def __div__(self, rhs):  return self.map(operator.div, rhs)
+    def __div__(self, rhs):  return self.map(operator.truediv, rhs)
     def __sub__(self, rhs):  return self.map(operator.sub, rhs)
     def __add__(self, rhs):  return self.map(operator.add, rhs)
     def __rmul__(self, lhs):  return self*lhs
@@ -126,28 +126,33 @@ class Matrix(Table):
         return Vec([self[i][i] for i in range(min(self.size))])
     def trace(self): return self.diag().sum()
     def mmul(self, other):
-        'Matrix multiply by another matrix or a column vector '
-        if other.dim==2: return Mat(map(self.mmul, other.tr())).tr()
+        """Matrix multiply by another matrix or a column vector """
+        if other.dim == 2:
+            return Mat(map(self.mmul, other.tr())).tr()
         assert NPRE or self.cols == len(other)
         return Vec(map(other.dot, self))
+
     def augment(self, otherMat):
         """Make a new matrix with the two original matrices laid side by side"""
-        assert self.rows == otherMat.rows, 'Size mismatch: %s * %s' % (`self.size`, `otherMat.size`)
+        assert self.rows == otherMat.rows, 'Size mismatch: %s * %s' % (repr(self.size), repr(otherMat.size))
         return Mat(map(Table.concat, self, otherMat))
+
     def qr(self, ROnly=0):
         """QR decomposition using Householder reflections: Q*R==self, Q.tr()*Q==I(n), R upper triangular"""
         R = self
         m, n = R.size
-        for i in range(min(m,n)):
+        for i in range(min(m, n)):
             v, beta = R.tr()[i].house(i)
-            R -= v.outer(R.tr().mmul(v)*beta)
-        for i in range(1,min(n,m)): R[i][:i] = [0] * i
+            R -= v.outer(R.tr().mmul(v) * beta)
+        for i in range(1, min(n, m)):
+            R[i][:i] = [0] * i
         R = Mat(R[:n])
-        if ROnly: return R
+        if ROnly:
+            return R
         Q = R.tr().solve(self.tr()).tr()       # Rt Qt = At    nn  nm  = nm
-        self.qr = lambda r=0, c=`self`: not r and c==`self` and (Q,R) or Matrix.qr(self,r) #Cache result
-        assert NPOST or m>=n and Q.size==(m,n) and isinstance(R,UpperTri) or m<n and Q.size==(m,m) and R.size==(m,n)
-        assert NPOST or Q.mmul(R)==self and Q.tr().mmul(Q)==eye(min(m,n))
+        self.qr = lambda r=0, c=repr(self): not r and c == repr(self) and (Q, R) or Matrix.qr(self, r) #Cache result
+        assert NPOST or m >= n and Q.size == (m, n) and isinstance(R, UpperTri) or m < n and Q.size == (m, m) and R.size==(m,n)
+        assert NPOST or Q.mmul(R) == self and Q.tr().mmul(Q) == eye(min(m , n))
         return Q, R
     def _solve(self, b):
         """General matrices (incuding) are solved using the QR composition.
@@ -171,7 +176,9 @@ class Matrix(Table):
             #print >> sys.stderr, i+1, maxdiff
         assert NPOST or self.rows!=self.cols or self.mmul(x) == b
         return x
-    def rank(self):  return Vec([ not row.forall(iszero) for row in self.qr(ROnly=1) ]).sum()
+
+    def rank(self):
+        return Vec([ not row.forall(iszero) for row in self.qr(ROnly=1) ]).sum()
 
 class Square(Matrix):
     def lu(self):
@@ -179,11 +186,11 @@ class Square(Matrix):
         n = self.rows
         L, U = eye(n), Mat(self[:])
         for i in range(n):
-            for j in range(i+1,U.rows):
+            for j in range(i+1, U.rows):
                 assert U[i][i] != 0.0, 'LU requires non-zero elements on the diagonal'
                 L[j][i] = m = 1.0 * U[j][i] / U[i][i]
                 U[j] -= U[i] * m
-        assert NPOST or isinstance(L,LowerTri) and isinstance(U,UpperTri) and L*U==self
+        assert NPOST or isinstance(L, LowerTri) and isinstance(U, UpperTri) and L*U==self
         return L, U
 
     def __pow__(self, exp):
