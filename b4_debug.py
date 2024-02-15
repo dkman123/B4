@@ -134,16 +134,16 @@ def parse_cmdline_args():
             print('Merging the raw data...')
             #mergedmatrix = diag.merge_matrix( *supermatrix)
             for matrix in supermatrix:
-                    loadmatrix.extend(matrix[1])
+                loadmatrix.extend(matrix[1])
             print('Raw data merge completed.')
 
         # Save the raw datas matrix(es)
         if args.diagrawsave:
             print('Saving the raw data to %s' % args.diagrawsave)
             if len(loadmatrix) > 0:
-                    diag.save_data(args.diagrawsave, *loadmatrix)
+                diag.save_data(args.diagrawsave, *loadmatrix)
             else:
-                    diag.save_data(args.diagrawsave, *supermatrix)
+                diag.save_data(args.diagrawsave, *supermatrix)
 
         # Stats Generation
         # Input logs stats generation (to show in the final summary digest)
