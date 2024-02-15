@@ -8,10 +8,10 @@ import wx
 
 try:
     from wx.py import editor
-except ImportError, err:
+except ImportError as err:
     editor = None
 from gettext import gettext as _
-from b3.tools.debug.runsnakerun import squaremap, pstatsloader
+from b4.tools.debug.runsnakerun import squaremap, pstatsloader
 
 if sys.platform == 'win32':
     windows = True
@@ -165,9 +165,9 @@ class ProfileView(wx.ListCtrl):
         """We have double-clicked for hit enter on a node refocus squaremap to this node"""
         try:
             node = self.sorted[event.GetIndex()]
-        except IndexError, err:
-            log.warn(_('Invalid index in node activated: %(index)s'),
-                     index=event.GetIndex())
+        except IndexError as err:
+            log.warning(_('Invalid index in node activated: %(index)s'),
+                     stacklevel=event.GetIndex())
         else:
             wx.PostEvent(
                 self,
@@ -179,9 +179,9 @@ class ProfileView(wx.ListCtrl):
         """We have selected a node with the list control, tell the world"""
         try:
             node = self.sorted[event.GetIndex()]
-        except IndexError, err:
-            log.warn(_('Invalid index in node selected: %(index)s'),
-                     index=event.GetIndex())
+        except IndexError as err:
+            log.warning(_('Invalid index in node selected: %(index)s'),
+                     stacklevel=event.GetIndex())
         else:
             if node is not self.selected_node:
                 wx.PostEvent(
@@ -196,9 +196,9 @@ class ProfileView(wx.ListCtrl):
         if item > -1:
             try:
                 node = self.sorted[item]
-            except IndexError, err:
-                log.warn(_('Invalid index in mouse move: %(index)s'),
-                         index=event.GetIndex())
+            except IndexError as err:
+                log.warning(_('Invalid index in mouse move: %(index)s'),
+                         stacklevel=event.GetIndex())
             else:
                 wx.PostEvent(
                     self,
@@ -263,13 +263,16 @@ class ProfileView(wx.ListCtrl):
 
     def reorder(self):
         """Force a reorder of the displayed items"""
-        self.sorted.sort(self.compareFunction)
+        self.sorted.sort(key=self.compareFunction)
+
+    def cmp(self, a, b):
+        return (a > b) - (a < b)
 
     def compareFunction(self, first, second):
         """Compare two functions according to our current sort order"""
         for ascending, column in self.sortOrder:
             aValue, bValue = column.get(first), column.get(second)
-            diff = cmp(aValue, bValue)
+            diff = self.cmp(aValue, bValue)
             if diff:
                 if not ascending:
                     return -diff
@@ -299,7 +302,7 @@ class ProfileView(wx.ListCtrl):
         try:
             column = self.columns[col]
             value = column.get(self.sorted[item])
-        except IndexError, err:
+        except IndexError as err:
             return None
         else:
             if column.percentPossible and self.percentageView and self.total:
@@ -307,8 +310,8 @@ class ProfileView(wx.ListCtrl):
             if column.format:
                 try:
                     return column.format % (value,)
-                except Exception, err:
-                    log.warn('Column %s could not format %r value: %s',
+                except Exception as err:
+                    log.warning('Column %s could not format %r value: %s',
                         column.name, type(value), value
                     )
                     return str(value)
@@ -660,7 +663,7 @@ class MainFrame(wx.Frame):
                 if getattr(parent, 'tree', pstatsloader.TREE_CALLS) == tree
             ]
             if parents:
-                parents.sort(lambda a, b: cmp(self.adapter.value(node, a),
+                parents.sort(key=lambda a, b: self.cmp(self.adapter.value(node, a),
                                               self.adapter.value(node, b)))
                 class event:
                     node = parents[-1]
@@ -676,7 +679,7 @@ class MainFrame(wx.Frame):
         self.historyIndex -= 1
         try:
             self.RestoreHistory(self.history[self.historyIndex])
-        except IndexError, err:
+        except IndexError as err:
             self.SetStatusText(_('No further history available'))
 
     def OnRootView(self, event):
@@ -707,7 +710,7 @@ class MainFrame(wx.Frame):
         if self.sourceFileShown != path:
             try:
                 data = open(path).read()
-            except Exception, err:
+            except Exception as err:
                 # TODO: load from zips/eggs? What about .pyc issues?
                 return None
             else:
@@ -753,7 +756,7 @@ class MainFrame(wx.Frame):
             if self.historyIndex < -1:
                 try:
                     del self.history[self.historyIndex+1:]
-                except AttributeError, err:
+                except AttributeError as err:
                     pass
             if (not self.history) or record != self.history[-1]:
                 self.history.append(record)
@@ -780,7 +783,7 @@ class MainFrame(wx.Frame):
             self.SetModel(pstatsloader.PStatsLoader(*filenames))
             self.SetTitle(_("Run Snake Run: %(filenames)s")
                           % {'filenames': ', '.join(filenames)[:120]})
-        except (IOError, OSError, ValueError), err:
+        except (IOError, OSError, ValueError) as err:
             self.SetStatusText(
                 _('Failure during load of %(filenames)s: %(err)s'
             ) % dict(
@@ -835,7 +838,7 @@ profilefile -- a file generated by a HotShot profile run from Python
 def main():
     """Mainloop for the application"""
     app = RunSnakeRunApp(0)
-    #app.OnInit(r'C:\b3\some.profile')
+    #app.OnInit(r'C:\b4\some.profile')
     app.MainLoop()
 
 

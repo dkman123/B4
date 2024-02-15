@@ -356,8 +356,8 @@ setup(
     install_requires=[
         'certifi>=2017.4.17,<2017.7.0',
         'pymysql>=0.6.6,<0.10.0',
-        'python-dateutil>=2.4.1,<3',
-        'feedparser>=4.1,<6',
+        #'python-dateutil>=2.4.1,<3',
+        #'feedparser>=4.1,<6',
         'requests>=2.6.0,<2.23.0'
     ],
     packages=setuptools.find_packages(),
