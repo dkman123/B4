@@ -375,6 +375,6 @@ class DBUpdate(object):
 
 
 from b4 import B4_CONFIG_GENERATOR, HOMEDIR
-from b4_functions import console_exit, splitDSN, clearscreen
-from b4_parser import StubParser
-from storage.b4_storage import getStorage
+from b4.b4_functions import console_exit, splitDSN, clearscreen
+from b4.b4_parser import StubParser
+from b4.storage.b4_storage import getStorage
