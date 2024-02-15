@@ -303,9 +303,9 @@ class DBUpdate(object):
                              'Please visit %s to create one.' % (config, B4_CONFIG_GENERATOR))
         else:
             # search a configuration file
-            for p in ('b4_%s', 'conf/b4_%s', 'b3/conf/b4_%s',
+            for p in ('b4_%s', 'conf/b4_%s', 'b4/conf/b4_%s',
                       os.path.join(HOMEDIR, 'b4_%s'), os.path.join(HOMEDIR, 'conf', 'b4_%s'),
-                      os.path.join(HOMEDIR, 'b3', 'conf', 'b4_%s'), '@b3/conf/b4_%s'):
+                      os.path.join(HOMEDIR, 'b4', 'conf', 'b4_%s'), '@b4/conf/b4_%s'):
                 for e in ('ini', 'cfg', 'xml'):
                     path = b4.getAbsolutePath(p % e, True)
                     if os.path.isfile(path):
@@ -350,7 +350,7 @@ class DBUpdate(object):
             :param update_version: the update version
             """
             if B4version(b4.__version__) >= update_version:
-                sql = b4.getAbsolutePath('@b3/sql/%s/b3-update-%s.sql' % (storage.protocol, update_version))
+                sql = b4.getAbsolutePath('@b4/sql/%s/b4-update-%s.sql' % (storage.protocol, update_version))
                 if os.path.isfile(sql):
                     try:
                         print('>>> updating database to version %s' % update_version)
@@ -360,7 +360,7 @@ class DBUpdate(object):
                         print('WARNING: could not update database properly: %s' % err)
                         sleep(3)
 
-        dsn = self.config.get('b3', 'database')
+        dsn = self.config.get('b4', 'database')
         dsndict = splitDSN(dsn)
         database = getStorage(dsn, dsndict, b4.b4_parser.StubParser())
 

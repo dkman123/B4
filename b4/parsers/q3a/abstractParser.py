@@ -34,7 +34,7 @@ import b4.b4_functions
 import b4.b4_parser
 import b4.b4_cvar
 
-import rcon
+import b4.parsers.q3a.rcon as rcon
 from ..punkbuster import PunkBuster
 from b4.b4_functions import prefixText
 

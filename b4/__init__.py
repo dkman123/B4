@@ -235,16 +235,16 @@ def getShortPath(filepath, decode=False, first_time=True):
     :return: string
     """
     # NOTE: make sure to have os.path.sep at the end otherwise also files starting with 'b4' will be matched
-    homepath = getAbsolutePath('@home/', decode) + os.path.sep
+    homepath = str(getAbsolutePath('@home/', decode)) + os.path.sep
     if filepath.startswith(homepath):
         return filepath.replace(homepath, '@home' + os.path.sep)
-    confpath = getAbsolutePath('@conf/', decode) + os.path.sep
+    confpath = str(getAbsolutePath('@conf/', decode)) + os.path.sep
     if filepath.startswith(confpath):
         return filepath.replace(confpath, '@conf' + os.path.sep)
-    b4path = getAbsolutePath('@b4/', decode) + os.path.sep
+    b4path = str(getAbsolutePath('@b4/', decode)) + os.path.sep
     if filepath.startswith(b4path):
         return filepath.replace(b4path, '@b4' + os.path.sep)
-    userpath = getAbsolutePath('~', decode) + os.path.sep
+    userpath = str(getAbsolutePath('~', decode)) + os.path.sep
     if filepath.startswith(userpath):
         return filepath.replace(userpath, '~' + os.path.sep)
     if first_time:

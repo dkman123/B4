@@ -298,7 +298,7 @@ class Cfgconfigparser(B4configparserMixin, configparser.ConfigParser):
     def __init__(self, allow_no_value=False):
         """
         Object constructor.
-        :param allow_no_value: Whether or not to allow empty values in configuration sections
+        :param allow_no_value: Whether to allow empty values in configuration sections
         """
         configparser.ConfigParser.__init__(self, allow_no_value=allow_no_value)
 

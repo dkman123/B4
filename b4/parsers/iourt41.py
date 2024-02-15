@@ -37,7 +37,7 @@ from threading import Thread
 from b4.b4_functions import getStuffSoundingLike
 from b4.b4_functions import prefixText
 from b4.b4_functions import time2minutes
-from q3a.abstractParser import AbstractParser
+from .q3a.abstractParser import AbstractParser
 
 
 class Iourt41Parser(AbstractParser):

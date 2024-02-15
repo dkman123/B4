@@ -2,7 +2,7 @@
 
 # ################################################################### #
 #                                                                     #
-#  BigBrotherBot(B3) (www.bigbrotherbot.net)                          #
+#  BigBrotherBot(B4) (www.bigbrotherbot.net)                          #
 #  Copyright (C) 2005 Michael "ThorN" Thornton                        #
 #                                                                     #
 #  This program is free software; you can redistribute it and/or      #
@@ -85,9 +85,9 @@ class Parser(object):
     _messages = {}  # message template cache
     _message_delay = 0  # delay between consequent sent say messages (apply also to private messages)
     _multiline = False  # whether linebreaks \n can be manually used in messages
-    _multiline_noprefix = False  # whether B3 adds > to multiline messages
-    _paused = False  # set to True when B3 is paused
-    _pauseNotice = False  # whether to notice B3 being paused
+    _multiline_noprefix = False  # whether B4 adds > to multiline messages
+    _paused = False  # set to True when B4 is paused
+    _pauseNotice = False  # whether to notice B4 being paused
     _plugins = OrderedDict()  # plugin instances
     _port = 0  # the port used by the gameserver for clients connection
     _publicIp = ''  # game server public ip address
@@ -95,10 +95,10 @@ class Parser(object):
     _rconPort = None  # the virtual port where to forward RCON commands
     _rconPassword = ''  # the rcon password set on the server
     _reColor = re.compile(r'\^[0-9a-z]')  # regex used to strip out color codes from a given string
-    _timeStart = None  # timestamp when B3 has first started
+    _timeStart = None  # timestamp when B4 has first started
     _use_color_codes = True  # whether the game supports color codes or not
 
-    autorestart = False  # whether B3 has been started in autorestart mode
+    autorestart = False  # whether B4 has been started in autorestart mode
     clients = None
     config = None  # parser configuration file instance
     delay = 0.33  # time between each game log lines fetching
@@ -108,7 +108,7 @@ class Parser(object):
     gameName = None  # console name
     log = None  # logger instance
     logTime = 0  # time in seconds of epoch of game log
-    name = 'b3'  # bot name
+    name = 'b4'  # bot name
     output = None  # will contain the instance used to send data to the game server (default to b4_parsers.q3a.rcon.Rcon)
     privateMsg = False  # will be set to True if the game supports private messages
     queue = None  # event queue
@@ -117,13 +117,13 @@ class Parser(object):
     screen = None
     storage = None  # storage module instance
     type = None
-    working = True  # whether B3 is running or not
+    working = True  # whether B4 is running or not
     wrapper = None  # textwrapper instance
 
     deadPrefix = '[DEAD]^7'  # say dead prefix
     msgPrefix = ''  # say prefix
     pmPrefix = '^8[pm]^7'  # private message prefix
-    prefix = '^2%s:^3'  # B3 prefix
+    prefix = '^2%s:^3'  # B4 prefix
 
     # default messages in case one is missing from config file
     _messages_default = {
@@ -184,12 +184,12 @@ class Parser(object):
     def __init__(self, conf, options):
         """
         Object contructor.
-        :param conf: The B3 configuration file
+        :param conf: The B4 configuration file
         :param options: command line options
         """
         self._timeStart = self.time()
 
-        # store in the parser whether we are running B3 in autorestart mode so
+        # store in the parser whether we are running B4 in autorestart mode so
         # plugins can react on this and perform different operations
         self.autorestart = options.autorestart
 
@@ -202,7 +202,7 @@ class Parser(object):
             self.encoding = self.config.get('server', 'encoding')
 
         # set up logging
-        logfile = self.config.getpath('b3', 'logfile')
+        logfile = self.config.getpath('b4', 'logfile')
         log2console = self.config.has_option('devmode', 'log2console') and \
                       self.config.getboolean('devmode', 'log2console')
 
@@ -210,12 +210,12 @@ class Parser(object):
         logfile = b4.getWritableFilePath(logfile, True)
 
         try:
-            logsize = b4.b4_functions.getBytes(self.config.get('b3', 'logsize'))
+            logsize = b4.b4_functions.getBytes(self.config.get('b4', 'logsize'))
         except (TypeError, NoOptionError):
             logsize = b4.b4_functions.getBytes('10MB')
 
         # create the main logger instance
-        self.log = b4.b4_output.getInstance(logfile, self.config.getint('b3', 'log_level'), logsize, log2console)
+        self.log = b4.b4_output.getInstance(logfile, self.config.getint('b4', 'log_level'), logsize, log2console)
 
         # save screen output to self.screen
         self.screen = sys.stdout
@@ -280,11 +280,11 @@ class Parser(object):
         self.bot('--------------------------------------------')
 
         # setup bot
-        bot_name = self.config.get('b3', 'bot_name')
+        bot_name = self.config.get('b4', 'bot_name')
         if bot_name:
             self.name = bot_name
 
-        bot_prefix = self.config.get('b3', 'bot_prefix')
+        bot_prefix = self.config.get('b4', 'bot_prefix')
         if bot_prefix:
             self.prefix = bot_prefix
         else:
@@ -306,11 +306,11 @@ class Parser(object):
 
         try:
             # setup storage module
-            dsn = self.config.get('b3', 'database')
+            dsn = self.config.get('b4', 'database')
             self.storage = b4.storage.b4_storage.getStorage(dsn=dsn, dsnDict=b4.b4_functions.splitDSN(dsn), console=self)
         except (AttributeError, ImportError) as e:
-            # exit if we don't manage to setup the storage module: B3 will stop working upon Admin
-            # Plugin loading so it makes no sense to keep going with the console initialization
+            # exit if we don't manage to set up the storage module: B4 will stop working upon Admin
+            # Plugin loading, so it makes no sense to keep going with the console initialization
             self.critical('Could not setup storage module: %s', e)
 
         # establish a connection with the database
@@ -407,7 +407,7 @@ class Parser(object):
             badRconReplies = ['Bad rconpassword.', 'Invalid password.']
             if res in badRconReplies:
                 self.screen.write('>>> Oops: Bad RCON password\n'
-                                  '>>> Hint: This will lead to errors and render B3 without any power to interact!\n')
+                                  '>>> Hint: This will lead to errors and render B4 without any power to interact!\n')
                 self.screen.flush()
                 time.sleep(2)
             elif res == '':
@@ -430,7 +430,7 @@ class Parser(object):
         self.game = b4.b4_game.Game(self, self.gameName)
 
         try:
-            queuesize = self.config.getint('b3', 'event_queue_size')
+            queuesize = self.config.getint('b4', 'event_queue_size')
         except NoOptionError:
             queuesize = 50
         except ValueError as err:
@@ -451,13 +451,13 @@ class Parser(object):
 
     def _dumpEventsStats(self):
         """
-        Dump event statistics into the B3 log file.
+        Dump event statistics into the B4 log file.
         """
         self._eventsStats.dumpStats()
 
     def start(self):
         """
-        Start B3
+        Start B4
         """
         self.bot("Starting parser..")
         self.startup()
@@ -476,7 +476,7 @@ class Parser(object):
 
     def die(self):
         """
-        Stop B3 with the die exit status (222)
+        Stop B4 with the die exit status (222)
         """
         self.shutdown()
         self.finalize()
@@ -485,7 +485,7 @@ class Parser(object):
 
     def restart(self):
         """
-        Stop B3 with the restart exit status (221)
+        Stop B4 with the restart exit status (221)
         """
         self.shutdown()
         time.sleep(5)
@@ -494,7 +494,7 @@ class Parser(object):
 
     def upTime(self):
         """
-        Amount of time B3 has been running
+        Amount of time B4 has been running
         """
         return self.time() - self._timeStart
 
@@ -532,14 +532,14 @@ class Parser(object):
 
     def pause(self):
         """
-        Pause B3 log parsing
+        Pause B4 log parsing
         """
         self.bot('PAUSING')
         self._paused = True
 
     def unpause(self):
         """
-        Unpause B3 log parsing
+        Unpause B4 log parsing
         """
         self._paused = False
         self._pauseNotice = False
@@ -655,7 +655,7 @@ class Parser(object):
                     # raise an exception so the plugin will not be loaded (since we miss the needed config file)
                     raise b4.b4_config.ConfigFileNotFound('could not find any configuration file for plugin %s' % p_name)
                 if len(search_path) > 1:
-                    # log all the configuration files found so users can decide to remove some of them on the next B3 startup
+                    # log all the configuration files found so users can decide to remove some of them on the next B4 startup
                     self.warning('Multiple configuration files found for plugin %s: %s', p_name, ', '.join(search_path))
 
                 # if the load fails, an exception is raised and the plugin won't be loaded
@@ -729,11 +729,11 @@ class Parser(object):
             """
             if p_data.clazz:
 
-                # check for correct B3 version
+                # check for correct B4 version
                 if p_data.clazz.requiresVersion and b4.b4_update.B4version(p_data.clazz.requiresVersion) > b4.b4_update.B4version(currentVersion):
                     raise MissingRequirement(
-                        'plugin %s requires B3 version %s (you have version %s) : please update your '
-                        'B3 if you want to run this plugin' % (
+                        'plugin %s requires B4 version %s (you have version %s) : please update your '
+                        'B4 if you want to run this plugin' % (
                         p_data.name, p_data.clazz.requiresVersion, currentVersion))
 
                 # check if the current game support this plugin (this may actually exclude more than one plugin
@@ -858,7 +858,7 @@ class Parser(object):
         """
         Load must have plugins.
         """
-        # if we fail to load one of those plugins, B3 will exit
+        # if we fail to load one of those plugins, B4 will exit
         _mandatory_plugins = ['ftpytail', 'sftpytail', 'httpytail']
 
         def _load_plugin(console, plugin_name):
@@ -876,10 +876,10 @@ class Parser(object):
             except Exception as e:
                 console.screen.write('x')
                 if plugin_name in _mandatory_plugins:
-                    # critical will stop B3 from running
+                    # critical will stop B4 from running
                     console.screen.write('\n')
                     console.screen.write('>>> CRITICAL: missing mandatory plugin: %s\n' % plugin_name)
-                    console.critical('Could not start B3 without %s plugin' % plugin_name, exc_info=e)
+                    console.critical('Could not start B4 without %s plugin' % plugin_name, exc_info=e)
                 else:
                     console.error('Could not load plugin %s' % plugin_name, exc_info=e)
             else:
@@ -1097,7 +1097,7 @@ class Parser(object):
 
     def formatTime(self, gmttime, tz_name=None):
         """
-        Return a time string formatted to local time in the b3 config time_format
+        Return a time string formatted to local time in the b4 config time_format
         :param gmttime: The current GMT time
         :param tz_name: The timezone name to be used for time formatting
         """
@@ -1111,24 +1111,24 @@ class Parser(object):
                 # treat it as a timezone name (can potentially fallback to autodetection mode)
                 tz_offset, tz_name = self.getTzOffsetFromName(tz_name)
         else:
-            # use the timezone name specified in b3 main configuration file (if specified),
+            # use the timezone name specified in b4 main configuration file (if specified),
             # or make use of the timezone offset autodetection implemented in getTzOffsetFromName
             tz_name = None
-            if self.config.has_option('b3', 'time_zone'):
-                tz_name = self.config.get('b3', 'time_zone').strip().upper()
+            if self.config.has_option('b4', 'time_zone'):
+                tz_name = self.config.get('b4', 'time_zone').strip().upper()
                 tz_name = tz_name if tz_name and tz_name != 'AUTO' else None
             tz_offset, tz_name = self.getTzOffsetFromName(tz_name)
 
-        time_format = self.config.get('b3', 'time_format').replace('%Z', tz_name).replace('%z', tz_name)
+        time_format = self.config.get('b4', 'time_format').replace('%Z', tz_name).replace('%z', tz_name)
         self.debug('Formatting time with timezone [%s], tzOffset : %s' % (tz_name, tz_offset))
         return time.strftime(time_format, time.gmtime(gmttime + int(tz_offset * 3600)))
 
     def run(self):
         """
-        Main worker thread for B3
+        Main worker thread for B4
         """
-        self.screen.write('Startup complete : B3 is running! Let\'s get to work!\n\n')
-        self.screen.write('If you run into problems check your B3 log file for more information\n')
+        self.screen.write('Startup complete : B4 is running! Let\'s get to work!\n\n')
+        self.screen.write('If you run into problems check your B4 log file for more information\n')
         self.screen.flush()
         self.updateDocumentation()
 
@@ -1137,7 +1137,7 @@ class Parser(object):
         while self.working:
             if self._paused:
                 if not self._pauseNotice:
-                    self.bot('PAUSED - not parsing any lines: B3 will be out of sync')
+                    self.bot('PAUSED - not parsing any lines: B4 will be out of sync')
                     self._pauseNotice = True
             else:
                 lines = self.read()
@@ -1325,7 +1325,7 @@ class Parser(object):
         # there's a problem
         if self.input.tell() > filestats.st_size:
             self.debug('Parser: game log is suddenly smaller than it was before (%s bytes, now %s), '
-                       'the log was probably either rotated or emptied. B3 will now re-adjust to the new '
+                       'the log was probably either rotated or emptied. B4 will now re-adjust to the new '
                        'size of the log' % (str(self.input.tell()), str(filestats.st_size)))
             self.input.seek(0, os.SEEK_END)
         # NOTE: __read is defined at runtime in __new__
@@ -1333,7 +1333,7 @@ class Parser(object):
 
     def shutdown(self):
         """
-        Shutdown B3.
+        Shutdown B4.
         """
         try:
             if self.working and self.exiting.acquire():
@@ -1352,16 +1352,16 @@ class Parser(object):
 
     def finalize(self):
         """
-        Commons operation to be done on B3 shutdown.
+        Commons operation to be done on B4 shutdown.
         Called internally by b4_parser.die()
         """
         if b4.getPlatform() in ('linux', 'darwin'):
-            # check for PID file if B3 has been started using the provided BASH initialization scripts.
-            b3_name = os.path.basename(self.config.fileName)
+            # check for PID file if B4 has been started using the provided BASH initialization scripts.
+            b4_name = os.path.basename(self.config.fileName)
             for x in ('.xml', '.ini'):
-                b3_name = b4.b4_functions.right_cut(b3_name, x)
+                b4_name = b4.b4_functions.right_cut(b4_name, x)
 
-            pidpath = os.path.join(b4.getAbsolutePath('@b3/', decode=True), '..', 'scripts', 'pid', '%s.pid' % b3_name)
+            pidpath = os.path.join(b4.getAbsolutePath('@b4/', decode=True), '..', 'scripts', 'pid', '%s.pid' % b4_name)
             if os.path.isfile(pidpath):
                 self.bot('Found PID file : %s : attempt to remove it' % pidpath)
                 try:
@@ -1479,7 +1479,7 @@ class Parser(object):
 
     def critical(self, msg, *args, **kwargs):
         """
-        Log a CRITICAL message and shutdown B3.
+        Log a CRITICAL message and shutdown B4.
         """
         self.log.critical(msg, *args, **kwargs)
         self.shutdown()
@@ -1674,7 +1674,7 @@ class Parser(object):
 
 class StubParser(object):
     """
-    Parser implementation used when dealing with the Storage module while updating B3 database.
+    Parser implementation used when dealing with the Storage module while updating B4 database.
     """
 
     screen = sys.stdout

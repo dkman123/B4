@@ -2,7 +2,7 @@
 
 # ################################################################### #
 #                                                                     #
-#  BigBrotherBot(B3) (www.bigbrotherbot.net)                          #
+#  BigBrotherBot(B4) (www.bigbrotherbot.net)                          #
 #  Copyright (C) 2005 Michael "ThorN" Thornton                        #
 #                                                                     #
 #  This program is free software; you can redistribute it and/or      #
@@ -30,7 +30,7 @@ import b4.b4_config
 import b4.b4_events
 import b4.b4_functions
 
-from b4 import __version__ as b3_version
+from b4 import __version__ as b4_version
 from configparser import NoOptionError
 
 __author__ = 'ThorN, Courgette'
@@ -39,8 +39,8 @@ __version__ = '1.13'
 
 class Plugin(object):
     """
-    This class implements a B3 plugin.
-    All the B3 plugins MUST inherit from this one and properly overriding methods and attributes.
+    This class implements a B4 plugin.
+    All the B4 plugins MUST inherit from this one and properly overriding methods and attributes.
     The plugin startup sequence is the following:
 
         1) call to Plugin.__init__()
@@ -64,29 +64,29 @@ class Plugin(object):
     ################################## PLUGIN DEVELOPERS: CUSTOMIZE THE FOLLOWING ######################################
 
     # Whether this plugin requires a configuration file to run. When this is set to False,
-    # a configuration file can still be loaded if specified in B3 main configuration file.
+    # a configuration file can still be loaded if specified in B4 main configuration file.
     requiresConfigFile = True
     """:type: bool"""
 
-    # The minimum B3 version which is needed to run this plugin. By default this is
-    # set to the version matching the currently running B3.
-    requiresVersion = b3_version
+    # The minimum B4 version which is needed to run this plugin. By default this is
+    # set to the version matching the currently running B4.
+    requiresVersion = b4_version
     """:type: str"""
 
     # List of parsers the current plugin supports: if no parser is specified the plugin will
-    # be loaded, if listed in B3 main configuraion file, no matter the parser being used.
+    # be loaded, if listed in B4 main configuraion file, no matter the parser being used.
     requiresParsers = []
     """:type: list"""
 
     # List of storage protocols supported by your plugin ('mysql', 'sqlite', 'postgresql'): if no value is specified
-    # B3 will load the plugin no matter the type of storage module being used (so it will assume that your plugin will
+    # B4 will load the plugin no matter the type of storage module being used (so it will assume that your plugin will
     # not use the storage layer at all, or that your plugin is capable of handling all of them).
-    # NOTE: B3 will not generate the database schema: you would have to handle this yourself in plugin onStartup()
+    # NOTE: B4 will not generate the database schema: you would have to handle this yourself in plugin onStartup()
     requiresStorage = []
     """:type: list"""
 
     # List of plugins the current one needs to run: if no plugin is specified then the plugin
-    # is dependency free. If one of the listed plugins is not installed in B3, then the current
+    # is dependency free. If one of the listed plugins is not installed in B4, then the current
     # plugin, and eventually all the other dependencies needed by this one, won't be loaded.
     requiresPlugins = []
     """:type: list"""
@@ -125,7 +125,7 @@ class Plugin(object):
         self.eventmanager = b4.b4_events.eventManager
         self.eventmap = dict()
         if isinstance(config, b4.b4_config.Xmlconfigparser) or isinstance(config, b4.b4_config.Cfgconfigparser):
-            # this will be used by default from the Parser class since B3 1.10dev
+            # this will be used by default from the Parser class since B4 1.10dev
             self.config = config
         else:
             if config is not None:
@@ -264,8 +264,8 @@ class Plugin(object):
             return float(str(value))
 
         def _get_level(value):
-            """convert the given value to a b3 group level"""
-            self.verbose('trying to convert value to b3 group level : %s', value)
+            """convert the given value to a b4 group level"""
+            self.verbose('trying to convert value to b4 group level : %s', value)
             return self.console.getGroupLevel(str(value).lower().strip())
 
         def _get_duration(value):
