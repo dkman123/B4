@@ -22,20 +22,19 @@
 #                                                                     #
 # ################################################################### #
 
-__author__ = 'ThorN, Courgette'
-__version__ = '1.13'
-
-
 import re
 
 import b4
 #import b4_clients
-import b4_config
-import b4_events
-import b4_functions
+import b4.b4_config
+import b4.b4_events
+import b4.b4_functions
 
 from b4 import __version__ as b3_version
 from configparser import NoOptionError
+
+__author__ = 'ThorN, Courgette'
+__version__ = '1.13'
 
 
 class Plugin(object):
@@ -123,9 +122,9 @@ class Plugin(object):
         :param config: The plugin configuration file
         """
         self.console = console
-        self.eventmanager = b4_events.eventManager
+        self.eventmanager = b4.b4_events.eventManager
         self.eventmap = dict()
-        if isinstance(config, b4_config.Xmlconfigparser) or isinstance(config, b4_config.Cfgconfigparser):
+        if isinstance(config, b4.b4_config.Xmlconfigparser) or isinstance(config, b4.b4_config.Cfgconfigparser):
             # this will be used by default from the Parser class since B3 1.10dev
             self.config = config
         else:
@@ -133,7 +132,7 @@ class Plugin(object):
                 # this is mostly used by automated tests which are loading plugins manually
                 try:
                     self.loadConfig(config)
-                except b4_config.ConfigFileNotValid as e:
+                except b4.b4_config.ConfigFileNotValid as e:
                     self.critical("The configuration file syntax is broken: %s" % e)
                     self.critical("TIP: make use of a text editor with syntax highlighting to "
                                   "modify your config files: it makes easy to spot errors")
@@ -153,7 +152,7 @@ class Plugin(object):
         Enable the plugin.
         """
         self._enabled = True
-        name = b4_functions.right_cut(self.__class__.__name__, 'Plugin').lower()
+        name = b4.b4_functions.right_cut(self.__class__.__name__, 'Plugin').lower()
         self.console.queueEvent(self.console.getEvent('EVT_PLUGIN_ENABLED', data=name))
         self.onEnable()
 
@@ -162,7 +161,7 @@ class Plugin(object):
         Disable the plugin.
         """
         self._enabled = False
-        name = b4_functions.right_cut(self.__class__.__name__, 'Plugin').lower()
+        name = b4.b4_functions.right_cut(self.__class__.__name__, 'Plugin').lower()
         self.console.queueEvent(self.console.getEvent('EVT_PLUGIN_DISABLED', data=name))
         self.onDisable()
 
@@ -187,8 +186,8 @@ class Plugin(object):
         if filename:
             self.bot('loading config %s for %s', filename, self.__class__.__name__)
             try:
-                self.config = b4_config.load(filename)
-            except b4_config.ConfigFileNotFound:
+                self.config = b4.b4_config.load(filename)
+            except b4.b4_config.ConfigFileNotFound:
                 if self.requiresConfigFile:
                     self.critical('could not find config file %s', filename)
                     return False
@@ -197,7 +196,7 @@ class Plugin(object):
                     return True
         elif self.config:
             self.bot('loading config %s for %s', self.config.fileName, self.__class__.__name__)
-            self.config = b4_config.load(self.config.fileName)
+            self.config = b4.b4_config.load(self.config.fileName)
         else:
             if self.requiresConfigFile:
                 self.error('could not load config for %s', self.__class__.__name__)
@@ -272,7 +271,7 @@ class Plugin(object):
         def _get_duration(value):
             """convert the given value using b4_functions.time2minutes"""
             self.verbose('trying to convert value to time duration : %s', value)
-            return b4_functions.time2minutes(str(value).strip())
+            return b4.b4_functions.time2minutes(str(value).strip())
 
         def _get_path(value):
             """convert the given path using b4_getAbsolutePath"""
@@ -281,7 +280,7 @@ class Plugin(object):
 
         def _get_template(value):
             """process the given value using b4_functions.vars2printf"""
-            return b4_functions.vars2printf(value).strip()
+            return b4.b4_functions.vars2printf(value).strip()
 
         def _get_list(value):
             """process the given value by extracting tokens"""
@@ -305,7 +304,7 @@ class Plugin(object):
 
         try:
             val = self.config.get(section, option, value_type == b4.TEMPLATE)
-        except b4_config.NoOptionError:
+        except b4.b4_config.NoOptionError:
             self.warning('could not find %s::%s in configuration file, using default : %s', section, option, default)
             val = default
         else:
@@ -346,7 +345,7 @@ class Plugin(object):
             except NoOptionError:
                 self.warning("config file is missing %r in section 'messages'" % msg)
                 if msg in self._default_messages:
-                    self._messages[msg] = b4_functions.vars2printf(self._default_messages[msg]).strip()
+                    self._messages[msg] = b4.b4_functions.vars2printf(self._default_messages[msg]).strip()
                 else:
                     raise
             _msg = self._messages[msg]

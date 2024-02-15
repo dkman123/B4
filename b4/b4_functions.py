@@ -22,9 +22,6 @@
 #                                                                     #
 # ################################################################### #
 
-__author__    = 'ThorN, xlr8or, courgette'
-__version__   = '1.23'
-
 import collections
 import os
 import re
@@ -34,7 +31,10 @@ import shutil
 import zipfile
 
 from hashlib import md5
-from b4_exceptions import ProgrammingError
+from b4.b4_exceptions import ProgrammingError
+
+__author__    = 'ThorN, xlr8or, courgette'
+__version__   = '1.23'
 
 
 def getModule(name):

@@ -23,22 +23,22 @@
 # ################################################################### #
 
 import b4
-import b4_config
-import b4_pkg_handler
+import b4.b4_config
+import b4.b4_pkg_handler
 import os
 import sys
 import argparse
 import traceback
 
 from b4 import HOMEDIR, B4_CONFIG_GENERATOR
-from b4_functions import main_is_frozen, console_exit
-from b4_update import DBUpdate
+from b4.b4_functions import main_is_frozen, console_exit
+from b4.b4_update import DBUpdate
 from time import sleep
 
 __author__  = 'ThorN'
 __version__ = '1.8'
 
-modulePath = b4_pkg_handler.resource_directory(__name__)
+modulePath = b4.b4_pkg_handler.resource_directory(__name__)
 
 
 def run_autorestart(args=None):
@@ -164,15 +164,15 @@ def run(options):
                              'Please visit %s to create one.' % B4_CONFIG_GENERATOR)
 
         # LOADING MAIN CONFIGURATION
-        main_config = b4_config.MainConfig(b4_config.load(config))
+        main_config = b4.b4_config.MainConfig(b4.b4_config.load(config))
         analysis = main_config.analyze()
         if analysis:
-            raise b4_config.ConfigFileNotValid('invalid configuration file specified')
+            raise b4.b4_config.ConfigFileNotValid('invalid configuration file specified')
 
         # START B4
         b4.start(main_config, options)
 
-    except b4_config.ConfigFileNotValid:
+    except b4.b4_config.ConfigFileNotValid:
         if analysis:
             print('CRITICAL: invalid configuration file specified:\n')
             for problem in analysis:

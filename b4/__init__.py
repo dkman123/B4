@@ -32,9 +32,9 @@ import signal
 import sys      # system functions
 #import time     # time and sleep
 import traceback    # stack traces for exception logging
-import b4_config
-import b4_functions
-import b4_pkg_handler
+import b4.b4_config
+import b4.b4_functions
+import b4.b4_pkg_handler
 
 from tempfile import TemporaryFile
 #from configparser import NoOptionError

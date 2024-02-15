@@ -22,12 +22,12 @@
 #                                                                     #
 # ################################################################### #
 
-__author__ = 'ThorN'
-__version__ = '1.4'
-
 import os
 import sys
-from b4_functions import main_is_frozen
+from b4.b4_functions import main_is_frozen
+
+__author__ = 'ThorN'
+__version__ = '1.4'
 
 __all__ = ['resource_directory']
 

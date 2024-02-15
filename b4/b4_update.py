@@ -23,8 +23,8 @@
 # ################################################################### #
 
 import b4
-import b4_config
-import b4_functions
+import b4.b4_config
+import b4.b4_functions
 import json
 import os
 import re
@@ -139,7 +139,7 @@ $''', re.VERBOSE)
         if isinstance(other, str):
             other = B4version(other)
 
-        compare = b4_functions.cmp(self, self.version, other.version)
+        compare = b4.b4_functions.cmp(self, self.version, other.version)
         if compare != 0:
             return compare
 
@@ -163,7 +163,7 @@ $''', re.VERBOSE)
         elif not self.prerelease and other.prerelease:
             return 1
         elif self.prerelease and other.prerelease:
-            return b4_functions.cmp(self, (self.prerelease_order[self.prerelease[0]], self.prerelease[1]),
+            return b4.b4_functions.cmp(self, (self.prerelease_order[self.prerelease[0]], self.prerelease[1]),
                                     (self.prerelease_order[other.prerelease[0]], other.prerelease[1]))
 
     def __cmp_build(self, other):
@@ -178,7 +178,7 @@ $''', re.VERBOSE)
         elif not self.build_num and other.build_num:
             return 1
         elif self.build_num and other.build_num:
-            return b4_functions.cmp(self, self.build_num, other.build_num)
+            return b4.b4_functions.cmp(self, self.build_num, other.build_num)
 
 
 def getDefaultChannel(currentVersion):
@@ -318,10 +318,10 @@ class DBUpdate(object):
                 console_exit('ERROR: could not find any valid configuration file.\n'
                              'Please visit %s to create one.' % B4_CONFIG_GENERATOR)
         try:
-            self.config = b4_config.MainConfig(b4_config.load(config))
+            self.config = b4.b4_config.MainConfig(b4.b4_config.load(config))
             if self.config.analyze():
-                raise b4_config.ConfigFileNotValid
-        except b4_config.ConfigFileNotValid:
+                raise b4.b4_config.ConfigFileNotValid
+        except b4.b4_config.ConfigFileNotValid:
             console_exit('ERROR: configuration file not valid (%s).\n'
                          'Please visit %s to generate a new one.' % (config, B4_CONFIG_GENERATOR))
 
@@ -335,7 +335,7 @@ class DBUpdate(object):
                         (o o)    {:>32}
                 +----oOO---OOo----------------------------------+
                 |                                               |
-                |             UPDATING B3 DATABASE              |
+                |             UPDATING B4 DATABASE              |
                 |                                               |
                 +-----------------------------------------------+
 

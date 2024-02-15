@@ -22,13 +22,13 @@
 #                                                                     #
 # ################################################################### #
 
-__author__ = 'Courgette, Fenix'
-__version__ = '1.3'
-
 import re
 import functools
 
-from b4_exceptions import ProgrammingError
+from b4.b4_exceptions import ProgrammingError
+
+__author__ = 'Courgette, Fenix'
+__version__ = '1.3'
 
 class Memoize(object):
     """
@@ -99,7 +99,7 @@ class GameEventRouter(object):
     To make a B3 parser take advantage of the GameEventRouter, the B3 parser needs to redefine
     the *parseLine* method as follow :
     
-    >>> from b4_decorators import GameEventRouter
+    >>> from b4.b4_decorators import GameEventRouter
     >>>
     >>> ger = GameEventRouter()
     >>>
@@ -172,7 +172,7 @@ class Singleton(object):
     USAGE:
     ------
 
-    >>> from b4_decorators import Singleton
+    >>> from b4.b4_decorators import Singleton
     >>>
     >>> @Singleton
     >>> class Foo(object):

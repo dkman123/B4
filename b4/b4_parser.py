@@ -22,9 +22,6 @@
 #                                                                     #
 # ################################################################### #
 
-__author__ = 'ThorN, Courgette, xlr8or, Bakes, Ozon, Fenix'
-__version__ = '1.43.6'
-
 import atexit
 import datetime
 import glob
@@ -40,25 +37,25 @@ import threading
 import time
 
 import b4
-import b4_config
-import storage.b4_storage
-import b4_events
-import b4_functions
-import b4_game
-import b4_cron
-import b4_output
-import parsers.q3a.rcon
-import b4_timezones
+import b4.b4_config
+import b4.storage.b4_storage
+import b4.b4_events
+import b4.b4_functions
+import b4.b4_game
+import b4.b4_cron
+import b4.b4_output
+import b4.parsers.q3a.rcon
+import b4.b4_timezones
 
-from configparser import NoOptionError
-from collections import OrderedDict
 from b4 import __version__ as currentVersion
-from b4_clients import Clients
-from b4_clients import Group
-from b4_decorators import Memoize
-from b4_exceptions import MissingRequirement
-from b4_plugin import PluginData
-from b4_update import B4version
+from b4.b4_clients import Clients
+from b4.b4_clients import Group
+from b4.b4_decorators import Memoize
+from b4.b4_exceptions import MissingRequirement
+from b4.b4_plugin import PluginData
+from b4.b4_update import B4version
+from collections import OrderedDict
+from configparser import NoOptionError
 from textwrap import TextWrapper
 from threading import Thread
 from traceback import extract_tb
@@ -68,9 +65,12 @@ try:
 except ImportError:
     from xml.etree import ElementTree
 
+__author__ = 'ThorN, Courgette, xlr8or, Bakes, Ozon, Fenix'
+__version__ = '1.43.6'
+
 
 class Parser(object):
-    OutputClass = parsers.q3a.rcon.Rcon  # default output class set to the q3a rcon class
+    OutputClass = b4.parsers.q3a.rcon.Rcon  # default output class set to the q3a rcon class
 
     _commands = {}  # will hold RCON commands for the current game
     _cron = None  # cron instance
@@ -210,12 +210,12 @@ class Parser(object):
         logfile = b4.getWritableFilePath(logfile, True)
 
         try:
-            logsize = b4_functions.getBytes(self.config.get('b3', 'logsize'))
+            logsize = b4.b4_functions.getBytes(self.config.get('b3', 'logsize'))
         except (TypeError, NoOptionError):
-            logsize = b4_functions.getBytes('10MB')
+            logsize = b4.b4_functions.getBytes('10MB')
 
         # create the main logger instance
-        self.log = b4_output.getInstance(logfile, self.config.getint('b3', 'log_level'), logsize, log2console)
+        self.log = b4.b4_output.getInstance(logfile, self.config.getint('b3', 'log_level'), logsize, log2console)
 
         # save screen output to self.screen
         self.screen = sys.stdout
@@ -223,8 +223,8 @@ class Parser(object):
             'Activating log   : %s\n' % b4.getShortPath(os.path.abspath(b4.getAbsolutePath(logfile, True))))
         self.screen.flush()
 
-        sys.stdout = b4_output.STDOutLogger(self.log)
-        sys.stderr = b4_output.STDErrLogger(self.log)
+        sys.stdout = b4.b4_output.STDOutLogger(self.log)
+        sys.stderr = b4.b4_output.STDErrLogger(self.log)
 
         # setup ip addresses
         if self.gameName in 'bf3':
@@ -270,12 +270,12 @@ class Parser(object):
         self.bot('Python: %s', sys.version.replace('\n', ''))
         self.bot('Default encoding: %s', sys.getdefaultencoding())
         self.bot('Starting %s v%s for server %s:%s (autorestart = %s)', self.__class__.__name__,
-                 getattr(b4_functions.getModule(self.__module__), '__version__', ' Unknown'),
+                 getattr(b4.b4_functions.getModule(self.__module__), '__version__', ' Unknown'),
                  self._rconIp, self._port, 'ON' if self.autorestart else 'OFF')
 
         # get events
-        self.Events = b4_events.eventManager
-        self._eventsStats = b4_events.EventsStats(self)
+        self.Events = b4.b4_events.eventManager
+        self._eventsStats = b4.b4_events.EventsStats(self)
 
         self.bot('--------------------------------------------')
 
@@ -307,7 +307,7 @@ class Parser(object):
         try:
             # setup storage module
             dsn = self.config.get('b3', 'database')
-            self.storage = storage.b4_storage.getStorage(dsn=dsn, dsnDict=b4_functions.splitDSN(dsn), console=self)
+            self.storage = b4.storage.b4_storage.getStorage(dsn=dsn, dsnDict=b4.b4_functions.splitDSN(dsn), console=self)
         except (AttributeError, ImportError) as e:
             # exit if we don't manage to setup the storage module: B3 will stop working upon Admin
             # Plugin loading so it makes no sense to keep going with the console initialization
@@ -427,7 +427,7 @@ class Parser(object):
         self.loadPlugins()
         self.loadArbPlugins()
 
-        self.game = b4_game.Game(self, self.gameName)
+        self.game = b4.b4_game.Game(self, self.gameName)
 
         try:
             queuesize = self.config.getint('b3', 'event_queue_size')
@@ -465,7 +465,7 @@ class Parser(object):
         self.call_plugins_onLoadConfig()
         self.bot("Starting plugins")
         self.startPlugins()
-        self._eventsStats_cronTab = b4_cron.CronTab(self._dumpEventsStats)
+        self._eventsStats_cronTab = b4.b4_cron.CronTab(self._dumpEventsStats)
         self.cron.add(self._eventsStats_cronTab)
         self.bot("All plugins started")
         self.pluginsStarted()
@@ -569,7 +569,7 @@ class Parser(object):
         """
         Return a new Event object for an event name
         """
-        return b4_events.Event(self.Events.getId(key), data, client, target)
+        return b4.b4_events.Event(self.Events.getId(key), data, client, target)
 
     def getEventName(self, key):
         """
@@ -653,7 +653,7 @@ class Parser(object):
                 search_path = _search_config_file(p_name)
                 if len(search_path) == 0:
                     # raise an exception so the plugin will not be loaded (since we miss the needed config file)
-                    raise b4_config.ConfigFileNotFound('could not find any configuration file for plugin %s' % p_name)
+                    raise b4.b4_config.ConfigFileNotFound('could not find any configuration file for plugin %s' % p_name)
                 if len(search_path) > 1:
                     # log all the configuration files found so users can decide to remove some of them on the next B3 startup
                     self.warning('Multiple configuration files found for plugin %s: %s', p_name, ', '.join(search_path))
@@ -661,7 +661,7 @@ class Parser(object):
                 # if the load fails, an exception is raised and the plugin won't be loaded
                 self.warning('Using %s as configuration file for plugin %s', search_path[0], p_name)
                 self.bot('Loading configuration file %s for plugin %s', search_path[0], p_name)
-                return b4_config.load(search_path[0])
+                return b4.b4_config.load(search_path[0])
             else:
                 # configuration file specified: load it if it's found. If we are not able to find the configuration
                 # file, then keep loading the plugin if such a plugin doesn't require a configuration file (optional)
@@ -669,7 +669,7 @@ class Parser(object):
                 p_config_absolute_path = b4.getAbsolutePath(p_config_path, decode=True)
                 if os.path.exists(p_config_absolute_path):
                     self.bot('Loading configuration file %s for plugin %s', p_config_absolute_path, p_name)
-                    return b4_config.load(p_config_absolute_path)
+                    return b4.b4_config.load(p_config_absolute_path)
 
                 # notice missing configuration file
                 self.warning('Could not find specified configuration file %s for plugin %s', p_config_absolute_path,
@@ -677,7 +677,7 @@ class Parser(object):
 
                 if p_clazz.requiresConfigFile:
                     # stop loading the plugin
-                    raise b4_config.ConfigFileNotFound(
+                    raise b4.b4_config.ConfigFileNotFound(
                         'plugin %s cannot be loaded without a configuration file' % p_name)
 
                 self.warning(
@@ -795,7 +795,7 @@ class Parser(object):
         # sort remaining plugins according to their inclusion requirements
         self.bot('Sorting plugins according to their dependency tree...')
         sorted_list = [y for y in \
-                       b4_functions.topological_sort([(x.name, set(x.clazz.requiresPlugins + [z for z in \
+                       b4.b4_functions.topological_sort([(x.name, set(x.clazz.requiresPlugins + [z for z in \
                                                                                               x.clazz.loadAfterPlugins
                                                                                               if z in plugin_dict])) for
                                                       x in plugin_list])]
@@ -992,7 +992,7 @@ class Parser(object):
                 msg = self._messages[msg] = self.config.getTextTemplate('messages', msg)
             except Exception as err:
                 self.warning("Falling back on default message for '%s': %s" % (msg, err))
-                msg = b4_functions.vars2printf(self._messages_default.get(msg, '')).strip()
+                msg = b4.b4_functions.vars2printf(self._messages_default.get(msg, '')).strip()
 
         if len(args):
             if type(args[0]) == dict:
@@ -1078,13 +1078,13 @@ class Parser(object):
         :return: tuple
         """
         if tz_name:
-            if not tz_name in b4_timezones.timezones:
+            if not tz_name in b4.b4_timezones.timezones:
                 self.warning(
                     "Unknown timezone name [%s]: falling back to auto-detection mode. Valid timezone codes can "
                     "be found on http://wiki.bigbrotherbot.net/doku.php/usage:available_timezones" % tz_name)
             else:
-                self.info("Using timezone: %s : %s" % (tz_name, b4_timezones.timezones[tz_name]))
-                return b4_timezones.timezones[tz_name], tz_name
+                self.info("Using timezone: %s : %s" % (tz_name, b4.b4_timezones.timezones[tz_name]))
+                return b4.b4_timezones.timezones[tz_name], tz_name
 
         # AUTO-DETECT TZ NAME/OFFSET
         self.debug("Auto detecting timezone information...")
@@ -1192,7 +1192,7 @@ class Parser(object):
         """
         m = re.match(self._lineFormat, line)
         if m:
-            self.queueEvent(b4_events.Event(self.getEventID('EVT_UNKNOWN'), m.group(2)[:1]))
+            self.queueEvent(b4.b4_events.Event(self.getEventID('EVT_UNKNOWN'), m.group(2)[:1]))
 
     def registerHandler(self, event_name, event_handler):
         """
@@ -1258,7 +1258,7 @@ class Parser(object):
                     try:
                         hfunc.parseEvent(event)
                         time.sleep(0.001)
-                    except b4_events.VetoEvent:
+                    except b4.b4_events.VetoEvent:
                         # plugin called for event halt, do not continue processing
                         self.bot('Event %s vetoed by %s', event_name, str(hfunc))
                         nomore = True
@@ -1340,7 +1340,7 @@ class Parser(object):
                 self.bot('Shutting down...')
                 self.working = False
                 for k, plugin in self._plugins.items():
-                    plugin.parseEvent(b4_events.Event(self.getEventID('EVT_STOP'), ''))
+                    plugin.parseEvent(b4.b4_events.Event(self.getEventID('EVT_STOP'), ''))
                 if self._cron:
                     self.bot('Stopping cron')
                     self._cron.stop()
@@ -1359,7 +1359,7 @@ class Parser(object):
             # check for PID file if B3 has been started using the provided BASH initialization scripts.
             b3_name = os.path.basename(self.config.fileName)
             for x in ('.xml', '.ini'):
-                b3_name = b4_functions.right_cut(b3_name, x)
+                b3_name = b4.b4_functions.right_cut(b3_name, x)
 
             pidpath = os.path.join(b4.getAbsolutePath('@b3/', decode=True), '..', 'scripts', 'pid', '%s.pid' % b3_name)
             if os.path.isfile(pidpath):
@@ -1500,7 +1500,7 @@ class Parser(object):
         Instantiate the main Cron object.
         """
         if not self._cron:
-            self._cron = b4_cron.Cron(self)
+            self._cron = b4.b4_cron.Cron(self)
             self._cron.start()
         return self._cron
 
@@ -1684,7 +1684,7 @@ class StubParser(object):
             def write(self, *args, **kwargs):
                 pass
 
-        if not b4_functions.main_is_frozen():
+        if not b4.b4_functions.main_is_frozen():
             self.screen = StubSTDOut()
 
     def bot(self, msg, *args, **kwargs):

@@ -27,9 +27,9 @@ import re
 import time
 
 import b4
-import b4_functions
-import b4_exceptions
-import storage.b4_storage
+import b4.b4_functions
+import b4.b4_exceptions
+import b4.storage.b4_storage
 import configparser
 
 __author__  = 'ThorN, Courgette, Fenix'
@@ -41,10 +41,10 @@ except ImportError:
     from xml.etree import ElementTree
 
 
-ConfigFileNotFound = b4_exceptions.ConfigFileNotFound
-ConfigFileNotValid = b4_exceptions.ConfigFileNotValid
-NoOptionError = b4_exceptions.NoOptionError
-NoSectionError = b4_exceptions.NoSectionError
+ConfigFileNotFound = b4.b4_exceptions.ConfigFileNotFound
+ConfigFileNotValid = b4.b4_exceptions.ConfigFileNotValid
+NoOptionError = b4.b4_exceptions.NoOptionError
+NoSectionError = b4.b4_exceptions.NoSectionError
 
 # list of plugins that cannot be loaded as disabled from configuration file
 MUST_HAVE_PLUGINS = ('admin', 'publist', 'ftpytail', 'sftpytail', 'httpytail')
@@ -83,7 +83,7 @@ class B4configparserMixin(object):
         :param setting: The configuration file setting.
         """
         value = self.get(section, setting).strip()
-        return b4_functions.time2minutes(value)
+        return b4.b4_functions.time2minutes(value)
 
     def getpath(self, section, setting):
         """
@@ -101,7 +101,7 @@ class B4configparserMixin(object):
         :param setting: The configuration file setting.
         :param kwargs: A dict with variables used for string substitution.
         """
-        value = b4_functions.vars2printf(self.get(section, setting, True)).strip()
+        value = b4.b4_functions.vars2printf(self.get(section, setting, True)).strip()
         if len(kwargs):
             return value % kwargs
         return value
@@ -392,8 +392,8 @@ class Cfgconfigparser(B4configparserMixin, configparser.ConfigParser):
         if (key.startswith(';') or key.startswith('#')) and value is None:
             # consider multiline comments
             for line in key.split('\n'):
-                line = b4_functions.left_cut(line, ';')
-                line = b4_functions.left_cut(line, '#')
+                line = b4.b4_functions.left_cut(line, ';')
+                line = b4.b4_functions.left_cut(line, '#')
                 fp.write("; %s\n" % (line.strip(),))
         else:
             if value is not None and str(value).strip() != '':
@@ -520,18 +520,18 @@ class MainConfig(B4configparserMixin):
         ## PARSER CHECK
         if self.has_option('b4', 'parser'):
             try:
-                b4_functions.getModule('b4_parsers.%s' % self.get('b4', 'parser'))
+                b4.b4_functions.getModule('b4_parsers.%s' % self.get('b4', 'parser'))
             except ImportError:
                 analysis.append('invalid parser specified in b4::parser (%s)' % self.get('b4', 'parser'))
 
         ## DSN DICT
         if self.has_option('b4', 'database'):
-            dsndict = b4_functions.splitDSN(self.get('b4', 'database'))
+            dsndict = b4.b4_functions.splitDSN(self.get('b4', 'database'))
             if not dsndict:
                 analysis.append('invalid database source name specified in b4::database (%s)' % self.get('b4', 'database'))
-            elif dsndict['protocol'] not in storage.b4_storage.PROTOCOLS:
+            elif dsndict['protocol'] not in b4.storage.b4_storage.PROTOCOLS:
                 analysis.append('invalid storage protocol specified in b4::database (%s) : '
-                                'valid protocols are : %s' % (dsndict['protocol'], ', '.join(storage.b4_storage.PROTOCOLS)))
+                                'valid protocols are : %s' % (dsndict['protocol'], ', '.join(b4.storage.b4_storage.PROTOCOLS)))
 
         ## ADMIN PLUGIN CHECK
         has_admin = False

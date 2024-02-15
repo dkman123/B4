@@ -28,35 +28,35 @@ with fakeConsole and joe which can be used to say commands
 as if it where a player.
 """
 
-__version__ = '1.18'
-
 import b4
-import b4_clients
-import b4_config
-import b4_events
-import b4_game
-import b4_output
-import b4_parser
-import parsers.punkbuster
+import b4.b4_clients
+import b4.b4_config
+import b4.b4_events
+import b4.b4_game
+import b4.b4_output
+import b4.b4_parser
+import b4.parsers.punkbuster
 import logging
 import re
 import sys
 import time
 import traceback
 
-from b4_cvar import Cvar
-from b4_functions import splitDSN
+from b4.b4_cvar import Cvar
+from b4.b4_functions import splitDSN
+from b4.plugins.admin import AdminPlugin
+from b4.storage.b4_sqlite import SqliteStorage
 from io import StringIO
-from plugins.admin import AdminPlugin
-from storage.b4_sqlite import SqliteStorage
 from sys import stdout
 
+__version__ = '1.18'
 
-class FakeConsole(b4_parser.Parser):
+
+class FakeConsole(b4.b4_parser.Parser):
     """
     Console implementation to be used with automated tests.
     """
-    Events = b4_events.eventManager = b4_events.Events()
+    Events = b4.b4_events.eventManager = b4.b4_events.Events()
     screen = stdout
     noVerbose = False
     input = None
@@ -69,27 +69,27 @@ class FakeConsole(b4_parser.Parser):
         super().__init__(super, config)
         b4_console = self
         self._timeStart = self.time()
-        logging.basicConfig(level=b4_output.VERBOSE2, format='%(asctime)s\t%(levelname)s\t%(message)s')
+        logging.basicConfig(level=b4.b4_output.VERBOSE2, format='%(asctime)s\t%(levelname)s\t%(message)s')
         self.log = logging.getLogger('output')
         self.config = config
 
-        if isinstance(config, b4_config.Xmlconfigparser) or isinstance(config, b4_config.Cfgconfigparser):
-            self.config = b4_config.MainConfig(config)
-        elif isinstance(config, b4_config.MainConfig):
+        if isinstance(config, b4.b4_config.Xmlconfigparser) or isinstance(config, b4.b4_config.Cfgconfigparser):
+            self.config = b4.b4_config.MainConfig(config)
+        elif isinstance(config, b4.b4_config.MainConfig):
             self.config = config
         else:
-            self.config = b4_config.MainConfig(b4_config.load(config))
+            self.config = b4.b4_config.MainConfig(b4.b4_config.load(config))
 
         self.storage = SqliteStorage("sqlite://:memory:", splitDSN("sqlite://:memory:"), self)
         self.storage.connect()
-        self.clients = b4_clients.Clients(self)
-        self.game = b4_game.Game(self, "fakeGame")
+        self.clients = b4.b4_clients.Clients(self)
+        self.game = b4.b4_game.Game(self, "fakeGame")
         self.game.mapName = 'ut4_turnpike'
         self.cvars = {}
         self._handlers = {}
         
         if not self.config.has_option('server', 'punkbuster') or self.config.getboolean('server', 'punkbuster'):
-            self.PunkBuster = parsers.punkbuster.PunkBuster(self)
+            self.PunkBuster = b4.parsers.punkbuster.PunkBuster(self)
         
         self.input = StringIO()
         self.working = True
@@ -129,7 +129,7 @@ class FakeConsole(b4_parser.Parser):
             try:
                 hfunc.parseEvent(event)
                 time.sleep(0.001)
-            except b4_events.VetoEvent:
+            except b4.b4_events.VetoEvent:
                 # plugin called for event hault, do not continue processing
                 self.bot('Event %s vetoed by %s', self.Events.getName(event.type), str(hfunc))
                 nomore = True
@@ -160,7 +160,7 @@ class FakeConsole(b4_parser.Parser):
         if name == 'admin':
             return fakeAdminPlugin
         else:
-            return b4_parser.Parser.getPlugin(self, name)
+            return b4.b4_parser.Parser.getPlugin(self, name)
     
     def sync(self):
         return {}
@@ -260,7 +260,7 @@ class FakeConsole(b4_parser.Parser):
         self.cvars[key] = c
 
 
-class FakeClient(b4_clients.Client):
+class FakeClient(b4.b4_clients.Client):
     """
     Client object implementation to be used in automated tests.
     """
@@ -273,7 +273,7 @@ class FakeClient(b4_clients.Client):
         """
         self.console = console
         self.message_history = [] # this allows unittests to check if a message was sent to the client
-        b4_clients.Client.__init__(self, **kwargs)
+        b4.b4_clients.Client.__init__(self, **kwargs)
                 
     def clearMessageHistory(self):
         self.message_history = []
@@ -300,7 +300,7 @@ class FakeClient(b4_clients.Client):
         print("sending msg to %s: %s" % (self.name, cleanmsg))
 
     def warn(self, duration, warning, keyword=None, admin=None, data=''):
-        w = b4_clients.Client.warn(self, duration, warning, keyword=None, admin=None, data='')
+        w = b4.b4_clients.Client.warn(self, duration, warning, keyword=None, admin=None, data='')
         print(">>>>%s gets a warning : %s" % (self, w))
 
     def connects(self, cid):
@@ -381,7 +381,7 @@ class FakeClient(b4_clients.Client):
 
     def trigger_event(self, type, data, target=None):
         print("\n%s trigger event %s" % (self.name, type))
-        self.console.queueEvent(b4_events.Event(type, data, self, target))
+        self.console.queueEvent(b4.b4_events.Event(type, data, self, target))
 
 
 #####################################################################################

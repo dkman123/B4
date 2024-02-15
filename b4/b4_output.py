@@ -22,14 +22,14 @@
 #                                                                     #
 # ################################################################### #
 
-__author__  = 'ThorN'
-__version__ = '1.7.2'
-
 import sys
 import logging
 
 from logging import handlers
 from logging import CRITICAL, ERROR, INFO, WARNING, DEBUG
+
+__author__  = 'ThorN'
+__version__ = '1.7.2'
 
 # log_level is set in the b4_distribution(.ini|.xml)
 

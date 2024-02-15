@@ -23,10 +23,8 @@
 # ################################################################### #
 
 import b4
-#import b4_events
-import b4_functions
+import b4.b4_functions
 import re
-#import string
 import sys
 import threading
 import time
@@ -709,7 +707,7 @@ class Client(object):
         :param silent: Whether to announce this tempban
         :param data: Extra data to add to the penalty
         """
-        duration = b4_functions.time2minutes(duration)
+        duration = b4.b4_functions.time2minutes(duration)
         self.console.tempban(self, reason, duration, admin, silent)
 
         if self.id:
@@ -748,7 +746,7 @@ class Client(object):
         :param data: Extra data to add to the penalty
         """
         if self.id:
-            duration = b4_functions.time2minutes(duration)
+            duration = b4.b4_functions.time2minutes(duration)
             warn = ClientWarning()
 
             if admin:
@@ -982,7 +980,7 @@ class Penalty(Struct):
     clientId = property(_get_client_id, _set_client_id)
 
     def _set_duration(self, v):
-        self._duration = b4_functions.time2minutes(v)
+        self._duration = b4.b4_functions.time2minutes(v)
 
     def _get_duration(self):
         return self._duration
@@ -1487,7 +1485,7 @@ class Clients(dict):
                 if c.guid and c.guid == guid:
                     self._guidIndex[guid] = c.cid
                     return c
-                elif b4_functions.fuzzyGuidMatch(c.guid, guid):
+                elif b4.b4_functions.fuzzyGuidMatch(c.guid, guid):
                     # found by fuzzy matching: don't index
                     return c
         return None
