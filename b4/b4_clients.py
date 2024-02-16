@@ -110,7 +110,7 @@ class Client(object):
     _password = ''
     _pluginData = None
     _pbid = ''
-    _team = b4.b4_clients.TEAM_UNKNOWN
+    _team = TEAM_UNKNOWN
     _tempLevel = None
     _timeAdd = 0
     _timeEdit = 0
@@ -131,7 +131,7 @@ class Client(object):
         :param kwargs: A dict containing client object attributes.
         """
         self._pluginData = {}
-        self.state = b4.STATE_UNKNOWN
+        self.state = STATE_UNKNOWN
         self._data = {}        
 
         # make sure to set console before anything else
