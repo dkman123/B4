@@ -21,9 +21,6 @@
 #  02110-1301, USA.                                                   #
 #                                                                     #
 # ################################################################### #
-#
-__author__ = 'ThorN'
-__version__ = '1.11'
 
 import re
 import socket
@@ -33,6 +30,10 @@ import threading
 import queue
 
 from threading import Thread
+
+__author__ = 'ThorN'
+__version__ = '1.11'
+
 
 class Rcon(object):
 

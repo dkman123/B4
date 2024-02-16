@@ -23,12 +23,12 @@
 # ################################################################### #
 
 import b4
+import b4.b4_clients
 import os
 import re
 import sys
 import threading
 
-import b4.b4_clients
 from b4.b4_querybuilder import QueryBuilder
 from b4_storage import Storage
 from b4_cursor import Cursor as DBCursor

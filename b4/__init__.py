@@ -41,7 +41,7 @@ from tempfile import TemporaryFile
 #from configparser import NoSectionError
 
 __author__ = 'ThorN'
-__version__ = '1.13.2'
+__version__ = '0.2'
 
 modulePath = b4_pkg_handler.resource_directory(__name__)
 
@@ -235,6 +235,7 @@ def getShortPath(filepath, decode=False, first_time=True):
     :return: string
     """
     # NOTE: make sure to have os.path.sep at the end otherwise also files starting with 'b4' will be matched
+    filepath = str(filepath)
     homepath = str(getAbsolutePath('@home/', decode)) + os.path.sep
     if filepath.startswith(homepath):
         return filepath.replace(homepath, '@home' + os.path.sep)

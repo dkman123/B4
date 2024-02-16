@@ -22,21 +22,19 @@
 #                                                                     #
 # ################################################################### #
 
-
-import re
-import string
-import time
-from types import MethodType as instancemethod
 import b4
 import b4.b4_events
 import b4.b4_clients
 import b4.b4_functions
 import b4.b4_parser
 import b4.b4_cvar
+import re
+import string
+import time
+from types import MethodType as instancemethod
 
 import b4.parsers.q3a.rcon as rcon
 from ..punkbuster import PunkBuster
-from b4.b4_functions import prefixText
 
 __author__ = 'ThorN, xlr8or'
 __version__ = '1.8.1'
@@ -431,7 +429,7 @@ class AbstractParser(b4.b4_parser.Parser):
             return
 
         lines = []
-        message = prefixText([self.msgPrefix, self.pmPrefix], text)
+        message = b4.b4_functions.prefixText([self.msgPrefix, self.pmPrefix], text)
         message = message.strip()
         for line in self.getWrap(message):
             lines.append(self.getCommand('message', cid=client.cid, message=line))
@@ -443,7 +441,7 @@ class AbstractParser(b4.b4_parser.Parser):
         :param text: The message to be broadcasted
         """
         lines = []
-        message = prefixText([self.msgPrefix], text)
+        message = b4.b4_functions.prefixText([self.msgPrefix], text)
         message = message.strip()
         for line in self.getWrap(message):
             lines.append(self.getCommand('say', message=line))
@@ -476,7 +474,7 @@ class AbstractParser(b4.b4_parser.Parser):
         :param text: The message to be sent.
         """
         lines = []
-        message = prefixText([self.msgPrefix, self.deadPrefix], text)
+        message = b4.b4_functions.prefixText([self.msgPrefix, self.deadPrefix], text)
         message = message.strip()
         wrapped = self.getWrap(message)
         for client in self.clients.getClientsByState(b4.STATE_DEAD):

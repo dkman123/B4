@@ -23,12 +23,11 @@
 # ################################################################### #
 
 import b4
+import b4.storage.b4_common
 import os
 
-from b4_common import DatabaseStorage
 
-
-class SqliteStorage(DatabaseStorage):
+class SqliteStorage(b4.storage.b4_commonDatabaseStorage):
 
     protocol = 'sqlite'
 

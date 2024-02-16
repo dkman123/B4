@@ -24,18 +24,17 @@
 
 import b4
 import b4.b4_config
+import b4.b4_functions
 import b4.b4_pkg_handler
+import b4.b4_update
 import os
 import sys
 import argparse
 import traceback
 
-from b4 import HOMEDIR, B4_CONFIG_GENERATOR
-from b4.b4_functions import main_is_frozen, console_exit
-from b4.b4_update import DBUpdate
 from time import sleep
 
-__author__  = 'ThorN'
+__author__ = 'ThorN'
 __version__ = '1.8'
 
 modulePath = b4.b4_pkg_handler.resource_directory(__name__)
@@ -47,7 +46,7 @@ def run_autorestart(args=None):
     """
     restart_num = 0
 
-    if main_is_frozen():
+    if b4.b4_functions.main_is_frozen():
         # if we are running the frozen application we do not
         # need to run any script, just the executable itself
         script = ''
@@ -125,7 +124,7 @@ def run_update(config=None):
     Run the B4 update.
     :param config: The B4 configuration file instance
     """
-    update = DBUpdate(config)
+    update = b4.b4_update.DBUpdate(config)
     update.run()
 
 
@@ -134,8 +133,8 @@ def run(options):
     Run B4 in console.
     :param options: command line options
     """
-    analysis = None     # main config analysis result
-    printexit = False   # whether the exit message has been printed already or not
+    analysis = None  # main config analysis result
+    printexit = False  # whether the exit message has been printed already or not
 
     try:
 
@@ -143,13 +142,13 @@ def run(options):
             config = b4.getAbsolutePath(options.config, True)
             if not os.path.isfile(config):
                 printexit = True
-                console_exit('ERROR: configuration file not found (%s).\n'
-                             'Please visit %s to create one.' % (config, B4_CONFIG_GENERATOR))
+                b4.b4_functions.console_exit('ERROR: configuration file not found (%s).\n'
+                                             'Please visit %s to create one.' % (config, b4.B4_CONFIG_GENERATOR))
         else:
             config = None
             for p in ('b4.%s', 'conf/b4.%s', 'b4/conf/b4.%s',
-                      os.path.join(HOMEDIR, 'b4.%s'), os.path.join(HOMEDIR, 'conf', 'b4.%s'),
-                      os.path.join(HOMEDIR, 'b4', 'conf', 'b4.%s'), '@b4/conf/b4.%s'):
+                      os.path.join(b4.HOMEDIR, 'b4.%s'), os.path.join(b4.HOMEDIR, 'conf', 'b4.%s'),
+                      os.path.join(b4.HOMEDIR, 'b4', 'conf', 'b4.%s'), '@b4/conf/b4.%s'):
                 for e in ('ini', 'cfg', 'xml'):
                     path = b4.getAbsolutePath(p % e, True)
                     if os.path.isfile(path):
@@ -160,8 +159,8 @@ def run(options):
 
             if not config:
                 printexit = True
-                console_exit('ERROR: could not find any valid configuration file.\n'
-                             'Please visit %s to create one.' % B4_CONFIG_GENERATOR)
+                b4.b4_functions.console_exit('ERROR: could not find any valid configuration file.\n'
+                                             'Please visit %s to create one.' % b4.B4_CONFIG_GENERATOR)
 
         # LOADING MAIN CONFIGURATION
         main_config = b4.b4_config.MainConfig(b4.b4_config.load(config))
@@ -181,7 +180,7 @@ def run(options):
             print('CRITICAL: invalid configuration file specified!')
         raise SystemExit(1)
     except SystemExit as msg:
-        if not printexit and main_is_frozen():
+        if not printexit and b4.b4_functions.main_is_frozen():
             if sys.stdout != sys.__stdout__:
                 sys.stdout = sys.__stdout__
                 sys.stderr = sys.__stderr__
@@ -201,12 +200,18 @@ def main():
     Main execution.
     """
     p = argparse.ArgumentParser()
-    p.add_argument('-c', '--config', dest='config', default=None, metavar='b4.ini', help='B4 config file. Example: -c b4.ini')
-    p.add_argument('-r', '--restart', action='store_true', dest='restart', default=False, help='Auto-restart B4 on crash')
-    p.add_argument('-s', '--setup',  action='store_true', dest='setup', default=False, help='Setup main b4.ini config file')
-    p.add_argument('-u', '--update', action='store_true', dest='update', default=False, help='Update B4 database to latest version')
-    p.add_argument('-v', '--version', action='version', default=False, version=b4.getB4versionString(), help='Show B4 version and exit')
-    p.add_argument('-a', '--autorestart', action='store_true', dest='autorestart', default=False, help=argparse.SUPPRESS)
+    p.add_argument('-c', '--config', dest='config', default=None, metavar='b4.ini',
+                   help='B4 config file. Example: -c b4.ini')
+    p.add_argument('-r', '--restart', action='store_true', dest='restart', default=False,
+                   help='Auto-restart B4 on crash')
+    p.add_argument('-s', '--setup', action='store_true', dest='setup', default=False,
+                   help='Setup main b4.ini config file')
+    p.add_argument('-u', '--update', action='store_true', dest='update', default=False,
+                   help='Update B4 database to latest version')
+    p.add_argument('-v', '--version', action='version', default=False, version=b4.getB4versionString(),
+                   help='Show B4 version and exit')
+    p.add_argument('-a', '--autorestart', action='store_true', dest='autorestart', default=False,
+                   help=argparse.SUPPRESS)
 
     (options, args) = p.parse_known_args()
 
@@ -216,8 +221,8 @@ def main():
     if options.setup:
         # setup procedure is deprecated: show configuration file generator web tool url instead
         sys.stdout.write('\n')
-        console_exit("  *** NOTICE: the console setup procedure is deprecated!\n" \
-                     "  *** Please visit %s to generate a new B4 configuration file.\n" % B4_CONFIG_GENERATOR)
+        b4.b4_functions.console_exit("  *** NOTICE: the console setup procedure is deprecated!\n" \
+                                     "  *** Please visit %s to generate a new B4 configuration file.\n" % b4.B4_CONFIG_GENERATOR)
 
     if options.update:
         ## UPDATE => CONSOLE

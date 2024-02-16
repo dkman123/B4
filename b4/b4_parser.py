@@ -37,6 +37,7 @@ import threading
 import time
 
 import b4
+import b4.b4_clients
 import b4.b4_config
 import b4.storage.b4_storage
 import b4.b4_events
@@ -46,14 +47,11 @@ import b4.b4_cron
 import b4.b4_output
 import b4.parsers.q3a.rcon
 import b4.b4_timezones
+import b4.b4_update
 
-from b4 import __version__ as currentVersion
-from b4.b4_clients import Clients
-from b4.b4_clients import Group
 from b4.b4_decorators import Memoize
 from b4.b4_exceptions import MissingRequirement
 from b4.b4_plugin import PluginData
-import b4_update
 from collections import OrderedDict
 from configparser import NoOptionError
 from textwrap import TextWrapper
@@ -422,7 +420,7 @@ class Parser(object):
 
         self.loadEvents()
         self.screen.write('Loading events   : %s events loaded\n' % len(self._events))
-        self.clients = Clients(self)
+        self.clients = b4.b4_clients.Clients(self)
 
         self.loadPlugins()
         self.loadArbPlugins()
@@ -641,7 +639,7 @@ class Parser(object):
 
             if p_config_path is None:
                 # no plugin configuration file path specified: we can still load the plugin
-                # if there is non need for a configuration file, otherwise we will lookup one
+                # if there is non need for a configuration file, otherwise we will look up one
                 if not p_clazz.requiresConfigFile:
                     self.debug('No configuration file specified for plugin %s: is not required either' % p_name)
                     return None
@@ -730,11 +728,13 @@ class Parser(object):
             if p_data.clazz:
 
                 # check for correct B4 version
-                if p_data.clazz.requiresVersion and b4.b4_update.B4version(p_data.clazz.requiresVersion) > b4.b4_update.B4version(currentVersion):
+                if p_data.clazz.requiresVersion \
+                        and b4.b4_update.B4version(p_data.clazz.requiresVersion) \
+                        > b4.b4_update.B4version(b4.__version__):
                     raise MissingRequirement(
                         'plugin %s requires B4 version %s (you have version %s) : please update your '
                         'B4 if you want to run this plugin' % (
-                        p_data.name, p_data.clazz.requiresVersion, currentVersion))
+                        p_data.name, p_data.clazz.requiresVersion, b4.__version__))
 
                 # check if the current game support this plugin (this may actually exclude more than one plugin
                 # in case a plugin is built on top of an incompatible one, due to plugin dependencies)
@@ -1057,9 +1057,9 @@ class Parser(object):
         Raises KeyError if group is not found.
         """
         if type(data) is int or isinstance(data, str) and data.isdigit():
-            g = Group(level=data)
+            g = b4.b4_clients.Group(level=data)
         else:
-            g = Group(keyword=data)
+            g = b4.b4_clients.Group(keyword=data)
         return self.storage.getGroup(g)
 
     def getGroupLevel(self, data):

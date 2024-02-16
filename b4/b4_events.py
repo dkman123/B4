@@ -22,10 +22,10 @@
 #                                                                     #
 # ################################################################### #
 
+import b4_functions
 import re
 import time
 
-from b4.b4_functions import meanstdv
 from b4.b4_decorators import Memoize
 from b4.b4_output import VERBOSE
 from collections import deque
@@ -223,14 +223,14 @@ class EventsStats(object):
         if self.console.log.isEnabledFor(VERBOSE):
             for plugin_name, plugin_timers in self._handling_timers.items():
                 for event_name, event_timers in plugin_timers.iteritems():
-                    mean, stdv = meanstdv(event_timers)
+                    mean, stdv = b4_functions.meanstdv(event_timers)
                     if len(event_timers):
                         self.console.verbose("%s %s : (ms) min(%0.1f), max(%0.1f), mean(%0.1f), "
                                              "stddev(%0.1f)", plugin_name, event_name, min(event_timers),
                                              max(event_timers), mean, stdv)
 
         if self.console.log.isEnabledFor(DEBUG):
-            mean, stdv = meanstdv(self._queue_wait)
+            mean, stdv = b4_functions.meanstdv(self._queue_wait)
             if len(self._queue_wait):
                 self.console.debug("Events waiting in queue stats : (ms) min(%0.1f), max(%0.1f), mean(%0.1f), "
                                    "stddev(%0.1f)", min(self._queue_wait), max(self._queue_wait), mean, stdv)

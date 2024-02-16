@@ -30,7 +30,6 @@ import b4.b4_config
 import b4.b4_events
 import b4.b4_functions
 
-from b4 import __version__ as b4_version
 from configparser import NoOptionError
 
 __author__ = 'ThorN, Courgette'
@@ -70,11 +69,11 @@ class Plugin(object):
 
     # The minimum B4 version which is needed to run this plugin. By default this is
     # set to the version matching the currently running B4.
-    requiresVersion = b4_version
+    requiresVersion = __version__
     """:type: str"""
 
     # List of parsers the current plugin supports: if no parser is specified the plugin will
-    # be loaded, if listed in B4 main configuraion file, no matter the parser being used.
+    # be loaded, if listed in B4 main configuration file, no matter the parser being used.
     requiresParsers = []
     """:type: list"""
 

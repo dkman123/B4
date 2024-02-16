@@ -23,13 +23,13 @@
 # ################################################################### #
 
 import b4
+import b4.storage.b4_common
 import sys
 
-from b4_common import DatabaseStorage
 from time import time
 from traceback import extract_tb
 
-class PymysqlStorage(DatabaseStorage):
+class PymysqlStorage(b4.storage.b4_common.DatabaseStorage):
     """
     Base inheritance class for MysqlStorage when using pymysql driver.
     """
@@ -84,7 +84,7 @@ class PymysqlStorage(DatabaseStorage):
         return False
 
 
-class MysqlConnectorStorage(DatabaseStorage):
+class MysqlConnectorStorage(b4.storage.b4_common.DatabaseStorage):
     """
     Base inheritance class for MysqlStorage when using mysql.connector driver.
     """
@@ -139,7 +139,7 @@ class MysqlConnectorStorage(DatabaseStorage):
         return False
 
 
-class MySQLdbStorage(DatabaseStorage):
+class MySQLdbStorage(b4.storage.b4_common.DatabaseStorage):
     """
     Base inheritance class for MysqlStorage when using MySQLdb driver.
     """
@@ -194,7 +194,7 @@ class MySQLdbStorage(DatabaseStorage):
         return False
 
 
-class MysqlStorage(DatabaseStorage):
+class MysqlStorage(b4.storage.b4_common.DatabaseStorage):
 
     _reconnectDelay = 60
     protocol = 'mysql'

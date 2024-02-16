@@ -26,10 +26,9 @@ import b4
 import re
 import time
 
-from b4.b4_clients import Client
-from b4.b4_events import Event
-from b4.b4_functions import minutesStr
-from b4.b4_functions import time2minutes
+import b4.b4_clients
+import b4.b4_events
+import b4.b4_functions
 from b4.parsers.iourt41 import Iourt41Parser
 from b4.plugins.spamcontrol import SpamcontrolPlugin
 from types import MethodType as instancemethod
@@ -39,7 +38,7 @@ __author__ = 'Courgette, Fenix, ptitbigorneau'
 __version__ = '0.2'
 
     
-class Iourt43Client(Client):
+class Iourt43Client(b4.b4_clients.Client):
 
     def auth_by_guid(self):
         """
@@ -750,7 +749,7 @@ class Iourt43Parser(Iourt41Parser):
                 # update existing client
                 for k, v in bclient.iteritems():
                     if hasattr(client, 'gear') and k == 'gear' and client.gear != v:
-                        self.queueEvent(Event(self.getEventID('EVT_CLIENT_GEAR_CHANGE'), v, client))
+                        self.queueEvent(b4.b4_events.Event(self.getEventID('EVT_CLIENT_GEAR_CHANGE'), v, client))
                     if not k.startswith('_') and k not in ('login', 'password', 'groupBits', 'maskLevel', 'autoLogin', 'greeting', 'app'):
                         setattr(client, k, v)
                         #self.debug("NOISY iourt43 setting client field %s to %s" % (k, v))
@@ -1131,10 +1130,10 @@ class Iourt43Parser(Iourt41Parser):
         :param client: The client to ban
         :param reason: The reason for this ban
         :param admin: The admin who performed the ban
-        :param silent: Whether or not to announce this ban
+        :param silent: Whether to announce this ban
         """
         self.debug('BAN : client: %s, reason: %s', client, reason)
-        if isinstance(client, Client) and not client.guid:
+        if isinstance(client, b4.b4_clients.Client) and not client.guid:
             # client has no guid, kick instead
             return self.kick(client, reason, admin, silent)
         elif isinstance(client, str) and re.match('^[0-9]+$', client):
@@ -1198,21 +1197,21 @@ class Iourt43Parser(Iourt41Parser):
         :param reason: The reason for this tempban
         :param duration: The duration of the tempban
         :param admin: The admin who performed the tempban
-        :param silent: Whether or not to announce this tempban
+        :param silent: Whether to announce this tempban
         """
-        duration = time2minutes(duration)
-        if isinstance(client, Client) and not client.guid:
+        duration = b4.b4_functions.time2minutes(duration)
+        if isinstance(client, b4.b4_clients.Client) and not client.guid:
             # client has no guid, kick instead
             return self.kick(client, reason, admin, silent)
         elif isinstance(client, str) and re.match('^[0-9]+$', client):
             self.write(self.getCommand('tempban', cid=client, reason=reason))
             return
         elif admin:
-            banduration = minutesStr(duration)
+            banduration = b4.b4_functions.minutesStr(duration)
             variables = self.getMessageVariables(client=client, reason=reason, admin=admin, banduration=banduration)
             fullreason = self.getMessage('temp_banned_by', variables)
         else:
-            banduration = minutesStr(duration)
+            banduration = b4.b4_functions.minutesStr(duration)
             variables = self.getMessageVariables(client=client, reason=reason, banduration=banduration)
             fullreason = self.getMessage('temp_banned', variables)
 
@@ -1276,7 +1275,7 @@ class Iourt43Parser(Iourt41Parser):
             if duration is None:
                 seconds = 60
             else:
-                seconds = round(float(time2minutes(duration) * 60), 0)
+                seconds = round(float(b4.b4_functions.time2minutes(duration) * 60), 0)
 
             # make sure to unmute first
             cmd = self.getCommand('mute', cid=client.cid, seconds=0)
@@ -1306,7 +1305,7 @@ class Iourt43Parser(Iourt41Parser):
         Return a B3 team given the team value.
         :param team: The team value
         """
-		
+
         match = str(team).lower()
         if match in {'red', 'r', '1'}:
             return b4.TEAM_RED
@@ -1314,7 +1313,7 @@ class Iourt43Parser(Iourt41Parser):
             return b4.TEAM_BLUE
         if match in {'spectator', 's', '3'}:
             return b4.TEAM_SPEC
-			
+
         return b4.TEAM_UNKNOWN
 
     def queryClientFrozenSandAccount(self, cid):
@@ -1416,7 +1415,7 @@ class Iourt43Parser(Iourt41Parser):
         self.info("Patching spamcontrol plugin...")
 
         def onRadio(this, event):
-            new_event = Event(type=event.type, client=event.client, target=event.target, data=repr(event.data))
+            new_event = b4.b4_events.Event(type=event.type, client=event.client, target=event.target, data=repr(event.data))
             this.onChat(new_event)
 
         #self.spamcontrolPlugin.onRadio = instancemethod(onRadio, self.spamcontrolPlugin, SpamcontrolPlugin)
@@ -1471,5 +1470,5 @@ class Iourt43Parser(Iourt41Parser):
                         clients.append(c)
                 return clients
 
-        Client.newClient = newClient
-        Client.getByMagic = newGetByMagic
+        b4.b4_clients.Client.newClient = newClient
+        b4.b4_clients.Client.getByMagic = newGetByMagic

@@ -17,7 +17,8 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 import datetime
-#import b4_mysql
+# DO NOT REMOVE
+import b4.storage.b4_mysql
 
 __author__ = 'Courgette'
 __version__ = '1.2'

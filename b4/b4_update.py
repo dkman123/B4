@@ -25,17 +25,19 @@
 import b4
 import b4.b4_config
 import b4.b4_functions
+import b4.b4_parser
+import b4.storage.b4_storage
 import json
 import os
 import re
-#import string
 import sys
 import urllib
 import urllib.request
 
 from distutils import version
 from time import sleep
-#from types import *
+
+# from types import *
 
 ## url from where we can get the latest B3 version number
 URL_B3_LATEST_VERSION = 'http://master.bigbrotherbot.net/version.json'
@@ -100,7 +102,7 @@ $''', re.VERBOSE)
         # and add each letter to num
         return self.myAtoiRecursive(string[1:], num)
 
-    def parse (self, vstring):
+    def parse(self, vstring):
         """
         Parse the version number from a string.
         :param vstring: The version string
@@ -164,7 +166,7 @@ $''', re.VERBOSE)
             return 1
         elif self.prerelease and other.prerelease:
             return b4.b4_functions.cmp(self, (self.prerelease_order[self.prerelease[0]], self.prerelease[1]),
-                                    (self.prerelease_order[other.prerelease[0]], other.prerelease[1]))
+                                       (self.prerelease_order[other.prerelease[0]], other.prerelease[1]))
 
     def __cmp_build(self, other):
         # case 1: neither has build_num; they're equal
@@ -223,7 +225,7 @@ def checkUpdate(currentVersion, channel=None, singleLine=True, showErrormsg=Fals
 
     message = None
     errormessage = None
-    
+
     try:
         json_data = urllib.request.urlopen(URL_B3_LATEST_VERSION, timeout=timeout).read()
         version_info = json.loads(json_data)
@@ -244,7 +246,7 @@ def checkUpdate(currentVersion, channel=None, singleLine=True, showErrormsg=Fals
             errormessage = repr(err) + '. %s' % version_info
         else:
             if channel not in channels:
-                errormessage = "unknown channel '%s': expecting (%s)"  % (channel, ', '.join(channels.keys()))
+                errormessage = "unknown channel '%s': expecting (%s)" % (channel, ', '.join(channels.keys()))
             else:
                 try:
                     latestVersion = channels[channel]['latest-version']
@@ -290,6 +292,7 @@ class DBUpdate(object):
     """
     Console database update procedure.
     """
+
     def __init__(self, config=None):
         """
         Object constructor.
@@ -299,13 +302,13 @@ class DBUpdate(object):
             # use the specified configuration file
             config = b4.getAbsolutePath(config, True)
             if not os.path.isfile(config):
-                console_exit('ERROR: configuration file not found (%s).\n'
-                             'Please visit %s to create one.' % (config, B4_CONFIG_GENERATOR))
+                b4.b4_functions.console_exit('ERROR: configuration file not found (%s).\n'
+                                             'Please visit %s to create one.' % (config, b4.B4_CONFIG_GENERATOR))
         else:
             # search a configuration file
             for p in ('b4_%s', 'conf/b4_%s', 'b4/conf/b4_%s',
-                      os.path.join(HOMEDIR, 'b4_%s'), os.path.join(HOMEDIR, 'conf', 'b4_%s'),
-                      os.path.join(HOMEDIR, 'b4', 'conf', 'b4_%s'), '@b4/conf/b4_%s'):
+                      os.path.join(b4.HOMEDIR, 'b4_%s'), os.path.join(b4.HOMEDIR, 'conf', 'b4_%s'),
+                      os.path.join(b4.HOMEDIR, 'b4', 'conf', 'b4_%s'), '@b4/conf/b4_%s'):
                 for e in ('ini', 'cfg', 'xml'):
                     path = b4.getAbsolutePath(p % e, True)
                     if os.path.isfile(path):
@@ -315,21 +318,21 @@ class DBUpdate(object):
                         break
 
             if not config:
-                console_exit('ERROR: could not find any valid configuration file.\n'
-                             'Please visit %s to create one.' % B4_CONFIG_GENERATOR)
+                b4.b4_functions.console_exit('ERROR: could not find any valid configuration file.\n'
+                                             'Please visit %s to create one.' % b4.B4_CONFIG_GENERATOR)
         try:
             self.config = b4.b4_config.MainConfig(b4.b4_config.load(config))
             if self.config.analyze():
                 raise b4.b4_config.ConfigFileNotValid
         except b4.b4_config.ConfigFileNotValid:
-            console_exit('ERROR: configuration file not valid (%s).\n'
-                         'Please visit %s to generate a new one.' % (config, B4_CONFIG_GENERATOR))
+            b4.b4_functions.console_exit('ERROR: configuration file not valid (%s).\n'
+                                         'Please visit %s to generate a new one.' % (config, b4.B4_CONFIG_GENERATOR))
 
     def run(self):
         """
         Run the DB update
         """
-        clearscreen()
+        b4.b4_functions.clearscreen()
         print("""
                         _\|/_
                         (o o)    {:>32}
@@ -361,8 +364,8 @@ class DBUpdate(object):
                         sleep(3)
 
         dsn = self.config.get('b4', 'database')
-        dsndict = splitDSN(dsn)
-        database = getStorage(dsn, dsndict, b4.b4_parser.StubParser())
+        dsndict = b4.b4_functions.splitDSN(dsn)
+        database = b4.storage.b4_storage.getStorage(dsn, dsndict, b4.b4_parser.StubParser())
 
         _update_database(database, '1.3.0')
         _update_database(database, '1.6.0')
@@ -371,10 +374,4 @@ class DBUpdate(object):
         _update_database(database, '1.9.0')
         _update_database(database, '1.10.0')
 
-        console_exit('B3 database update completed!')
-
-
-from b4 import B4_CONFIG_GENERATOR, HOMEDIR
-from b4.b4_functions import console_exit, splitDSN, clearscreen
-import b4.b4_parser
-from b4.storage.b4_storage import getStorage
+        b4.b4_functions.console_exit('B3 database update completed!')

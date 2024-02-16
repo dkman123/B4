@@ -121,6 +121,17 @@ def splitDSN(url):
         g['port'] = 3306
     elif g['protocol'] == 'postgresql':
         g['port'] = 5432
+
+    #sys.stdout.write("splitDSN protocol %s\n" % g['protocol'])
+    #sys.stdout.write("splitDSN user     %s\n" % g['user'])
+    #sys.stdout.write("splitDSN host     %s\n" % g['host'])
+    #sys.stdout.write("splitDSN path     %s\n" % g['path'])
+    #sys.stdout.write("splitDSN password %s\n" % g['password'])
+    #sys.stdout.write("splitDSN port     %s\n" % g['port'])
+    #sys.stdout.write("title %s\n" % g['protocol'].title())
+    #sys.stdout.write("type    %s\n" % type(globals()))
+    #print(globals())
+
     return g
 
 
