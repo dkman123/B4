@@ -65,18 +65,6 @@ B4_XLRSTATS = 'http://www.xlrstats.com/'
 B4_PLUGIN_REPOSITORY = 'http://forum.bigbrotherbot.net/downloads/?cat=4'
 B4_RSS = 'http://forum.bigbrotherbot.net/news-2/?type=rss;action=.xml'
 
-# TEAMS
-TEAM_UNKNOWN = -1
-TEAM_FREE = 0
-TEAM_SPEC = 1
-TEAM_RED = 2
-TEAM_BLUE = 3
-
-# PLAYER STATE
-STATE_DEAD = 1
-STATE_ALIVE = 2
-STATE_UNKNOWN = 3
-
 # CUSTOM TYPES FOR DYNAMIC CASTING
 STRING = STR = 1                        ## built-in string
 INTEGER = INT = 2                       ## built-in integer

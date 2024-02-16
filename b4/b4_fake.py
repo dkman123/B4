@@ -328,7 +328,7 @@ class FakeClient(b4.b4_clients.Client):
         self.cid = None
         self.authed = False
         self._pluginData = {}
-        self.state = b4.STATE_UNKNOWN
+        self.state = b4.b4_clients.TEAM_UNKNOWN
     
     def says(self, msg):
         print("\n%s says \"%s\"" % (self.name, msg))
@@ -350,7 +350,7 @@ class FakeClient(b4.b4_clients.Client):
         print("\n%s damages %s for %s points" % (self.name, victim.name, points))
         if self == victim:
             eventkey = 'EVT_CLIENT_DAMAGE_SELF'
-        elif self.team != b4.TEAM_UNKNOWN and self.team == victim.team:
+        elif self.team != b4.b4_clients.TEAM_UNKNOWN and self.team == victim.team:
             eventkey = 'EVT_CLIENT_DAMAGE_TEAM'
         else:
             eventkey = 'EVT_CLIENT_DAMAGE'
@@ -363,7 +363,7 @@ class FakeClient(b4.b4_clients.Client):
         if self == victim:
             self.suicides()
             return
-        elif self.team != b4.TEAM_UNKNOWN and self.team == victim.team:
+        elif self.team != b4.b4_clients.TEAM_UNKNOWN and self.team == victim.team:
             eventkey = 'EVT_CLIENT_KILL_TEAM'
         else:
             eventkey = 'EVT_CLIENT_KILL'

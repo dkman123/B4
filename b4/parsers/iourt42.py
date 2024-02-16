@@ -801,11 +801,11 @@ class Iourt42Parser(Iourt41Parser):
                     setattr(client, 'team', team)
 
                     if 'r' in parseddata:
-                        if team == b4.TEAM_BLUE:
+                        if team == b4.b4_clients.TEAM_BLUE:
                             setattr(client, 'raceblue', parseddata['r'])
-                        elif team == b4.TEAM_RED:
+                        elif team == b4.b4_clients.TEAM_RED:
                             setattr(client, 'racered', parseddata['r'])
-                        elif team == b4.TEAM_FREE:
+                        elif team == b4.b4_clients.TEAM_FREE:
                             setattr(client, 'racefree', parseddata['r'])
 
                     if parseddata.get('f0') is not None \
@@ -813,9 +813,9 @@ class Iourt42Parser(Iourt41Parser):
                         and parseddata.get('f2') is not None:
 
                         data = "%s,%s,%s" % (parseddata['f0'], parseddata['f1'], parseddata['f2'])
-                        if team == b4.TEAM_BLUE:
+                        if team == b4.b4_clients.TEAM_BLUE:
                             setattr(client, 'funblue', data)
-                        elif team == b4.TEAM_RED:
+                        elif team == b4.b4_clients.TEAM_RED:
                             setattr(client, 'funred', data)
 
                 if 'a0' in parseddata and 'a1' in parseddata and 'a2' in parseddata:
@@ -958,7 +958,7 @@ class Iourt42Parser(Iourt41Parser):
             self.debug('No client found')
             return None
 
-        client.state = b4.STATE_ALIVE
+        client.state = b4.b4_clients.STATE_ALIVE
         return self.getEvent('EVT_CLIENT_SPAWN', client=client)
 
     def OnClientmelted(self, action, data, match=None):
@@ -969,7 +969,7 @@ class Iourt42Parser(Iourt41Parser):
             self.debug('No client found')
             return None
 
-        client.state = b4.STATE_ALIVE
+        client.state = b4.b4_clients.STATE_ALIVE
         return self.getEvent('EVT_CLIENT_MELTED', client=client)
 
     def OnSurvivorwinner(self, action, data, match=None):
@@ -1004,7 +1004,7 @@ class Iourt42Parser(Iourt41Parser):
             self.debug('No weapon')
             return None
 
-        victim.state = b4.STATE_DEAD
+        victim.state = b4.b4_clients.STATE_DEAD
         return self.getEvent('EVT_CLIENT_FREEZE', data=weapon, client=attacker, target=victim)
 
     def OnThawoutstarted(self, action, data, match=None):
@@ -1033,7 +1033,7 @@ class Iourt42Parser(Iourt41Parser):
             self.debug('No target')
             return None
 
-        target.state = b4.STATE_ALIVE
+        target.state = b4.b4_clients.STATE_ALIVE
         return self.getEvent('EVT_CLIENT_THAWOUT_FINISHED', client=client, target=target)
 
     ####################################################################################################################

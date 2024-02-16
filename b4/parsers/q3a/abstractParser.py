@@ -398,14 +398,14 @@ class AbstractParser(b4.b4_parser.Parser):
         """
         team = str(team).lower()
         if team == 'free' or team == '0':
-            return b4.TEAM_FREE
+            return b4.b4_clients.TEAM_FREE
         elif team == 'red' or team == '1':
-            return b4.TEAM_RED
+            return b4.b4_clients.TEAM_RED
         elif team == 'blue' or team == '2':
-            return b4.TEAM_BLUE
+            return b4.b4_clients.TEAM_BLUE
         elif team == 'spectator' or team == '3':
-            return b4.TEAM_SPEC
-        return b4.TEAM_UNKNOWN
+            return b4.b4_clients.TEAM_SPEC
+        return b4.b4_clients.TEAM_UNKNOWN
 
     ####################################################################################################################
     #                                                                                                                  #
@@ -461,7 +461,7 @@ class AbstractParser(b4.b4_parser.Parser):
         :param client: The client whose state will regulate the message visibility.
         :param text: The message to be sent.
         """
-        if client and (client.state == b4.STATE_DEAD or client.team == b4.TEAM_SPEC):
+        if client and (client.state == b4.b4_clients.STATE_DEAD or client.team == b4.b4_clients.TEAM_SPEC):
             self.verbose('Say dead state: %s, team %s', client.state, client.team)
             self.sayDead(text)
         else:
@@ -477,7 +477,7 @@ class AbstractParser(b4.b4_parser.Parser):
         message = b4.b4_functions.prefixText([self.msgPrefix, self.deadPrefix], text)
         message = message.strip()
         wrapped = self.getWrap(message)
-        for client in self.clients.getClientsByState(b4.STATE_DEAD):
+        for client in self.clients.getClientsByState(b4.b4_clients.STATE_DEAD):
             if client.cid:                
                 for line in wrapped:
                     lines.append(self.getCommand('message', cid=client.cid, message=line))
@@ -489,7 +489,7 @@ class AbstractParser(b4.b4_parser.Parser):
         :param client: The client to kick
         :param reason: The reason for this kick
         :param admin: The admin who performed the kick
-        :param silent: Whether or not to announce this kick
+        :param silent: Whether to announce this kick
         """
         if isinstance(client, str) and re.match('^[0-9]+$', client):
             self.write(self.getCommand('kick', cid=client, reason=reason))
@@ -579,7 +579,7 @@ class AbstractParser(b4.b4_parser.Parser):
         :param client: The client to unban
         :param reason: The reason for the unban
         :param admin: The admin who unbanned this client
-        :param silent: Whether or not to announce this unban
+        :param silent: Whether to announce this unban
         """
         if self.PunkBuster:
             if client.pbid:
@@ -610,7 +610,7 @@ class AbstractParser(b4.b4_parser.Parser):
         :param reason: The reason for this tempban
         :param duration: The duration of the tempban
         :param admin: The admin who performed the tempban
-        :param silent: Whether or not to announce this tempban
+        :param silent: Whether to announce this tempban
         """
         duration = b4.b4_functions.time2minutes(duration)
         if isinstance(client, b4.b4_clients.Client) and not client.guid:

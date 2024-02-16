@@ -31,6 +31,19 @@ import time
 import traceback
 
 
+# TEAMS
+TEAM_UNKNOWN = -1
+TEAM_FREE = 0
+TEAM_SPEC = 1
+TEAM_RED = 2
+TEAM_BLUE = 3
+
+# PLAYER STATE
+STATE_DEAD = 1
+STATE_ALIVE = 2
+STATE_UNKNOWN = 3
+
+
 class ClientVar(object):
 
     value = None
@@ -97,7 +110,7 @@ class Client(object):
     _password = ''
     _pluginData = None
     _pbid = ''
-    _team = b4.TEAM_UNKNOWN
+    _team = b4.b4_clients.TEAM_UNKNOWN
     _tempLevel = None
     _timeAdd = 0
     _timeEdit = 0
@@ -1037,6 +1050,7 @@ class ClientWarning(Penalty):
 
     warning = property(_get_reason, _set_reason)
 
+
 class ClientNotice(Penalty):
     """
     Represent a Notice.
@@ -1051,17 +1065,20 @@ class ClientNotice(Penalty):
 
     notice = property(_get_reason, _set_reason)
 
+
 class ClientBan(Penalty):
     """
     Represent a Ban.
     """
     type = 'Ban'
 
+
 class ClientTempBan(Penalty):
     """
     Represent a TempBan.
     """
     type = 'TempBan'
+
 
 class ClientKick(Penalty):
     """

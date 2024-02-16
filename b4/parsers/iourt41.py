@@ -557,7 +557,7 @@ class Iourt41Parser(AbstractParser):
                     guid = nguid
 
                 self.clients.newClient(bclient['cid'], name=bclient['name'], ip=bclient['ip'],
-                                       state=b4.STATE_ALIVE, guid=guid, bot=bot, data={'guid': guid})
+                                       state=b4.b4_clients.STATE_ALIVE, guid=guid, bot=bot, data={'guid': guid})
 
         return None
 
@@ -577,9 +577,9 @@ class Iourt41Parser(AbstractParser):
                     setattr(client, 'team', team)
 
                     if 'r' in parseddata:
-                        if team == b4.TEAM_BLUE:
+                        if team == b4.b4_clients.TEAM_BLUE:
                             setattr(client, 'raceblue', parseddata['r'])
-                        elif team == b4.TEAM_RED:
+                        elif team == b4.b4_clients.TEAM_RED:
                             setattr(client, 'racered', parseddata['r'])
 
                     if parseddata.get('f0') is not None \
@@ -587,9 +587,9 @@ class Iourt41Parser(AbstractParser):
                             and parseddata.get('f2') is not None:
 
                         data = "%s,%s,%s" % (parseddata['f0'], parseddata['f1'], parseddata['f2'])
-                        if team == b4.TEAM_BLUE:
+                        if team == b4.b4_clients.TEAM_BLUE:
                             setattr(client, 'funblue', data)
-                        elif team == b4.TEAM_RED:
+                        elif team == b4.b4_clients.TEAM_RED:
                             setattr(client, 'funred', data)
 
                 if 'a0' in parseddata and 'a1' in parseddata and 'a2' in parseddata:
@@ -612,7 +612,7 @@ class Iourt41Parser(AbstractParser):
         event = self.getEventID('EVT_CLIENT_DAMAGE')
         if attacker.cid == victim.cid:
             event = self.getEventID('EVT_CLIENT_DAMAGE_SELF')
-        elif attacker.team != b4.TEAM_UNKNOWN and attacker.team == victim.team:
+        elif attacker.team != b4.b4_clients.TEAM_UNKNOWN and attacker.team == victim.team:
             event = self.getEventID('EVT_CLIENT_DAMAGE_TEAM')
 
         hitloc = match.group('hitloc')
@@ -709,7 +709,7 @@ class Iourt41Parser(AbstractParser):
                 return None
             else:
                 event = self.getEventID('EVT_CLIENT_SUICIDE')
-        elif attacker.team != b4.TEAM_UNKNOWN and attacker.team == victim.team:
+        elif attacker.team != b4.b4_clients.TEAM_UNKNOWN and attacker.team == victim.team:
             event = self.getEventID('EVT_CLIENT_KILL_TEAM')
 
         # if not logging damage we need a general hitloc (for xlrstats)
@@ -719,7 +719,7 @@ class Iourt41Parser(AbstractParser):
         else:
             last_damage_data = (100, weapon, 'body')
 
-        victim.state = b4.STATE_DEAD
+        victim.state = b4.b4_clients.STATE_DEAD
         # self.verbose('OnKill Victim: %s, Attacker: %s, Weapon: %s, Hitloc: %s, dType: %s' %
         #              (victim.name, attacker.name, weapon, victim.hitloc, dType))
         # need to pass some amount of damage for the teamkill plugin - 100 is a kill
@@ -1221,13 +1221,13 @@ class Iourt41Parser(AbstractParser):
 
         team = int(team)
         if team == 1:
-            result = b4.TEAM_RED
+            result = b4.b4_clients.TEAM_RED
         elif team == 2:
-            result = b4.TEAM_BLUE
+            result = b4.b4_clients.TEAM_BLUE
         elif team == 3:
-            result = b4.TEAM_SPEC
+            result = b4.b4_clients.TEAM_SPEC
         else:
-            result = b4.TEAM_UNKNOWN
+            result = b4.b4_clients.TEAM_UNKNOWN
 
         return result
 
@@ -1456,12 +1456,12 @@ class Iourt41Parser(AbstractParser):
         g_blueteamlist = cvars.get('g_blueteamlist')
         if g_blueteamlist:
             for letter in g_blueteamlist:
-                player_teams[letters2slots[letter]] = b4.TEAM_BLUE
+                player_teams[letters2slots[letter]] = b4.b4_clients.TEAM_BLUE
 
         g_redteamlist = cvars.get('g_redteamlist')
         if g_redteamlist:
             for letter in g_redteamlist:
-                player_teams[letters2slots[letter]] = b4.TEAM_RED
+                player_teams[letters2slots[letter]] = b4.b4_clients.TEAM_RED
         return player_teams
 
     def _getDamagePoints(self, weapon, hitloc):

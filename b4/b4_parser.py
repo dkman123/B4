@@ -709,7 +709,7 @@ class Parser(object):
                 self.error('Could not load plugin %s' % p['name'], exc_info=err)
 
         # check for AdminPlugin
-        if not 'admin' in plugins:
+        if 'admin' not in plugins:
             # critical will exit, admin plugin must be loaded!
             self.critical('Plugin admin is essential and MUST be loaded! Cannot continue without admin plugin')
 
