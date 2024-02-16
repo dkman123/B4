@@ -23,13 +23,12 @@
 # ################################################################### #
 
 
-import os       # system os functions
-import platform # like os
-import re       # regular expressions
-import shutil   # high level file utilities
+import os        # system os functions
+import platform  # like os
+import re        # regular expressions
+import shutil    # high level file utilities
 import signal
-#import string
-import sys      # system functions
+import sys       # system functions
 #import time     # time and sleep
 import traceback    # stack traces for exception logging
 import b4.b4_config

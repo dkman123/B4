@@ -74,6 +74,7 @@ class ClientVar(object):
             return 0
         return len(self.value)
 
+
 class Client(object):
 
     ## PVT

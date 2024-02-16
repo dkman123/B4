@@ -25,6 +25,7 @@ __version__ = '1.2'
 
 PROTOCOLS = ('mysql', 'sqlite', 'postgresql')
 
+
 class mapresult(object):
     # initialization function
     def __init__(self, mapname, redscore, bluescore, maptime, lowplayer, highplayer, createddate, id):
