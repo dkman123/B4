@@ -228,7 +228,7 @@ class Client(object):
     # -----------------------
 
     def getBans(self):
-        return self.console.storage.getClientPenalties(self, type=('Ban', 'TempBan'))
+        return self.console.storage.getClientPenalties(self, penType=('Ban', 'TempBan'))
 
     bans = property(getBans)
 
@@ -372,7 +372,7 @@ class Client(object):
     # -----------------------
 
     def getWarnings(self):
-        return self.console.storage.getClientPenalties(self, type='Warning')
+        return self.console.storage.getClientPenalties(self, penType='Warning')
 
     warnings = property(getWarnings)
 

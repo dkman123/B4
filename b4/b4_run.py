@@ -187,7 +187,7 @@ def run(options):
             print(msg)
             input("press any key to continue...")
         raise
-    except:
+    except Exception:
         if sys.stdout != sys.__stdout__:
             sys.stdout = sys.__stdout__
             sys.stderr = sys.__stderr__

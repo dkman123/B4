@@ -80,7 +80,7 @@ class PymysqlStorage(b4.storage.b4_common.DatabaseStorage):
         :return True if the connection is active, False otherwise.
         """
         if self.db and self.db.open:
-           return True
+            return True
         return False
 
 
@@ -254,10 +254,13 @@ class MysqlStorage(b4.storage.b4_common.DatabaseStorage):
         super(MysqlStorage, self).__init__(dsn, dsnDict, console)
         # check for valid MySQL host
         if not self.dsnDict['host']:
-            raise AttributeError("invalid MySQL host in %(protocol)s://%(user)s:******@%(host)s:%(port)s%(path)s" % self.dsnDict)
+            raise AttributeError(
+                "invalid MySQL host in %(protocol)s://%(user)s:******@%(host)s:%(port)s%(path)s" % self.dsnDict)
         # check for valid MySQL database name
         if not self.dsnDict['path'] or not self.dsnDict['path'][1:]:
-            raise AttributeError("missing MySQL database name in %(protocol)s://%(user)s:******@%(host)s:%(port)s%(path)s" % self.dsnDict)
+            raise AttributeError(
+                "missing MySQL database name in %(protocol)s://%(user)s:******@%(host)s:%(port)s%(path)s"
+                % self.dsnDict)
 
     ####################################################################################################################
     #                                                                                                                  #
@@ -280,7 +283,9 @@ class MysqlStorage(b4.storage.b4_common.DatabaseStorage):
         else:
             # close the active connection (if any)
             self.shutdown()
-            self.console.bot('Connecting to MySQL database: %(protocol)s://%(user)s:******@%(host)s:%(port)s%(path)s...', self.dsnDict)
+            self.console.bot(
+                'Connecting to MySQL database: %(protocol)s://%(user)s:******' +
+                '@%(host)s:%(port)s%(path)s...', self.dsnDict)
             # uncomment the following line to show the password
             #self.console.bot('Using pass %(password)s', self.dsnDict)
 
@@ -289,7 +294,6 @@ class MysqlStorage(b4.storage.b4_common.DatabaseStorage):
                 self.db = self.__driver.connect(host=self.dsnDict['host'],
                                                 port=self.dsnDict['port'],
                                                 user=self.dsnDict['user'],
-                                                #passwd=self.dsnDict['password'],
                                                 password=self.dsnDict['password'],
                                                 db=self.dsnDict['path'][1:],
                                                 charset="utf8")
@@ -301,22 +305,25 @@ class MysqlStorage(b4.storage.b4_common.DatabaseStorage):
                     self.console.screen.write('Connecting to DB : OK\n')
                     self._consoleNotice = False
 
-                # check whether the database is ready for usage or if we have to import B4 sql files to generate necessary
-                # tables: if database is empty, then then AdminPlugin will raise an exception upon loading hence B4 won't be
-                # operational. I placed the check here since it doesn't make sense to keep loading plugins if B4 will crash.
+                # check whether the database is ready for usage or if we have to import B4 sql files to generate
+                # necessary tables: if database is empty, then AdminPlugin will raise an exception upon loading
+                # hence B4 won't be operational. I placed the check here since it doesn't make sense to keep
+                # loading plugins if B4 will crash.
                 if not self.getTables():
 
                     try:
-                        self.console.info("Missing MySQL database tables: importing SQL file: %s..." % b4.getAbsolutePath("@b4/sql/mysql/b4.sql"))
+                        self.console.info("Missing MySQL database tables: importing SQL file: %s..."
+                                          % b4.getAbsolutePath("@b4/sql/mysql/b4.sql"))
                         self.queryFromFile("@b4/sql/mysql/b4.sql")
                     except Exception as e:
                         self.shutdown()
-                        self.console.critical("Missing MySQL database tables. You need to create the necessary tables for "
-                                              "B4 to work. You can do so by importing the following SQL script into your "
-                                              "database: %s. An attempt of creating tables automatically just failed: %s" %
-                                              (b4.getAbsolutePath("@b4/sql/mysql/b4.sql"), e))
+                        self.console.critical("Missing MySQL database tables. You need to create the necessary tables "
+                                              "for B4 to work. You can do so by importing the following SQL script "
+                                              "into your database: %s. An attempt of creating tables automatically "
+                                              "just failed: %s" % (b4.getAbsolutePath("@b4/sql/mysql/b4.sql"), e))
             except Exception as e:
-                self.console.error('Database connection failed: working in remote mode: %s - %s', e, extract_tb(sys.exc_info()[2]))
+                self.console.error('Database connection failed: working in remote mode: %s - %s',
+                                   e, extract_tb(sys.exc_info()[2]))
                 self.db = None
                 self._lastConnectAttempt = time()
                 if self._consoleNotice:
@@ -357,12 +364,12 @@ class MysqlStorage(b4.storage.b4_common.DatabaseStorage):
             current_tables = self.getTables()
             if isinstance(table, tuple) or isinstance(table, list):
                 for v in table:
-                    if not v in current_tables:
+                    if v not in current_tables:
                         raise KeyError("could not find table '%s' in the database" % v)
                     self.query("TRUNCATE TABLE %s;" % v)
             else:
-                if not table in current_tables:
-                     raise KeyError("could not find table '%s' in the database" % table)
+                if table not in current_tables:
+                    raise KeyError("could not find table '%s' in the database" % table)
                 self.query("TRUNCATE TABLE %s;" % table)
         finally:
             self.query("""SET FOREIGN_KEY_CHECKS=1;""")

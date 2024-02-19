@@ -118,19 +118,19 @@ class Storage(object):
     def getClientPenalty(self, penalty):
         raise NotImplementedError
     
-    def getClientPenalties(self, client, type='Ban'):
+    def getClientPenalties(self, client, penType='Ban'):
         raise NotImplementedError
     
-    def getClientLastPenalty(self, client, type='Ban'):
+    def getClientLastPenalty(self, client, penType='Ban'):
         raise NotImplementedError
     
-    def getClientFirstPenalty(self, client, type='Ban'):
+    def getClientFirstPenalty(self, client, penType='Ban'):
         raise NotImplementedError
     
-    def disableClientPenalties(self, client, type='Ban'):
+    def disableClientPenalties(self, client, penType='Ban'):
         raise NotImplementedError
     
-    def numPenalties(self, client, type='Ban'):
+    def numPenalties(self, client, penType='Ban'):
         raise NotImplementedError
     
     def getGroups(self):

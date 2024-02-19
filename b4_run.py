@@ -34,11 +34,11 @@ if sys.version_info >= (4,):
 if sys.version_info < (3, 7):
     raise SystemExit("Sorry, cannot continue: B4 is not compatible with python versions earlier than 3.7!")
     
-import b4_run
+import b4.b4_run
 
 
 def main():
-    b4_run.main()
+    b4.b4_run.main()
 
 
 if __name__ == '__main__':

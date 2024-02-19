@@ -94,7 +94,7 @@ class Cursor(object):
         """
         row = self.getRow()
         if key in row:
-           return row[key]
+            return row[key]
         return default
 
     def close(self):
