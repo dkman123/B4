@@ -26,7 +26,7 @@ import b4
 import b4.b4_clients
 import b4.b4_querybuilder
 import b4.storage.b4_cursor
-#import b4.storage.b4_storage
+import b4.storage.b4_storage
 import os
 import re
 import sys

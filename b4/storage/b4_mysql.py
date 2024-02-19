@@ -194,7 +194,7 @@ class MySQLdbStorage(b4.storage.b4_common.DatabaseStorage):
         return False
 
 
-class MysqlStorage(b4.storage.b4_common.DatabaseStorage):
+class MysqlStorage(b4_common.DatabaseStorage):
 
     _reconnectDelay = 60
     protocol = 'mysql'

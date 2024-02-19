@@ -224,6 +224,11 @@ def main():
         b4.b4_functions.console_exit("  *** NOTICE: the console setup procedure is deprecated!\n" \
                                      "  *** Please visit %s to generate a new B4 configuration file.\n" % b4.B4_CONFIG_GENERATOR)
 
+    # add current dir to sys path
+    path = os.path.dirname(os.path.dirname(__file__))
+    sys.path.insert(0, path)
+    print("Exec Path: %s\r\n" % path)
+
     if options.update:
         ## UPDATE => CONSOLE
         run_update(config=options.config)
