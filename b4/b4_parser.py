@@ -55,7 +55,6 @@ from b4.b4_plugin import PluginData
 from collections import OrderedDict
 from configparser import NoOptionError
 from textwrap import TextWrapper
-from threading import Thread
 from traceback import extract_tb
 
 try:
@@ -444,6 +443,7 @@ class Parser(object):
         """
         Return an absolute path name and expand the user prefix (~)
         :param path: the relative path we want to expand
+        :param decode: True to decode bytes, False for string
         """
         return b4.getAbsolutePath(path, decode=decode)
 
@@ -468,7 +468,7 @@ class Parser(object):
         self.bot("All plugins started")
         self.pluginsStarted()
         self.bot("Starting event dispatching thread")
-        Thread(target=self.handleEvents, args=()).start()
+        threading.Thread(target=self.handleEvents, args=()).start()
         self.bot("Start reading game events")
         self.run()
 

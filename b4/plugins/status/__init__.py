@@ -214,12 +214,12 @@ class StatusPlugin(b4.b4_plugin.Plugin):
         self.build_schema()
 
         if self._cronTab:
-            self.console.cron.cancel((self._cronTab))
-            #self.console.cron - self._cronTab
+            #self.console.cron.cancel((self._cronTab))
+            self.console.cron - self._cronTab
 
         self._cronTab = b4.b4_cron.PluginCronTab(self, self.update, '*/%s' % self._interval)
-        self.console.cron.add(self._cronTab)
-        #self.console.cron + self._cronTab
+        #self.console.cron.add(self._cronTab)
+        self.console.cron + self._cronTab
 
     ####################################################################################################################
     #                                                                                                                  #

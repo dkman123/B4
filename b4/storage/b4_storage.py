@@ -18,10 +18,12 @@
 
 import datetime
 # DO NOT REMOVE
-import b4.storage.b4_mysql
+#import b4.storage.b4_mysql
 
 __author__ = 'Courgette'
 __version__ = '1.2'
+
+import b4.storage.b4_mysql
 
 PROTOCOLS = ('mysql', 'sqlite', 'postgresql')
 
@@ -172,5 +174,6 @@ def getStorage(dsn, dsnDict, console):
         raise AttributeError('invalid storage protocol specified: %s: supported storage '
                              'protocols are: %s' % (dsnDict['protocol'], ','.join(PROTOCOLS)))
 
-    construct = globals()['%sStorage' % dsnDict['protocol'].title()]
-    return construct(dsn, dsnDict, console)
+    #construct = globals()['%sStorage' % dsnDict['protocol'].title()]
+    #return construct(dsn, dsnDict, console)
+    return b4.storage.b4_mysql.MysqlStorage(dsn, dsnDict, console)

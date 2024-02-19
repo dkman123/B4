@@ -94,14 +94,14 @@ class BanlistPlugin(b4.b4_plugin.Plugin):
             for banlist in self._banlists:
                 if banlist._cronTab :
                     # remove existing crontab
-                    self.console.cron.cancel(banlist._cronTab)
-                    #self.console.cron - banlist._cronTab
+                    #self.console.cron.cancel(banlist._cronTab)
+                    self.console.cron - banlist._cronTab
         if self._whitelists:
             for whitelist in self._whitelists:
                 if whitelist._cronTab :
                     # remove existing crontab
-                    self.console.cron.cancel(whitelist._cronTab)
-                    #self.console.cron - whitelist._cronTab
+                    #self.console.cron.cancel(whitelist._cronTab)
+                    self.console.cron - whitelist._cronTab
 
     def onLoadConfig(self):
         """
@@ -193,8 +193,8 @@ class BanlistPlugin(b4.b4_plugin.Plugin):
 
         if self._cronTab:
             # remove existing crontab
-            self.console.cron.cancel(self._cronTab)
-            #self.console.cron - self._cronTab
+            #self.console.cron.cancel(self._cronTab)
+            self.console.cron - self._cronTab
 
         # (m, s) = self._get_rate_minsec(self._rate)
         run_minutes = self._store_for_minutes
@@ -202,8 +202,8 @@ class BanlistPlugin(b4.b4_plugin.Plugin):
             run_minutes = 59
         if run_minutes > 0:
             self._cronTab = b4.b4_cron.PluginCronTab(self, self.cmd_banlistcleanup, 0, '*/%s' % run_minutes)
-            self.console.cron.add(self._cronTab)
-            #self.console.cron + self._cronTab
+            #self.console.cron.add(self._cronTab)
+            self.console.cron + self._cronTab
             self.debug("cron set for every %d minutes" % run_minutes)
 
     ####################################################################################################################

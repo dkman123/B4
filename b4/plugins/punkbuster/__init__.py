@@ -101,14 +101,14 @@ class PunkbusterPlugin(b4.b4_plugin.Plugin):
 
         if self._cronTab:
             # remove old crontab
-            self.console.cron.cancel(self._cronTab)
-            #self.console.cron - self._cronTab
+            #self.console.cron.cancel(self._cronTab)
+            self.console.cron - self._cronTab
 
         if self._rebuildBans != '0':
             minute, hour, day, month, dow = self._rebuildBans.split(' ')
             self._cronTab = b4.b4_cron.PluginCronTab(self, self.rebuild_bans, '0', minute, hour, day, month, dow)
-            self.console.cron.add(self._cronTab)
-            #self.console.cron + self._cronTab
+            #self.console.cron.add(self._cronTab)
+            self.console.cron + self._cronTab
 
     ####################################################################################################################
     #                                                                                                                  #

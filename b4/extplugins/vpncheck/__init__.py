@@ -108,8 +108,8 @@ class VpncheckPlugin(b4.b4_plugin.Plugin):
             for whitelist in self._whitelists:
                 if whitelist._cronTab:
                     # remove existing crontab
-                    self.console.cron.cancel(whitelist._cronTab)
-                    #self.console.cron - whitelist._cronTab
+                    #self.console.cron.cancel(whitelist._cronTab)
+                    self.console.cron - whitelist._cronTab
 
     def onLoadConfig(self):
         """

@@ -105,8 +105,8 @@ class FollowPlugin(b4.b4_plugin.Plugin):
         self._onlinePlayers = {}
 
         if self._crontab:
-            self.console.cron.cancel(self._crontab)
-            #self.console.cron - self._crontab
+            #self.console.cron.cancel(self._crontab)
+            self.console.cron - self._crontab
 
         rhour = random.randint(0, 23)
         rmin = random.randint(5, 59)

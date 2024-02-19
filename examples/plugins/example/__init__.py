@@ -235,8 +235,8 @@ class ExamplePlugin(b4_plugin.Plugin):
 
         # create a new plugin crontab and install it into the main cron object (available in self.console.cron)
         self.crontab = b4_cron.PluginCronTab(self, self.scheduled_refill, '*/%s' % self.refill_interval)
-        self.crontab.cron.cancel(self.crontab)
-        #self.console.cron + self.crontab
+        #self.crontab.cron.cancel(self.crontab)
+        self.console.cron + self.crontab
 
     ####################################################################################################################
     #                                                                                                                  #

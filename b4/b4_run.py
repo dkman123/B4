@@ -68,10 +68,10 @@ def run_autorestart(args=None):
 
         try:
 
-            try:
-                import subprocess32 as subprocess
-            except ImportError:
-                import subprocess
+            #try:
+            #    import subprocess32 as subprocess
+            #except ImportError:
+            import subprocess
 
             status = subprocess.call(script, shell=True)
 

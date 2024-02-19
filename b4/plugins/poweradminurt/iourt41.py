@@ -476,16 +476,16 @@ class Poweradminurt41Plugin(b4.b4_plugin.Plugin):
         """
         if self._ncronTab:
             # remove existing crontab
-            self.console.cron.cancel(self._ncronTab)
-            #self.console.cron - self._ncronTab
+            #self.console.cron.cancel(self._ncronTab)
+            self.console.cron - self._ncronTab
         if self._tcronTab:
             # remove existing crontab
-            self.console.cron.cancel(self._tcronTab)
-            #self.console.cron - self._tcronTab
+            #self.console.cron.cancel(self._tcronTab)
+            self.console.cron - self._tcronTab
         if self._scronTab:
             # remove existing crontab
-            self.console.cron.cancel(self._scronTab)
-            #self.console.cron - self._scronTab
+            #self.console.cron.cancel(self._scronTab)
+            self.console.cron - self._scronTab
         if self._skcronTab:
             # remove existing crontab
             self.console.cron.cancel(self._skcronTab)

@@ -371,8 +371,8 @@ class TkPlugin(b4.b4_plugin.Plugin):
                 (event.type == self.console.getEventID('EVT_GAME_ROUND_END') and self._use_round_end):
             if self._cronTab_tkhalflife:
                 # remove existing crontab
-                self.console.cron.cancel(self._cronTab_tkhalflife)
-                #self.console.cron - self._cronTab_tkhalflife
+                #self.console.cron.cancel(self._cronTab_tkhalflife)
+                self.console.cron - self._cronTab_tkhalflife
             self.halveTKPoints('map end: cutting all teamkill points in half')
             return
 
@@ -380,12 +380,12 @@ class TkPlugin(b4.b4_plugin.Plugin):
             if self._tkpointsHalflife > 0:
                 if self._cronTab_tkhalflife:
                     # remove existing crontab
-                    self.console.cron.cancel(self._cronTab_tkhalflife)
-                    #self.console.cron - self._cronTab_tkhalflife
+                    #self.console.cron.cancel(self._cronTab_tkhalflife)
+                    self.console.cron - self._cronTab_tkhalflife
                 (m, s) = self.crontab_time()
                 self._cronTab_tkhalflife = b4.b4_cron.OneTimeCronTab(self.halveTKPoints, second=s, minute=m)
-                self.console.cron.add(self._cronTab_tkhalflife)
-                #self.console.cron + self._cronTab_tkhalflife
+                #self.console.cron.add(self._cronTab_tkhalflife)
+                self.console.cron + self._cronTab_tkhalflife
                 self.debug('TK crontab started')
 
             return
@@ -468,12 +468,12 @@ class TkPlugin(b4.b4_plugin.Plugin):
         if self._tkpointsHalflife > 0: 
             if self._cronTab_tkhalflife:
                 # remove existing crontab
-                self.console.cron.cancel(self._cronTab_tkhalflife)
-                #self.console.cron - self._cronTab_tkhalflife
+                #self.console.cron.cancel(self._cronTab_tkhalflife)
+                self.console.cron - self._cronTab_tkhalflife
             (m, s) = self.crontab_time()
             self._cronTab_tkhalflife = b4.b4_cron.OneTimeCronTab(self.halveTKPoints, second=s, minute=m)
-            self.console.cron.add(self._cronTab_tkhalflife)
-            #self.console.cron + self._cronTab_tkhalflife
+            #self.console.cron.add(self._cronTab_tkhalflife)
+            self.console.cron + self._cronTab_tkhalflife
             #self.console.say('TK Crontab re-started')
             self.debug('TK crontab re-started')
             
