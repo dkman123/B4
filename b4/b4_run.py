@@ -227,7 +227,7 @@ def main():
     # add current dir to sys path
     path = os.path.dirname(os.path.dirname(__file__))
     sys.path.insert(0, path)
-    print("Exec Path: %s\r\n" % path)
+    #sys.stdout.write("Exec Path: %s\n" % path)
 
     if options.update:
         ## UPDATE => CONSOLE

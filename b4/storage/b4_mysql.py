@@ -29,10 +29,12 @@ import sys
 from time import time
 from traceback import extract_tb
 
+
 class PymysqlStorage(b4.storage.b4_common.DatabaseStorage):
     """
     Base inheritance class for MysqlStorage when using pymysql driver.
     """
+
     def __init__(self, dsn, dsnDict, console):
         """
         Object constructor.
@@ -88,6 +90,7 @@ class MysqlConnectorStorage(b4.storage.b4_common.DatabaseStorage):
     """
     Base inheritance class for MysqlStorage when using mysql.connector driver.
     """
+
     def __init__(self, dsn, dsnDict, console):
         """
         Object constructor.
@@ -143,6 +146,7 @@ class MySQLdbStorage(b4.storage.b4_common.DatabaseStorage):
     """
     Base inheritance class for MysqlStorage when using MySQLdb driver.
     """
+
     def __init__(self, dsn, dsnDict, console):
         """
         Object constructor.
@@ -190,12 +194,11 @@ class MySQLdbStorage(b4.storage.b4_common.DatabaseStorage):
         :return True if the connection is active, False otherwise.
         """
         if self.db and self.db.open:
-           return True
+            return True
         return False
 
 
-class MysqlStorage(b4_common.DatabaseStorage):
-
+class MysqlStorage(b4.storage.b4_common.DatabaseStorage):
     _reconnectDelay = 60
     protocol = 'mysql'
 
@@ -205,10 +208,10 @@ class MysqlStorage(b4_common.DatabaseStorage):
         :raise ImportError: If the system misses the necessary libraries needed to setup the storage module.
         """
         try:
-            #fil = open("/home/urt/test.txt", "w")
+            # fil = open("/home/urt/test.txt", "w")
 
             # PREFER PYMYSQL
-            #fil.write("trying pymysql driver");
+            # fil.write("trying pymysql driver");
             import pymysql as mysqldriver
             cls.__bases__ = (PymysqlStorage,)
             cls.__driver = mysqldriver
@@ -217,7 +220,7 @@ class MysqlStorage(b4_common.DatabaseStorage):
 
             try:
                 # BACKUP USING MYSQL.CONNECTOR
-                #fil.write("trying mysql.connector driver");
+                # fil.write("trying mysql.connector driver");
                 import b4_mysql.connector as mysqldriver
                 cls.__bases__ = (MysqlConnectorStorage,)
                 cls.__driver = mysqldriver
@@ -226,7 +229,7 @@ class MysqlStorage(b4_common.DatabaseStorage):
 
                 try:
                     # USE MYSQLDB AS LAST OPTION
-                    #fil.write("trying MySQLdb driver");
+                    # fil.write("trying MySQLdb driver");
                     import MySQLdb as mysqldriver
                     cls.__bases__ = (MySQLdbStorage,)
                     cls.__driver = mysqldriver
@@ -239,7 +242,7 @@ class MysqlStorage(b4_common.DatabaseStorage):
                                       "connectors: 'pymysql', 'python-mysql.connector', 'MySQL-python': look for "
                                       "'dependencies' in B4 documentation.")
 
-        #fil.close()
+        # fil.close()
         return super(MysqlStorage, cls).__new__(cls)
 
     def __init__(self, dsn, dsnDict, console):
@@ -287,9 +290,13 @@ class MysqlStorage(b4_common.DatabaseStorage):
                 'Connecting to MySQL database: %(protocol)s://%(user)s:******' +
                 '@%(host)s:%(port)s%(path)s...', self.dsnDict)
             # uncomment the following line to show the password
-            #self.console.bot('Using pass %(password)s', self.dsnDict)
+            # self.console.bot('Using pass %(password)s', self.dsnDict)
 
             try:
+                sys.stdout.write(" Host: %s\n Port: %s\n User: %s\n  Pass: %s\n  DB: %s\n " %
+                                 (self.dsnDict['host'], self.dsnDict['port'],
+                                  self.dsnDict['user'], self.dsnDict['password'],
+                                  self.dsnDict['path'][1:]))
                 # create the connection instance using the specified connector
                 self.db = self.__driver.connect(host=self.dsnDict['host'],
                                                 port=self.dsnDict['port'],

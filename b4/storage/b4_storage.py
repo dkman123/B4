@@ -19,7 +19,7 @@
 import datetime
 # DO NOT REMOVE
 import b4
-#import b4.storage.b4_mysql
+import b4.storage.b4_mysql
 
 __author__ = 'Courgette'
 __version__ = '1.2'
