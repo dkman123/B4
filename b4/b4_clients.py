@@ -154,6 +154,7 @@ class Client(object):
         :param key: The key associated to the value.
         :return True if there is a value, False otherwise
         """
+        self.console.info("b4_clients.Client.isvar")
         try:
             d = self._pluginData[id(plugin)][key]
             return True
@@ -168,6 +169,7 @@ class Client(object):
         :param value: The value of this variable.
         :return The stored variable.
         """
+        self.console.info("b4_clients.Client.setvar")
         try:
             self._pluginData[id(plugin)]
         except Exception:
@@ -188,17 +190,20 @@ class Client(object):
         :param default: A default value to be returned if the variable is not stored.
         :return The variable saved under the plugin/key combination or default if it doesn't exists.
         """
+        self.console.info("b4_clients.Client.var")
         try:
             return self._pluginData[id(plugin)][key]
         except Exception:
             return self.setvar(plugin, key, default)
 
     def varlist(self, plugin, key, default=None):
+        self.console.info("b4_clients.Client.varList")
         if not default:
             default = []
         return self.var(plugin, key, default)
 
     def vardict(self, plugin, key, default=None):
+        self.console.info("b4_clients.Client.vardict")
         if not default:
             default = {}
         return self.var(plugin, key, default)
@@ -209,6 +214,7 @@ class Client(object):
         :param plugin: The plugin that stored the variable.
         :param key: The key of the variable.
         """
+        self.console.info("b4_clients.Client.delvar")
         try:
             del self._pluginData[id(plugin)][key]
         except Exception:
@@ -221,6 +227,7 @@ class Client(object):
     ####################################################################################################################
 
     def getAliases(self):
+        self.console.info("b4_clients.Client.getAliases")
         return self.console.storage.getClientAliases(self)
 
     aliases = property(getAliases)
@@ -228,6 +235,7 @@ class Client(object):
     # -----------------------
 
     def getBans(self):
+        self.console.debug("b4_clients.Client.getBans")
         return self.console.storage.getClientPenalties(self, penType=('Ban', 'TempBan'))
 
     bans = property(getBans)
@@ -235,10 +243,12 @@ class Client(object):
     # -----------------------
 
     def _set_data(self, data):
+        self.console.debug("b4_clients.Client._set_data")
         for k, v in data.iteritems():
             self._data[k] = v
 
     def _get_data(self):
+        self.console.debug("b4_clients.Client._get_data")
         return self._data
 
     data = property(_get_data, _set_data)
@@ -246,6 +256,7 @@ class Client(object):
     # -----------------------
 
     def _get_firstWarn(self):
+        self.console.debug("b4_clients.Client._get_firstWarn")
         if not self.id:
             return None
         return self.console.storage.getClientFirstPenalty(self, 'Warning')
@@ -255,6 +266,7 @@ class Client(object):
     # -----------------------
 
     def getGroups(self):
+        self.console.debug("b4_clients.Client.getGroups")
         if not self._groups:
             self._groups = []
             groups = self.console.storage.getGroups()
@@ -273,6 +285,7 @@ class Client(object):
     # -----------------------
 
     def getIpAddresses(self):
+        self.console.debug("b4_clients.Client.getIpAddresses")
         return self.console.storage.getClientIpAddresses(self)
 
     ip_addresses = property(getIpAddresses)
@@ -280,9 +293,11 @@ class Client(object):
     # -----------------------
 
     def _get_last_visit(self):
+        self.console.debug("b4_clients.Client._get_last_visit")
         return self._lastVisit
 
     def _set_last_visit(self, lastVisit):
+        self.console.debug("b4_clients.Client._set_last_visit")
         self._lastVisit = lastVisit
 
     lastVisit = property(_get_last_visit, _set_last_visit)
@@ -290,6 +305,7 @@ class Client(object):
     # -----------------------
 
     def _get_lastBan(self):
+        self.console.debug("b4_clients.Client._get_lastBan")
         if not self.id:
             return None
         return self.console.storage.getClientLastPenalty(self, ('Ban', 'TempBan'))
@@ -299,6 +315,7 @@ class Client(object):
     # -----------------------
 
     def _get_lastWarn(self):
+        self.console.debug("b4_clients.Client._get_lastWarn")
         if not self.id:
             return None
         return self.console.storage.getClientLastPenalty(self, 'Warning')
@@ -308,6 +325,7 @@ class Client(object):
     # -----------------------
 
     def _get_maxLevel(self):
+        self.console.debug("b4_clients.Client._get_maxLevel")
         if self._maxLevel is None:
             if self.groups and len(self.groups):
                 m = -1
@@ -330,6 +348,7 @@ class Client(object):
     # -----------------------
 
     def _get_maxGroup(self):
+        self.console.debug("b4_clients.Client._get_maxGroup")
         self._get_maxLevel()
         return self._maxGroup
 
@@ -338,6 +357,7 @@ class Client(object):
     # -----------------------
 
     def _get_numBans(self):
+        self.console.debug("b4_clients.Client._get_numBans")
         if not self.id:
             return 0
         return self.console.storage.numPenalties(self, ('Ban', 'TempBan'))
@@ -347,6 +367,7 @@ class Client(object):
     # -----------------------
 
     def _get_numWarns(self):
+        self.console.debug("b4_clients.Client._get_numWarns")
         if not self.id:
             return 0
         return self.console.storage.numPenalties(self, 'Warning')
@@ -356,6 +377,7 @@ class Client(object):
     # -----------------------
 
     def _set_team(self, team):
+        self.console.debug("b4_clients.Client._set_team")
         if self._team != team:
             previous_team = self.team
             self._team = team
@@ -365,6 +387,7 @@ class Client(object):
                                                                                           'new': self.team}, self))
 
     def _get_team(self):
+        self.console.debug("b4_clients.Client._get_team")
         return self._team
 
     team = property(_get_team, _set_team)
@@ -372,6 +395,7 @@ class Client(object):
     # -----------------------
 
     def getWarnings(self):
+        self.console.debug("b4_clients.Client.getWarnings")
         return self.console.storage.getClientPenalties(self, penType='Warning')
 
     warnings = property(getWarnings)
@@ -379,6 +403,7 @@ class Client(object):
     # -----------------------
 
     def getattr(self, name, default=None):
+        self.console.debug("b4_clients.Client.getattr")
         return getattr(self, name, default)
 
     ####################################################################################################################
@@ -388,9 +413,11 @@ class Client(object):
     ####################################################################################################################
 
     def _set_auto_login(self, autoLogin):
+        self.console.debug("b4_clients.Client._set_auto_login")
         self._autoLogin = autoLogin
 
     def _get_auto_login(self):
+        self.console.debug("b4_clients.Client._get_auto_login")
         return self._autoLogin
 
     autoLogin = property(_get_auto_login, _set_auto_login)
@@ -399,9 +426,11 @@ class Client(object):
 
     _connections = 0
     def _set_connections(self, v):
+        self.console.debug("b4_clients.Client._set_connections")
         self._connections = int(v)
 
     def _get_connections(self):
+        self.console.debug("b4_clients.Client._get_connections")
         return self._connections
 
     connections = property(_get_connections, _set_connections)
@@ -409,9 +438,11 @@ class Client(object):
     # -----------------------
 
     def _set_greeting(self, greeting):
+        self.console.debug("b4_clients.Client._set_greeting")
         self._greeting = greeting
 
     def _get_greeting(self):
+        self.console.debug("b4_clients.Client._get_greeting")
         return self._greeting
 
     greeting = property(_get_greeting, _set_greeting)
@@ -419,29 +450,36 @@ class Client(object):
     # -----------------------
 
     def _set_groupBits(self, bits):
+        self.console.debug("b4_clients.Client._set_groupBits")
         self._groupBits = int(bits)
         self.refreshLevel()
 
     def _get_groupBits(self):
+        self.console.debug("b4_clients.Client._get_groupBits")
         return self._groupBits
 
     groupBits = property(_get_groupBits, _set_groupBits)
 
     def addGroup(self, group):
+        self.console.debug("b4_clients.Client.addGroup")
         self.groupBits = self.groupBits | group.id
 
     def setGroup(self, group):
+        self.console.debug("b4_clients.Client.setGroup")
         self.groupBits = group.id
 
     def remGroup(self, group):
+        self.console.debug("b4_clients.Client.remGroup")
         self.groupBits = self.groupBits ^ group.id
 
     def inGroup(self, group):
+        self.console.debug("b4_clients.Client.inGroup")
         return self.groupBits & group.id
 
     # -----------------------
 
     def _set_guid(self, guid):
+        self.console.debug("b4_clients.Client._set_guid")
         if guid and len(guid) > 2:
             if self._guid and self._guid != guid:
                 self.console.error('Client has guid but its not the same %s <> %s', self._guid, guid)
@@ -453,6 +491,7 @@ class Client(object):
             self._guid = ''
 
     def _get_guid(self):
+        self.console.debug("b4_clients.Client._get_guid")
         return self._guid
 
     guid = property(_get_guid, _set_guid)
@@ -460,12 +499,14 @@ class Client(object):
     # -----------------------
 
     def _set_id(self, v):
+        self.console.debug("b4_clients.Client._set_id")
         if not v:
             self._id = 0
         else:
             self._id = int(v)
 
     def _get_id(self):
+        self.console.debug("b4_clients.Client._get_id")
         return self._id
 
     id = property(_get_id, _set_id)
@@ -473,6 +514,7 @@ class Client(object):
     # -----------------------
 
     def _set_ip(self, ip):
+        self.console.debug("b4_clients.Client._set_ip")
         if ':' in ip:
             ip = ip[0:ip.find(':')]
         if self._ip != ip:
@@ -480,6 +522,7 @@ class Client(object):
         self._ip = ip
 
     def _get_ip(self):
+        self.console.debug("b4_clients.Client._get_ip")
         return self._ip
 
     ip = property(_get_ip, _set_ip)
@@ -487,9 +530,11 @@ class Client(object):
     # -----------------------
 
     def _set_login(self, login):
+        self.console.debug("b4_clients.Client._set_login")
         self._login = login
 
     def _get_login(self):
+        self.console.debug("b4_clients.Client._get_login")
         return self._login
 
     login = property(_get_login, _set_login)
@@ -497,10 +542,12 @@ class Client(object):
     # -----------------------
 
     def _set_maskGroup(self, g):
+        self.console.debug("b4_clients.Client._set_maskGroup")
         self.maskLevel = g.level
         self._maskGroup = None
 
     def _get_maskGroup(self):
+        self.console.debug("b4_clients.Client._get_maskGroup")
         if not self.maskLevel:
             return None
         elif not self._maskGroup:
@@ -519,6 +566,7 @@ class Client(object):
     # -----------------------
 
     def _get_maskedGroup(self):
+        self.console.debug("b4_clients.Client._get_maskedGroup")
         group = self.maskGroup
         return group if group else self.maxGroup
 
@@ -527,10 +575,12 @@ class Client(object):
     # -----------------------
 
     def _set_maskLevel(self, v):
+        self.console.debug("b4_clients.Client._set_maskLevel")
         self._maskLevel = int(v)
         self._maskGroup = None
 
     def _get_maskLevel(self):
+        self.console.debug("b4_clients.Client._get_maskLevel")
         return self._maskLevel
 
     maskLevel = property(_get_maskLevel, _set_maskLevel)
@@ -538,6 +588,7 @@ class Client(object):
     # -----------------------
 
     def _get_maskedLevel(self):
+        self.console.debug("b4_clients.Client._get_maskedLevel")
         group = self.maskedGroup
         if group:
             return group.level
@@ -549,6 +600,7 @@ class Client(object):
     # -----------------------
 
     def _set_name(self, name):
+        self.console.debug("b4_clients.Client._set_name")
         if self.console:
             newName = self.console.stripColors(name)
         else:
@@ -571,9 +623,11 @@ class Client(object):
             self.console.queueEvent(self.console.getEvent('EVT_CLIENT_NAME_CHANGE', self.name, self))
 
     def _get_name(self):
+        self.console.debug("b4_clients.Client._get_name")
         return self._name
 
     def _get_exactName(self):
+        self.console.debug("b4_clients.Client._get_exactName")
         return self._exactName
 
     name = property(_get_name, _set_name)               # cleaned
@@ -582,9 +636,11 @@ class Client(object):
     # -----------------------
 
     def _set_password(self, password):
+        self.console.debug("b4_clients.Client._set_password")
         self._password = password
 
     def _get_password(self):
+        self.console.debug("b4_clients.Client._get_password")
         return self._password
 
     password = property(_get_password, _set_password)
@@ -592,9 +648,11 @@ class Client(object):
     # -----------------------
 
     def _set_pbid(self, pbid):
+        self.console.debug("b4_clients.Client._set_pbid")
         self._pbid = pbid
 
     def _get_pbid(self):
+        self.console.debug("b4_clients.Client._get_pbid")
         return self._pbid
 
     pbid = property(_get_pbid, _set_pbid)
@@ -602,9 +660,11 @@ class Client(object):
     # -----------------------
 
     def _set_timeAdd(self, timeAdd):
+        self.console.debug("b4_clients.Client._set_timeAdd")
         self._timeAdd = int(timeAdd)
 
     def _get_timeAdd(self):
+        self.console.debug("b4_clients.Client._get_timeAdd")
         return self._timeAdd
 
     timeAdd = property(_get_timeAdd, _set_timeAdd)
@@ -612,9 +672,11 @@ class Client(object):
     # -----------------------
 
     def _set_timeEdit(self, timeEdit):
+        self.console.debug("b4_clients.Client._set_timeEdit")
         self._timeEdit = int(timeEdit)
 
     def _get_timeEdit(self):
+        self.console.debug("b4_clients.Client._get_timeEdit")
         return self._timeEdit
 
     timeEdit = property(_get_timeEdit, _set_timeEdit)
@@ -629,6 +691,7 @@ class Client(object):
         """
         Refresh the client level.
         """
+        self.console.debug("b4_clients.Client.refreshLevel")
         self._maxLevel = None
         self._groups = None
 
@@ -636,6 +699,7 @@ class Client(object):
         """
         Disconnect the client.
         """
+        self.console.debug("b4_clients.Client.disconnect")
         self.console.clients.disconnect(self)
 
     def kick(self, reason='', keyword=None, admin=None, silent=False, data='', *kwargs):
@@ -644,9 +708,10 @@ class Client(object):
         :param reason: The reason for this kick
         :param keyword: The keyword specified before the reason
         :param admin: The admin who performed the kick
-        :param silent: Whether or not to announce this kick
+        :param silent: Whether to announce this kick
         :param data: Extra data to add to the penalty
         """
+        self.console.debug("b4_clients.Client.kick")
         self.console.kick(self, reason, admin, silent)
 
         if self.id:
@@ -673,6 +738,7 @@ class Client(object):
         :param silent: Whether to announce this ban or not
         :param data: Extra data to add to the penalty
         """
+        self.console.debug("b4_clients.Client.ban")
         self.console.ban(self, reason, admin, silent)
 
         if self.id:
@@ -694,6 +760,7 @@ class Client(object):
         """
         Re-apply a ban penalty on this client.
         """
+        self.console.debug("b4_clients.Client.reBan")
         if ban.timeExpire == -1:
             self.console.ban(self, ban.reason, None, True)
         elif ban.timeExpire > self.console.time():
@@ -706,6 +773,7 @@ class Client(object):
         :param admin: The admin who unbanned this client
         :param silent: Whether to announce this unban
         """
+        self.console.debug("b4_clients.Client.unban")
         self.console.unban(self, reason, admin, silent)
         for ban in self.bans:
             ban.inactive = 1
@@ -721,6 +789,7 @@ class Client(object):
         :param silent: Whether to announce this tempban
         :param data: Extra data to add to the penalty
         """
+        self.console.debug("b4_clients.Client.tempban")
         duration = b4.b4_functions.time2minutes(duration)
         self.console.tempban(self, reason, duration, admin, silent)
 
@@ -748,6 +817,7 @@ class Client(object):
         :param msg: the message to send
         :param args: substitution arguments (if any).
         """
+        self.console.debug("b4_clients.Client.message")
         self.console.message(self, msg, *args)
 
     def warn(self, duration, warning, keyword=None, admin=None, data=''):
@@ -759,6 +829,7 @@ class Client(object):
         :param admin: The admin who performed the ban
         :param data: Extra data to add to the penalty
         """
+        self.console.debug("b4_clients.Client.warn")
         if self.id:
             duration = b4.b4_functions.time2minutes(duration)
             warn = ClientWarning()
@@ -794,6 +865,7 @@ class Client(object):
         :param spare: Wtf is this one?!?!?
         :param admin: The admin who added the notice
         """
+        self.console.debug("b4_clients.Client.notice")
         if self.id:
             notice_object = ClientNotice()
 
@@ -821,6 +893,7 @@ class Client(object):
         Create a new alias for this client.
         :param name: The alias string
         """
+        self.console.debug("b4_clients.Client.makeAlias")
         if not self.id or not name:
             return
 
@@ -845,6 +918,7 @@ class Client(object):
         Create a new ip alias for this client.
         :param ip: The ip string
         """
+        self.console.debug("b4_clients.Client.makeIpAlias")
         if not self.id or not ip:
             return
 
@@ -868,6 +942,7 @@ class Client(object):
         """
         Save the current client in the storage.
         """
+        self.console.debug("b4_clients.Client.save")
         self.timeEdit = time.time()
         if self.guid is None or str(self.guid) == '0':
             # can't save a client without a guid
@@ -885,6 +960,7 @@ class Client(object):
         """
         Authorize this client.
         """
+        self.console.debug("b4_clients.Client.auth")
         if not self.authed and self.guid and not self.authorizing:
             self.authorizing = True
 
@@ -949,12 +1025,14 @@ class Struct(object):
             setattr(self, k, v)
 
     def _set_id(self, v):
+        #self.console.debug("b4_clients.Struct.xxxxx")
         if not v:
             self._id = 0
         else:
             self._id = int(v)
 
     def _get_id(self):
+        #self.console.debug("b4_clients.Struct.xxxxx")
         return self._id
 
     id = property(_get_id, _set_id)
@@ -978,49 +1056,61 @@ class Penalty(Struct):
     _duration = 0
 
     def _set_admin_id(self, v):
+        #self.console.debug("b4_clients.Penalty.xxxxx")
         self._adminId = v
 
     def _get_admin_id(self):
+        #self.console.debug("b4_clients.Penalty.xxxxx")
         return self._adminId
 
     adminId = property(_get_admin_id, _set_admin_id)
 
     def _set_client_id(self, v):
+        #self.console.debug("b4_clients.Penalty.xxxxx")
         self._clientId = v
 
     def _get_client_id(self):
+        #self.console.debug("b4_clients.Penalty.xxxxx")
         return self._clientId
 
     clientId = property(_get_client_id, _set_client_id)
 
     def _set_duration(self, v):
+        #self.console.debug("b4_clients.Penalty.xxxxx")
         self._duration = b4.b4_functions.time2minutes(v)
 
     def _get_duration(self):
+        #self.console.debug("b4_clients.Penalty.xxxxx")
         return self._duration
 
     duration = property(_get_duration, _set_duration)
 
     def _set_timeAdd(self, v):
+        #self.console.debug("b4_clients.Penalty.xxxxx")
         self._timeAdd = int(v)
 
     def _get_timeAdd(self):
+        #self.console.debug("b4_clients.Penalty.xxxxx")
         return self._timeAdd
 
     timeAdd = property(_get_timeAdd, _set_timeAdd)
 
     def _set_timeEdit(self, v):
+        #self.console.debug("b4_clients.Penalty.xxxxx")
         self._timeEdit = int(v)
 
     def _get_timeEdit(self):
+        #self.console.debug("b4_clients.Penalty.xxxxx")
         return self._timeEdit
 
     timeEdit = property(_get_timeEdit, _set_timeEdit)
 
     def _set_timeExpire(self, v):
+        #self.console.debug("b4_clients.Penalty._set_timeExpire")
         self._timeExpire = int(v)
 
     def _get_timeExpire(self):
+        #self.console.debug("b4_clients.Penalty._get_timeExpire")
         return self._timeExpire
 
     timeExpire = property(_get_timeExpire, _set_timeExpire)
@@ -1030,6 +1120,7 @@ class Penalty(Struct):
         Save the penalty in the storage.
         :param console: The console instance
         """
+        #self.console.debug("b4_clients.Penalty.save")
         self.timeEdit = console.time()
         if not self.id:
             self.timeAdd = console.time()
@@ -1043,9 +1134,11 @@ class ClientWarning(Penalty):
     type = 'Warning'
 
     def _get_reason(self):
+        #self.console.debug("b4_clients.ClientWarning._get_reason")
         return self.reason
 
     def _set_reason(self, v):
+        #self.console.debug("b4_clients.ClientWarning._get_reason")
         self.reason = v
 
     warning = property(_get_reason, _set_reason)
@@ -1058,9 +1151,11 @@ class ClientNotice(Penalty):
     type = 'Notice'
 
     def _get_reason(self):
+        #self.console.debug("b4_clients.ClientNotice._get_reason")
         return self.reason
 
     def _set_reason(self, v):
+        #self.console.debug("b4_clients.ClientNotice._set_reason")
         self.reason = v
 
     notice = property(_get_reason, _set_reason)
@@ -1098,41 +1193,51 @@ class Alias(Struct):
     _timeEdit = 0
 
     def _set_alias(self, v):
+        #self.console.debug("b4_clients.Alias.xxxxx")
         self._alias = v
 
     def _get_alias(self):
+        #self.console.debug("b4_clients.Alias.xxxxx")
         return self._alias
 
     alias = property(_get_alias, _set_alias)
 
     def _set_client_id(self, v):
+        #self.console.debug("b4_clients.Alias.xxxxx")
         self._clientId = v
 
     def _get_client_id(self):
+        #self.console.debug("b4_clients.Alias.xxxxx")
         return self._clientId
 
     clientId = property(_get_client_id, _set_client_id)
 
     def _set_num_used(self, v):
+        #self.console.debug("b4_clients.Alias.xxxxx")
         self._numUsed = v
 
     def _get_num_used(self):
+        #self.console.debug("b4_clients.Alias.xxxxx")
         return self._numUsed
 
     numUsed = property(_get_num_used, _set_num_used)
 
     def _set_time_add(self, v):
+        #self.console.debug("b4_clients.Alias.xxxxx")
         self._timeAdd = int(v)
 
     def _get_time_add(self):
+        #self.console.debug("b4_clients.Alias.xxxxx")
         return self._timeAdd
 
     timeAdd = property(_get_time_add, _set_time_add)
 
     def _set_time_edit(self, v):
+        #self.console.debug("b4_clients.Alias.xxxxx")
         self._timeEdit = int(v)
 
     def _get_time_edit(self):
+        #self.console.debug("b4_clients.Alias.xxxxx")
         return self._timeEdit
 
     timeEdit = property(_get_time_edit, _set_time_edit)
@@ -1142,6 +1247,7 @@ class Alias(Struct):
         Save the alias in the storage.
         :param console: The console instance.
         """
+        console.info("b4_clients.Alias.xxxxx")
         self.timeEdit = console.time()
         if not self.id:
             self.timeAdd = console.time()
@@ -1162,41 +1268,51 @@ class IpAlias(Struct):
     _timeEdit = 0
 
     def _set_ip(self, v):
+        #self.console.debug("b4_clients.IpAlias.xxxxx")
         self._ip = v
 
     def _get_ip(self):
+        #self.console.debug("b4_clients.IpAlias.xxxxx")
         return self._ip
 
     ip = property(_get_ip, _set_ip)
 
     def _set_client_id(self, v):
+        #self.console.debug("b4_clients.IpAlias.xxxxx")
         self._clientId = v
 
     def _get_client_id(self):
+        #self.console.debug("b4_clients.IpAlias.xxxxx")
         return self._clientId
 
     clientId = property(_get_client_id, _set_client_id)
 
     def _set_num_used(self, v):
+        #self.console.debug("b4_clients.IpAlias.xxxxx")
         self._numUsed = v
 
     def _get_num_used(self):
+        #self.console.debug("b4_clients.IpAlias.xxxxx")
         return self._numUsed
 
     numUsed = property(_get_num_used, _set_num_used)
 
     def _set_time_add(self, v):
+        #self.console.debug("b4_clients.IpAlias.xxxxx")
         self._timeAdd = int(v)
 
     def _get_time_add(self):
+        #self.console.debug("b4_clients.IpAlias.xxxxx")
         return self._timeAdd
 
     timeAdd = property(_get_time_add, _set_time_add)
 
     def _set_time_edit(self, v):
+        #self.console.debug("b4_clients.IpAlias.xxxxx")
         self._timeEdit = int(v)
 
     def _get_time_edit(self):
+        #self.console.debug("b4_clients.IpAlias.xxxxx")
         return self._timeEdit
 
     timeEdit = property(_get_time_edit, _set_time_edit)
@@ -1206,6 +1322,7 @@ class IpAlias(Struct):
         Save the ip alias in the storage.
         :param console: The console implementation
         """
+        console.info("b4_clients.IpAlias.save")
         self.timeEdit = console.time()
         if not self.id:
             self.timeAdd = console.time()
@@ -1226,41 +1343,51 @@ class Group(Struct):
     _timeEdit = 0
 
     def _set_name(self, v):
+        #self.console.debug("b4_clients.Group.xxxxx")
         self._name = v
 
     def _get_name(self):
+        #self.console.debug("b4_clients.Group.xxxxx")
         return self._name
 
     name = property(_get_name, _set_name)
 
     def _set_keyword(self, v):
+        #self.console.debug("b4_clients.Group.xxxxx")
         self._keyword = v
 
     def _get_keyword(self):
+        #self.console.debug("b4_clients.Group.xxxxx")
         return self._keyword
 
     keyword = property(_get_keyword, _set_keyword)
 
     def _set_level(self, v):
+        #self.console.debug("b4_clients.Group.xxxxx")
         self._level = int(v)
 
     def _get_level(self):
+        #self.console.debug("b4_clients.Group.xxxxx")
         return self._level
 
     level = property(_get_level, _set_level)
 
     def _set_time_add(self, v):
+        #self.console.debug("b4_clients.Group.xxxxx")
         self._timeAdd = int(v)
 
     def _get_time_add(self):
+        #self.console.debug("b4_clients.Group.xxxxx")
         return self._timeAdd
 
     timeAdd = property(_get_time_add, _set_time_add)
 
     def _set_time_edit(self, v):
+        #self.console.debug("b4_clients.Group.xxxxx")
         self._timeEdit = int(v)
 
     def _get_time_edit(self):
+        #self.console.debug("b4_clients.Group.xxxxx")
         return self._timeEdit
 
     timeEdit = property(_get_time_edit, _set_time_edit)
@@ -1270,6 +1397,7 @@ class Group(Struct):
         Save the group in the storage.
         :param console: The console implementation
         """
+        console.info("b4_clients.Group.save")
         self.timeEdit = console.time()
         if not self.id:
             self.timeAdd = console.time()
@@ -1314,6 +1442,7 @@ class Clients(dict):
         :param handle: The search input
         :param maxres: A maximum amount of results
         """
+        self.console.debug("b4_clients.Clients.find")
         matches = self.getByMagic(handle)
         if len(matches) == 0:
             return None
@@ -1327,6 +1456,7 @@ class Clients(dict):
         Search a client by matching his name.
         :param name: The name to use for the search
         """
+        self.console.debug("b4_clients.Clients.getByName")
         name = name.lower()
         try:
             return self[self._nameIndex[name]]
@@ -1343,6 +1473,7 @@ class Clients(dict):
         Search a client by matching his exact name.
         :param name: The name to use for the search
         """
+        self.console.debug("b4_clients.Clients.getByExactName")
         name = name.lower() + '^7'
         try:
             c = self[self._exactNameIndex[name]]
@@ -1360,6 +1491,7 @@ class Clients(dict):
         """
         Return the list of line clients.
         """
+        self.console.debug("b4_clients.Clients.getList")
         clist = []
         for cid, c in self.items():
             # DK (hide is hiding CI connections)
@@ -1374,6 +1506,7 @@ class Clients(dict):
         :param max: The maximum level
         :param masked: Whether to match masked levels
         """
+        self.console.debug("b4_clients.Clients.getClientsByLevel")
         clist = []
         minlevel, maxlevel = int(min), int(max)
         for cid, c in self.items():
@@ -1395,6 +1528,7 @@ class Clients(dict):
         Return a list of clients matching the given name.
         :param name: The name to match
         """
+        self.console.debug("b4_clients.Clients.getClientsByName")
         clist = []
         needle = re.sub(r'\s', '', name.lower())
         for cid,c in self.items():
@@ -1411,6 +1545,7 @@ class Clients(dict):
         Return the client who has the given name in its name (match substring).
         :param name: The name to match
         """
+        self.console.debug("b4_clients.Clients.getClientLikeName")
         name = name.lower()
         for cid, c in self.items():
             # DK (hide is hiding CI connections)
@@ -1424,6 +1559,7 @@ class Clients(dict):
         Return a list ofclients matching the given state.
         :param state: The clients state
         """
+        self.console.debug("b4_clients.Clients.getClientsByState")
         clist = []
         for cid, c in self.items():
             # DK (hide is hiding CI connections)
@@ -1436,6 +1572,7 @@ class Clients(dict):
         """
         Return the client matching the given database id.
         """
+        self.console.debug("b4_clients.Clients.getByDB")
         m = re.match(r'^@([0-9]+)$', client_id)
         if m:
             try:
@@ -1467,6 +1604,7 @@ class Clients(dict):
         Return the client matching the given handle.
         :param handle: The handle to use for the search
         """
+        self.console.debug("b4_clients.Clients.getByMagic")
         handle = handle.strip()
         # if it's all numbers look by client ID
         if re.match(r'^[0-9]+$', handle):
@@ -1495,6 +1633,7 @@ class Clients(dict):
         Return the client matching the given GUID.
         :param guid: The GUID to match
         """
+        self.console.debug("b4_clients.Clients.getByGUID")
         guid = guid.upper()
         try:
             return self[self._guidIndex[guid]]
@@ -1513,6 +1652,7 @@ class Clients(dict):
         Return the client matching the given slot number.
         :param cid: The client slot number
         """
+        self.console.debug("b4_clients.Clients.getByCID")
         try:
             c = self[cid]
         except KeyError:
@@ -1527,13 +1667,13 @@ class Clients(dict):
                 return None
         return None
 
-
     def escape_string(self, value, mapping=None):
         """
         escape_string escapes *value* but not surround it with quotes.
         Value should be bytes or unicode.
         Source - https://github.com/PyMySQL/PyMySQL/blob/40f6a706144a9b65baa123e6d5d89d23558646ac/pymysql/converters.py
         """
+        self.console.debug("b4_clients.Clients.escape_string")
         if isinstance(value, str):
             return value.translate(self.escape_table)
         if isinstance(value, (bytes, bytearray)):
@@ -1553,6 +1693,7 @@ class Clients(dict):
         Will search both on the online clients list and in the storage.
         :param name: The client name
         """
+        self.console.debug("b4_clients.Clients.lookupByName")
         # first check connected users
         c = self.getClientLikeName(name)
         # DK (hide is hiding CI connections)
@@ -1583,6 +1724,7 @@ class Clients(dict):
         Return the list of superadmins.
         Will search in the storage only.
         """
+        self.console.debug("b4_clients.Clients.lookupSuperAdmins")
         try:
             group = Group(keyword='superadmin')
             group = self.console.storage.getGroup(group)
@@ -1609,6 +1751,7 @@ class Clients(dict):
         Disconnect a client from the game.
         :param client: The client to disconnect.
         """
+        self.console.debug("b4_clients.Clients.disconnect")
         client.connected = False
         if client.cid is None:
             return
@@ -1625,8 +1768,9 @@ class Clients(dict):
         """
         Reset the indexes.
         """
-        self._nameIndex    = {}
-        self._guidIndex    = {}
+        self.console.debug("b4_clients.Clients.resetIndex")
+        self._nameIndex = {}
+        self._guidIndex = {}
         self._exactNameIndex = {}
 
     def newClient(self, cid, **kwargs):
@@ -1635,6 +1779,7 @@ class Clients(dict):
         :param cid: The client slot number
         :param kwargs: The client attributes
         """
+        self.console.debug("b4_clients.Clients.newClient")
         client = Client(console=self.console, cid=cid, timeAdd=self.console.time(), **kwargs)
         self[client.cid] = client
         self.resetIndex()
@@ -1652,12 +1797,14 @@ class Clients(dict):
         """
         Empty the clients list
         """
+        self.console.debug("b4_clients.Clients.empty")
         self.clear()
 
     def clear(self):
         """
         Empty the clients list and reset the indexes.
         """
+        self.console.debug("b4_clients.Clients.clear")
         self.resetIndex()
         for cid, c in self.items():
             # DK (hide is hiding CI connections)
@@ -1668,6 +1815,7 @@ class Clients(dict):
         """
         Synchronize the clients list.
         """
+        self.console.debug("b4_clients.Clients.sync")
         mlist = self.console.sync()
         # remove existing clients
         self.clear()
@@ -1679,6 +1827,7 @@ class Clients(dict):
         """
         Authorize the online clients.
         """
+        self.console.debug("b4_clients.Clients.authorizeClients")
         if not self._authorizing:
             # lookup is delayed to allow time for auth
             # it will also allow us to batch the lookups if several players
@@ -1692,5 +1841,6 @@ class Clients(dict):
         Authorize the online clients.
         Must not be called directly: always use authorize_clients().
         """
+        self.console.debug("b4_clients.Clients._authorizeClients")
         self.console.authorizeClients()
         self._authorizing = False

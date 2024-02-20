@@ -112,6 +112,7 @@ class MysqlConnectorStorage(b4.storage.b4_common.DatabaseStorage):
         Return the database connection. If the connection has not been established yet, will establish a new one.
         :return The connection instance, or None if no connection can be established.
         """
+        self.console.info("b4_mysql.MysqlConnectorStorage.getConnection")
         if self.db and self.db._socket is not None:
             return self.db
         return self.connect()
@@ -120,6 +121,7 @@ class MysqlConnectorStorage(b4.storage.b4_common.DatabaseStorage):
         """
         Close the current active database connection.
         """
+        self.console.info("b4_mysql.MysqlConnectorStorage.shutdown")
         if self.db and self.db._socket is not None:
             # the shutdown method is already exception safe
             self.console.bot('Closing connection with MySQL database...')
@@ -137,6 +139,7 @@ class MysqlConnectorStorage(b4.storage.b4_common.DatabaseStorage):
         Check whether the connection with the storage layer is active or not.
         :return True if the connection is active, False otherwise.
         """
+        self.console.info("b4_mysql.MysqlConnectorStorage.status")
         if self.db and self.db._socket is not None:
             return True
         return False
@@ -277,6 +280,7 @@ class MysqlStorage(b4.storage.b4_common.DatabaseStorage):
         Will store the connection object also in the 'db' attribute so in the future we can reuse it.
         :return The connection instance if established successfully, otherwise None.
         """
+        self.console.info("b4_mysql.MysqlStorage.connect")
         # do not retry too soon because the MySQL server could
         # have connection troubles and we do not want to spam it
         if time() - self._lastConnectAttempt < self._reconnectDelay:
@@ -293,10 +297,10 @@ class MysqlStorage(b4.storage.b4_common.DatabaseStorage):
             # self.console.bot('Using pass %(password)s', self.dsnDict)
 
             try:
-                sys.stdout.write(" Host: %s\n Port: %s\n User: %s\n  Pass: %s\n  DB: %s\n " %
-                                 (self.dsnDict['host'], self.dsnDict['port'],
-                                  self.dsnDict['user'], self.dsnDict['password'],
-                                  self.dsnDict['path'][1:]))
+                # sys.stdout.write(" Host: %s\n Port: %s\n User: %s\n  Pass: %s\n  DB: %s\n " %
+                #                  (self.dsnDict['host'], self.dsnDict['port'],
+                #                   self.dsnDict['user'], self.dsnDict['password'],
+                #                   self.dsnDict['path'][1:]))
                 # create the connection instance using the specified connector
                 self.db = self.__driver.connect(host=self.dsnDict['host'],
                                                 port=self.dsnDict['port'],
@@ -350,6 +354,7 @@ class MysqlStorage(b4.storage.b4_common.DatabaseStorage):
         List the tables of the current database.
         :return: list of strings.
         """
+        self.console.info("b4_mysql.MysqlStorage.getTables")
         tables = []
         cursor = self.query("SHOW TABLES")
         if cursor and not cursor.EOF:
@@ -366,6 +371,7 @@ class MysqlStorage(b4.storage.b4_common.DatabaseStorage):
         :param table: The database table or a collection of tables
         :raise KeyError: If the table is not present in the database
         """
+        self.console.info("b4_mysql.MysqlStorage.truncateTable")
         try:
             self.query("""SET FOREIGN_KEY_CHECKS=0;""")
             current_tables = self.getTables()

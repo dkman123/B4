@@ -24,6 +24,7 @@
 
 import b4_functions
 import re
+import sys
 import time
 
 from b4.b4_decorators import Memoize
@@ -95,6 +96,7 @@ class Events:
         :param key: The event key
         :param name: An optional name to associate to the event
         """
+        sys.stdout.write("b4_events.Events.createEvent")
         g = globals()
 
         try:
@@ -115,6 +117,7 @@ class Events:
         Return an event ID given its key.
         :param key: The event key
         """
+        sys.stdout.write("b4_events.Events.getId")
         if re.match('^[0-9]+$', str(key)):
             return int(key)
         else:
@@ -129,6 +132,7 @@ class Events:
         Get the key of a given event ID.
         :param event_id: The event ID
         """
+        sys.stdout.write("b4_events.Events.getKey")
         matching_keys = [k for k, v in self._events.items() if v == event_id]
         if not len(matching_keys):
             raise KeyError('could not find any B3 event with ID %s' % event_id)
@@ -140,6 +144,7 @@ class Events:
         Return an event name given its key.
         :param key: The event key
         """
+        sys.stdout.write("b4_events.Events.getName")
         try:
             return self._eventNames[self.getId(key)]
         except KeyError:
@@ -150,6 +155,7 @@ class Events:
         Load default events.
         :param events: A collection of Event tuples
         """
+        sys.stdout.write("b4_events.Events.loadEvents")
         for k, n in events:
             self.createEvent(k, n)
 
@@ -157,6 +163,7 @@ class Events:
         """
         Return the Event dict.
         """
+        sys.stdout.write("b4_events.Events._get_events")
         return self._events
 
     events = property(_get_events)
@@ -202,6 +209,7 @@ class EventsStats(object):
         :param event_name: The event name
         :param milliseconds_elapsed: The amount of milliseconds necessary to handle the event
         """
+        self.console.debug("b4_events.EventsStats.add_event_handled")
         if plugin_name not in self._handling_timers:
             self._handling_timers[plugin_name] = {}
         if event_name not in self._handling_timers[plugin_name]:
@@ -214,12 +222,14 @@ class EventsStats(object):
         Add delay to the event processing.
         :param milliseconds_wait: The amount of milliseconds to wait
         """
+        self.console.debug("b4_events.EventsStats.add_event_wait")
         self._queue_wait.append(milliseconds_wait)
         
     def dumpStats(self):
         """
         Print event stats in the log file.
         """
+        self.console.debug("b4_events.EventsStats.dumpStats")
         if self.console.log.isEnabledFor(VERBOSE):
             for plugin_name, plugin_timers in self._handling_timers.items():
                 for event_name, event_timers in plugin_timers.iteritems():

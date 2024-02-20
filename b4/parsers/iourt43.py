@@ -44,6 +44,7 @@ class Iourt43Client(b4.b4_clients.Client):
         """
         Authorize this client using his GUID.
         """
+        self.console.debug("b4.parsers.Iourt43Client.auth_by_guid")
         self.console.debug("Auth by guid: %r", self.guid)
         try:
             return self.console.storage.getClient(self)
@@ -55,6 +56,7 @@ class Iourt43Client(b4.b4_clients.Client):
         """
         Authorize this client using his PBID.
         """
+        self.console.debug("b4.parsers.Iourt43Client.auth_by_pbid")
         self.console.debug("Auth by FSA: %r", self.pbid)
         clients_matching_pbid = self.console.storage.getClientsMatching(dict(pbid=self.pbid))
         if len(clients_matching_pbid) > 1:
@@ -82,6 +84,7 @@ class Iourt43Client(b4.b4_clients.Client):
         """
         Authorize this client using both his PBID and GUID.
         """
+        self.console.debug("b4.parsers.Iourt43Client.auth_by_pbid_and_guid")
         self.console.debug("Auth by both guid and FSA: %r, %r", self.guid, self.pbid)
         clients_matching_pbid = self.console.storage.getClientsMatching({'pbid': self.pbid, 'guid': self.guid})
         if len(clients_matching_pbid):
@@ -100,6 +103,7 @@ class Iourt43Client(b4.b4_clients.Client):
         The FSA is a worldwide identifier while the cl_guid only identify a player on a given game server.
         See http://forum.bigbrotherbot.net/urban-terror-4-2/urt-4-2-discussion/
         """
+        self.console.debug("b4.parsers.Iourt43Client.auth")
         if not self.authed and self.guid and not self.authorizing:
 
             self.authorizing = True
@@ -297,8 +301,10 @@ class Iourt43Parser(Iourt41Parser):
         # ClientMelted: 1
         re.compile(r'^(?P<action>Client(Melted|Spawn)):\s(?P<cid>[0-9]+)$', re.IGNORECASE),
         
-		#Assist: 0 14 15: -[TPF]-PtitBigorneau assisted Bot1_14 to kill Bot1_15
-        re.compile(r'^(?P<action>Assist):\s(?P<acid>[0-9]+)\s(?P<kcid>[0-9]+)\s(?P<dcid>[0-9]+):\s+(?P<text>.*)$', re.IGNORECASE),
+        # Assist: 0 14 15: -[TPF]-PtitBigorneau assisted Bot1_14 to kill Bot1_15
+        re.compile(
+            r'^(?P<action>Assist):\s(?P<acid>[0-9]+)\s(?P<kcid>[0-9]+)\s(?P<dcid>[0-9]+):\s+(?P<text>.*)$',
+            re.IGNORECASE),
         
         # Generated with ioUrbanTerror v4.1:
         # Hit: 12 7 1 19: BSTHanzo[FR] hit ercan in the Helmet
@@ -552,6 +558,7 @@ class Iourt43Parser(Iourt41Parser):
         """
         Called after the parser is created before run().
         """
+        self.debug("b4.parsers.Iourt43Parser.startup")
         try:
             cvar = self.getCvar('gamename')
             gamename = cvar.getString() if cvar else None
@@ -596,6 +603,7 @@ class Iourt43Parser(Iourt41Parser):
         """
         Called when all plugins are started.
         """
+        self.debug("b4.parsers.Iourt43Parser.pluginsStarted")
         self.spamcontrolPlugin = self.getPlugin("spamcontrol")
         if self.spamcontrolPlugin:
             self.patch_spamcontrolPlugin()
@@ -610,6 +618,7 @@ class Iourt43Parser(Iourt41Parser):
         """
         Load ban settings according to auth system cvars.
         """
+        self.debug("b4.parsers.Iourt43Parser.load_conf_frozensand_ban_settings")
         try:
             frozensand_auth_available = self.is_frozensand_auth_available()
         except Exception as e:
@@ -646,6 +655,7 @@ class Iourt43Parser(Iourt41Parser):
         """
         Load permban configuration from b4_xml.
         """
+        self.debug("b4.parsers.Iourt43Parser.load_conf_permban_with_frozensand")
         self._permban_with_frozensand = False
         if self.config.has_option('server', 'permban_with_frozensand'):
             try:
@@ -659,6 +669,7 @@ class Iourt43Parser(Iourt41Parser):
         """
         Load tempban configuration from b4_xml.
         """
+        self.debug("b4.parsers.Iourt43Parser.load_conf_tempban_with_frozensand")
         self._tempban_with_frozensand = False
         if self.config.has_option('server', 'tempban_with_frozensand'):
             try:
@@ -672,6 +683,7 @@ class Iourt43Parser(Iourt41Parser):
         """
         Load userinfo overflow configuration settings.
         """
+        self.debug("b4.parsers.Iourt43Parser.load_conf_userinfo_overflow")
         self._allow_userinfo_overflow = False
         if self.config.has_option('server', 'allow_userinfo_overflow'):
             try:
@@ -699,6 +711,7 @@ class Iourt43Parser(Iourt41Parser):
     def OnClientuserinfo(self, action, data, match=None):
         # 2 \ip\145.99.135.227:27960\challenge\-232198920\qport\2781\protocol\68\battleye\1\name\[SNT]^1XLR^78or..
         # 0 \gear\GMIORAA\team\blue\skill\5.000000\characterfile\bots/ut_chicken_c.c\color\4\sex\male\race\2\snaps\20\..
+        self.debug("b4.parsers.Iourt43Parser.OnClientuserinfo")
         bclient = self.parseUserInfo(data)
         bot = False
         if not 'cl_guid' in bclient and 'skill' in bclient:
@@ -838,6 +851,7 @@ class Iourt43Parser(Iourt41Parser):
 
     def OnClientuserinfochanged(self, action, data, match=None):
         # 7 n\[SNT]^1XLR^78or\t\3\r\2\tl\0\f0\\f1\\f2\\a0\0\a1\0\a2\0
+        self.debug("b4.parsers.Iourt43Parser.OnClientuserinfochanged")
         parseddata = self.parseUserInfo(data)
         self.verbose('Parsed userinfo: %s' % parseddata)
         if parseddata:
@@ -873,6 +887,7 @@ class Iourt43Parser(Iourt41Parser):
                     setattr(client, 'cg_rgb', "%s %s %s" % (parseddata['a0'], parseddata['a1'], parseddata['a2']))
 
     def OnRadio(self, action, data, match=None):
+        self.debug("b4.parsers.Iourt43Parser.OnRadio")
         cid = match.group('cid')
         msg_group = match.group('msg_group')
         msg_id = match.group('msg_id')
@@ -886,6 +901,7 @@ class Iourt43Parser(Iourt41Parser):
                                                                       'location': location, 'text': text})
 
     def OnCallvote(self, action, data, match=None):
+        self.debug("b4.parsers.Iourt43Parser.OnCallvote")
         cid = match.group('cid')
         vote_string = match.group('vote_string')
         client = self.getByCidOrJoinPlayer(cid)
@@ -895,6 +911,7 @@ class Iourt43Parser(Iourt41Parser):
         return self.getEvent('EVT_CLIENT_CALLVOTE', client=client, data=vote_string)
 
     def OnVote(self, action, data, match=None):
+        self.debug("b4.parsers.Iourt43Parser.OnVote")
         cid = match.group('cid')
         value = match.group('value')
         client = self.getByCidOrJoinPlayer(cid)
@@ -904,12 +921,14 @@ class Iourt43Parser(Iourt41Parser):
         return self.getEvent('EVT_CLIENT_VOTE', client=client, data=value)
 
     def OnVotepassed(self, action, data, match=None):
+        self.debug("b4.parsers.Iourt43Parser.OnVotepassed")
         yes_count = int(match.group('yes'))
         no_count = int(match.group('no'))
         vote_what = match.group('what')
         return self.getEvent('EVT_VOTE_PASSED', data={'yes': yes_count, 'no': no_count, 'what': vote_what})
 
     def OnVotefailed(self, action, data, match=None):
+        self.debug("b4.parsers.Iourt43Parser.OnVotefailed")
         yes_count = int(match.group('yes'))
         no_count = int(match.group('no'))
         vote_what = match.group('what')
@@ -918,6 +937,7 @@ class Iourt43Parser(Iourt41Parser):
     def OnFlagcapturetime(self, action, data, match=None):
         # FlagCaptureTime: 0: 1234567890
         # FlagCaptureTime: 1: 1125480101
+        self.debug("b4.parsers.Iourt43Parser.OnFlagcapturetime")
         cid = match.group('cid')
         captime = int(match.group('captime'))
         client = self.getByCidOrJoinPlayer(cid)
@@ -927,6 +947,7 @@ class Iourt43Parser(Iourt41Parser):
         return self.getEvent('EVT_FLAG_CAPTURE_TIME', client=client, data=captime)
 
     def OnClientjumprunstarted(self, action, data, match=None):
+        self.debug("b4.parsers.Iourt43Parser.OnClientjumprunstarted")
         cid = match.group('cid')
         way_id = match.group('way_id')
         attempt_num = match.group('attempt_num')
@@ -940,6 +961,7 @@ class Iourt43Parser(Iourt41Parser):
                                                                                'attempt_max': attempt_max})
 
     def OnClientjumprunstopped(self, action, data, match=None):
+        self.debug("b4.parsers.Iourt43Parser.OnClientjumprunstopped")
         cid = match.group('cid')
         way_id = match.group('way_id')
         way_time = match.group('way_time')
@@ -955,6 +977,7 @@ class Iourt43Parser(Iourt41Parser):
                                                                               'attempt_max': attempt_max})
     
     def OnClientjumpruncanceled(self, action, data, match=None):
+        self.debug("b4.parsers.Iourt43Parser.OnClientjumpruncanceled")
         cid = match.group('cid')
         way_id = match.group('way_id')
         attempt_num = match.group('attempt_num')
@@ -968,6 +991,7 @@ class Iourt43Parser(Iourt41Parser):
                                                                                 'attempt_max': attempt_max})
     
     def OnClientsaveposition(self, action, data, match=None):
+        self.debug("b4.parsers.Iourt43Parser.OnClientsaveposition")
         cid = match.group('cid')
         position = float(match.group('x')), float(match.group('y')), float(match.group('z'))
         client = self.getByCidOrJoinPlayer(cid)
@@ -977,6 +1001,7 @@ class Iourt43Parser(Iourt41Parser):
         return self.getEvent('EVT_CLIENT_POS_SAVE', client=client, data={'position': position})
 
     def OnClientloadposition(self, action, data, match=None):
+        self.debug("b4.parsers.Iourt43Parser.OnClientloadposition")
         cid = match.group('cid')
         position = float(match.group('x')), float(match.group('y')), float(match.group('z'))
         client = self.getByCidOrJoinPlayer(cid)
@@ -986,6 +1011,7 @@ class Iourt43Parser(Iourt41Parser):
         return self.getEvent('EVT_CLIENT_POS_LOAD', client=client, data={'position': position})
     
     def OnClientgoto(self, action, data, match=None):
+        self.debug("b4.parsers.Iourt43Parser.OnClientgoto")
         cid = match.group('cid')
         tcid = match.group('tcid')
         position = float(match.group('x')), float(match.group('y')), float(match.group('z'))
@@ -1003,6 +1029,7 @@ class Iourt43Parser(Iourt41Parser):
 
     def OnClientspawn(self, action, data, match=None):
         # ClientSpawn: 0
+        self.debug("b4.parsers.Iourt43Parser.OnClientspawn")
         cid = match.group('cid')
         client = self.getByCidOrJoinPlayer(cid)
         if not client:
@@ -1014,6 +1041,7 @@ class Iourt43Parser(Iourt41Parser):
 
     def OnClientmelted(self, action, data, match=None):
         # ClientMelted: 0
+        self.debug("b4.parsers.Iourt43Parser.OnClientmelted")
         cid = match.group('cid')
         client = self.getByCidOrJoinPlayer(cid)
         if not client:
@@ -1028,6 +1056,7 @@ class Iourt43Parser(Iourt41Parser):
         # SurvivorWinner: Red
         # SurvivorWinner: 0
         # queue round and in any case (backwards compatibility for plugins)
+        self.debug("b4.parsers.Iourt43Parser.OnSurvivorwinner")
         self.queueEvent(self.getEvent('EVT_GAME_ROUND_END'))
         if data in ('Blue', 'Red'):
             return self.getEvent('EVT_SURVIVOR_WIN', data=data)
@@ -1040,6 +1069,7 @@ class Iourt43Parser(Iourt41Parser):
 
     def OnFreeze(self, action, data, match=None):
         # 6:37 Freeze: 0 1 16: Fenix froze Biddle by UT_MOD_SPAS
+        self.debug("b4.parsers.Iourt43Parser.OnFreeze")
         victim = self.getByCidOrJoinPlayer(match.group('cid'))
         if not victim:
             self.debug('No victim')
@@ -1060,6 +1090,7 @@ class Iourt43Parser(Iourt41Parser):
 
     def OnThawoutstarted(self, action, data, match=None):
         # ThawOutStarted: 0 1: Fenix started thawing out Biddle
+        self.debug("b4.parsers.Iourt43Parser.OnThawoutstarted")
         client = self.getByCidOrJoinPlayer(match.group('cid'))
         if not client:
             self.debug('No client')
@@ -1074,6 +1105,7 @@ class Iourt43Parser(Iourt41Parser):
 
     def OnThawoutfinished(self, action, data, match=None):
         # ThawOutFinished: 0 1: Fenix thawed out Biddle
+        self.debug("b4.parsers.Iourt43Parser.OnThawoutfinished")
         client = self.getByCidOrJoinPlayer(match.group('cid'))
         if not client:
             self.debug('No client')
@@ -1088,16 +1120,17 @@ class Iourt43Parser(Iourt41Parser):
         return self.getEvent('EVT_CLIENT_THAWOUT_FINISHED', client=client, target=target)
         
     def OnAssist(self, action, data, match=None):
+        self.debug("b4.parsers.Iourt43Parser.OnAssist")
 
         cid = match.group('acid')
         vid = match.group('dcid')
         aid = match.group('kcid')
-		
+
         client = self.getByCidOrJoinPlayer(cid)
         if not client:
             self.debug('No client')
             return None
-	
+
         victim = self.getByCidOrJoinPlayer(vid)
         if not victim:
             self.debug('No victim')
@@ -1122,6 +1155,7 @@ class Iourt43Parser(Iourt41Parser):
         the user in the database (usualy guid, or punkbuster id, ip) and call the
         Client.auth() method.
         """
+        self.debug("b4.parsers.Iourt43Parser.authorizeClients")
         pass
 
     def ban(self, client, reason='', admin=None, silent=False, *kwargs):
@@ -1132,6 +1166,7 @@ class Iourt43Parser(Iourt41Parser):
         :param admin: The admin who performed the ban
         :param silent: Whether to announce this ban
         """
+        self.debug("b4.parsers.Iourt43Parser.ban")
         self.debug('BAN : client: %s, reason: %s', client, reason)
         if isinstance(client, b4.b4_clients.Client) and not client.guid:
             # client has no guid, kick instead
@@ -1199,6 +1234,7 @@ class Iourt43Parser(Iourt41Parser):
         :param admin: The admin who performed the tempban
         :param silent: Whether to announce this tempban
         """
+        self.debug("b4.parsers.Iourt43Parser.tempban")
         duration = b4.b4_functions.time2minutes(duration)
         if isinstance(client, b4.b4_clients.Client) and not client.guid:
             # client has no guid, kick instead
@@ -1257,6 +1293,7 @@ class Iourt43Parser(Iourt41Parser):
         """
         Urban Terror specific punishments.
         """
+        self.debug("b4.parsers.Iourt43Parser.inflictCustomPenalty")
         if penalty_type == 'slap' and client:
             cmd = self.getCommand('slap', cid=client.cid)
             self.write(cmd)
@@ -1305,6 +1342,7 @@ class Iourt43Parser(Iourt41Parser):
         Return a B3 team given the team value.
         :param team: The team value
         """
+        self.debug("b4.parsers.Iourt43Parser.getTeam")
 
         match = str(team).lower()
         if match in {'red', 'r', '1'}:
@@ -1327,6 +1365,7 @@ class Iourt43Parser(Iourt41Parser):
         : auth-whois 3
         Client 3 is not active.
         """
+        self.debug("b4.parsers.Iourt43Parser.queryClientFrozenSandAccount")
         data = self.write('auth-whois %s' % cid)
         if not data:
             return dict()
@@ -1344,6 +1383,7 @@ class Iourt43Parser(Iourt41Parser):
         """
         Query the accounts of all the online clients.
         """
+        self.debug("b4.parsers.Iourt43Parser.queryAllFrozenSandAccount")
         data = self.write('auth-whois all', maxRetries=max_retries)
         if not data:
             return {}
@@ -1356,6 +1396,7 @@ class Iourt43Parser(Iourt41Parser):
         """
         Check whether the auth system is available.
         """
+        self.debug("b4.parsers.Iourt43Parser.is_frozensand_auth_available")
         cvar = self.getCvar('auth')
         if cvar:
             auth = cvar.getInt()
@@ -1367,6 +1408,7 @@ class Iourt43Parser(Iourt41Parser):
         """
         Translate the gametype to a readable format (also for teamkill plugin!)
         """
+        self.debug("b4.parsers.Iourt43Parser.defineGameType")
         gametype = str(gametype_int)
 
         if gametype_int == '0':
@@ -1400,6 +1442,7 @@ class Iourt43Parser(Iourt41Parser):
         Provide the estimated number of damage points inflicted by
         a hit of a given weapon to a given body location.
         """
+        self.debug("b4.parsers.Iourt43Parser._getDamagePoints")
         try:
             points = self.damage[weapon][int(hitloc) - 1]
             self.debug("_getDamagePoints(%s, %s) -> %d" % (weapon, hitloc, points))
@@ -1412,9 +1455,11 @@ class Iourt43Parser(Iourt41Parser):
         """
         This method alters the Spamcontrol plugin after it started to make it aware of RADIO spam.
         """
+        self.debug("b4.parsers.Iourt43Parser.patch_spamcontrolPlugin")
         self.info("Patching spamcontrol plugin...")
 
         def onRadio(this, event):
+            self.debug("b4.parsers.Iourt43Parser.onRadio")
             new_event = b4.b4_events.Event(type=event.type, client=event.client, target=event.target, data=repr(event.data))
             this.onChat(new_event)
 
@@ -1429,6 +1474,7 @@ class Iourt43Parser(Iourt41Parser):
             """
             Patch the newClient method in the Clients class to handle UrT 4.2 specific client instances.
             """
+            self.debug("b4.parsers.Iourt43Parser.newClient")
             client = Iourt43Client(console=self.console, cid=cid, timeAdd=self.console.time(), **kwargs)
             self[client.cid] = client
             self.resetIndex()
@@ -1448,6 +1494,7 @@ class Iourt43Parser(Iourt41Parser):
             """
             Patch the getByMagic method in the Clients class so it's possible to lookup players using the auth login.
             """
+            self.debug("b4.parsers.Iourt43Parser.newGetByMagic")
             handle = handle.strip()
             if re.match(r'^[0-9]+$', handle):
                 client = self.getByCID(handle)
