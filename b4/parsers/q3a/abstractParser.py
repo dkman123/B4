@@ -750,7 +750,7 @@ class AbstractParser(b4.b4_parser.Parser):
             m = None
             for f in self._reCvar:
                 m = re.match(f, val)
-                self.log.info("abstractParser looking for match for %s in cvar %s" % (cvar_name, val))
+                #self.log.info("abstractParser looking for match for %s in cvar %s" % (cvar_name, val))
                 if m:
                     break
 
@@ -820,7 +820,7 @@ class AbstractParser(b4.b4_parser.Parser):
         plist = self.getPlayerList()
         mlist = {}
 
-        for cid, c in plist.iteritems():
+        for cid, c in plist.items():
             client = self.clients.getByCID(cid)
             if client:
                 if client.guid and 'guid' in c.keys():
@@ -853,7 +853,7 @@ class AbstractParser(b4.b4_parser.Parser):
         players = self.getPlayerList(maxRetries=4)
         self.verbose('authorizeClients() = %s' % players)
 
-        for cid, p in players.iteritems():
+        for cid, p in players.items():
             sp = self.clients.getByCID(cid)
             if sp:
                 # Only set provided data, otherwise use the currently set data

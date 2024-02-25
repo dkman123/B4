@@ -1344,7 +1344,7 @@ class Parser(object):
         """
         Write a message to Rcon/Console
         """
-        sys.stdout.write("b4_parser.Parser.write\n")
+        #sys.stdout.write("b4_parser.Parser.write\n")
         if self.output:
             res = self.output.write(str(msg))
             self.output.flush()
@@ -1355,7 +1355,7 @@ class Parser(object):
         Write a sequence of messages to Rcon/Console. Optimized for speed.
         :param msg: The message to be sent to Rcon/Console.
         """
-        sys.stdout.write("b4_parser.Parser.writelines\n")
+        #sys.stdout.write("b4_parser.Parser.writelines\n")
         if self.output and msg:
             res = self.output.writelines(msg)
             self.output.flush()

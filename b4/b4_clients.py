@@ -533,11 +533,11 @@ class Client(object):
     # -----------------------
 
     def _set_login(self, login):
-        self.console.debug("b4_clients.Client._set_login")
+        #self.console.debug("b4_clients.Client._set_login")
         self._login = login
 
     def _get_login(self):
-        self.console.debug("b4_clients.Client._get_login")
+        #self.console.debug("b4_clients.Client._get_login")
         return self._login
 
     login = property(_get_login, _set_login)

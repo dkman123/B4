@@ -169,7 +169,7 @@ class Rcon(object):
         :param maxRetries: How many times we have to retry the sending upon failure
         :param socketTimeout: The socket timeout value
         """
-        self.console.info("rcon sendRcon")
+        #self.console.info("rcon sendRcon")
         if socketTimeout is None:
             socketTimeout = self.socket_timeout
         if maxRetries is None:
@@ -196,7 +196,7 @@ class Rcon(object):
                     # convert the string to bytes before sending
                     tosend = self.rconsendstring % (self.password, data)
                     tohex = " ".join("{:02x}".format(ord(c)) for c in tosend)
-                    self.console.info("rcon sending hex %s" % tohex)
+                    #self.console.verbose2("rcon sending hex %s" % tohex)
                     # convert to bytes or no?
                     writeables[0].send(bytearray.fromhex(tohex))
                 except Exception as msg:
@@ -241,7 +241,7 @@ class Rcon(object):
         """
         Write multiple RCON commands on the socket.
         """
-        self.console.info("rcon _writelines")
+        #self.console.info("rcon _writelines")
         while not self._stopEvent.is_set():
             lines = self.queue.get(True)
             for cmd in lines:
@@ -265,7 +265,7 @@ class Rcon(object):
         :param maxRetries: How many times we have to retry the sending upon failure
         :param socketTimeout: The socket timeout value
         """
-        self.console.info("rcon write")
+        #self.console.info("rcon write")
         # intercept status request for caching construct
         if (cmd == 'status' or cmd == 'PB_SV_PList') and self.status_cache:
             if time.time() < self.status_cache_expired:
