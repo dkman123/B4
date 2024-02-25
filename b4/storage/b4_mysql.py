@@ -375,11 +375,11 @@ class MysqlStorage(b4.storage.b4_common.DatabaseStorage):
             if cursor and not cursor.EOF:
                 while not cursor.EOF:
                     row = cursor.getRow()
-                    tables.append(row.values()[0])
+                    tables.append(list(row.values())[0])
                     cursor.moveNext()
-                sys.stdout.write("cursor is not empty\n")
-            else:
-                sys.stdout.write("cursor is empty\n")
+                #sys.stdout.write("cursor is not empty\n")
+            #else:
+            #    sys.stdout.write("cursor is empty\n")
             cursor.close()
         except Exception as ex:
             self.console.error("b4_mysql.MysqlStorage.getTables %s" % ex)

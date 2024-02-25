@@ -315,11 +315,11 @@ class Parser(object):
         # establish a connection with the database
         self.storage.connect()
 
-        sys.stdout.write("Parser looking for game_log")
+        #sys.stdout.write("Parser looking for game_log")
         if self.config.has_option('server', 'game_log'):
             # open log file
             game_log = self.config.get('server', 'game_log')
-            sys.stdout.write("Parser found setting for game_log %s" % game_log)
+            #sys.stdout.write("Parser found setting for game_log %s" % game_log)
             if game_log[0:6] == 'ftp://' or game_log[0:7] == 'sftp://' or game_log[0:7] == 'http://':
                 self.remoteLog = True
                 self.bot('Working in remote-log mode: %s', game_log)
@@ -349,7 +349,7 @@ class Parser(object):
             else:
                 self.bot('Game log is: %s', game_log)
                 f = self.config.getpath('server', 'game_log')
-                sys.stdout.write("Parser opened game_log")
+                #sys.stdout.write("Parser opened game_log")
 
             self.bot('Starting bot reading file: %s', os.path.abspath(f))
             self.screen.write('Using gamelog    : %s\n' % b4.getShortPath(os.path.abspath(f)))
@@ -401,27 +401,32 @@ class Parser(object):
             self.bot('Setting multiline_noprefix to: %s', self._multiline_noprefix)
 
         # testing rcon
-        if self.rconTest:
-            res = self.output.write('status')
-            self.output.flush()
-            self.screen.write('Testing RCON     : ')
-            self.screen.flush()
-            badRconReplies = ['Bad rconpassword.', 'Invalid password.']
-            if res in badRconReplies:
-                self.screen.write('>>> Oops: Bad RCON password\n'
-                                  '>>> Hint: This will lead to errors and render B4 without any power to interact!\n')
+        self.bot('b4_parser testing rcon')
+        try:
+            if self.rconTest:
+                res = self.output.write('status')
+                self.output.flush()
+                self.screen.write('Testing RCON     : ')
                 self.screen.flush()
-                time.sleep(2)
-            elif res == '':
-                self.screen.write('>>> Oops: No response\n'
-                                  '>>> Could be something wrong with the rcon connection to the server!\n'
-                                  '>>> Hint 1: The server is not running or it is changing maps.\n'
-                                  '>>> Hint 2: Check your server-ip and port.\n')
-                self.screen.flush()
-                time.sleep(2)
-            else:
-                self.screen.write('OK\n')
+                badRconReplies = ['Bad rconpassword.', 'Invalid password.']
+                if res in badRconReplies:
+                    self.screen.write('>>> Oops: Bad RCON password\n'
+                                      '>>> Hint: This will lead to errors and render B4 without any power to interact!\n')
+                    self.screen.flush()
+                    time.sleep(2)
+                elif res == '':
+                    self.screen.write('>>> Oops: No response\n'
+                                      '>>> Could be something wrong with the rcon connection to the server!\n'
+                                      '>>> Hint 1: The server is not running or it is changing maps.\n'
+                                      '>>> Hint 2: Check your server-ip and port.\n')
+                    self.screen.flush()
+                    time.sleep(2)
+                else:
+                    self.screen.write('OK\n')
+        except Exception as ex:
+            self.log.error("b4_parser testing rcon %s", ex)
 
+        self.bot('b4_parser Loading events')
         self.loadEvents()
         self.screen.write('Loading events   : %s events loaded\n' % len(self._events))
         self.clients = b4.b4_clients.Clients(self)
@@ -439,6 +444,7 @@ class Parser(object):
             queuesize = 50
             self.warning(err)
 
+        self.bot('b4_parser Creating the event queue')
         self.log.debug("Creating the event queue with size %s", queuesize)
         self.queue = queue.Queue(queuesize)
 
@@ -512,8 +518,8 @@ class Parser(object):
         Set the config file to load
         """
         # DEBUG
-        sys.stdout.write("self is type %s. self.log is not set yet.\n" % type(self).__name__)
-        sys.stdout.write("b4_parser.Parser.loadConfig\n")
+        #sys.stdout.write("self is type %s. self.log is not set yet.\n" % type(self).__name__)
+        #sys.stdout.write("b4_parser.Parser.loadConfig\n")
         if not conf:
             return False
 
@@ -1567,7 +1573,7 @@ class Parser(object):
         """
         Return the current time in GMT/UTC.
         """
-        sys.stdout.write("b4_parser.Parser.time\n")
+        #sys.stdout.write("b4_parser.Parser.time\n")
         return int(time.time())
 
     def _get_cron(self):
