@@ -114,6 +114,9 @@ class Client(object):
     _tempLevel = None
     _timeAdd = 0
     _timeEdit = 0
+    _app = ''
+    _isocode = ''
+    _permmute = 0
 
     # PUB
     authed = False
@@ -243,12 +246,12 @@ class Client(object):
     # -----------------------
 
     def _set_data(self, data):
-        self.console.debug("b4_clients.Client._set_data")
+        #self.console.debug("b4_clients.Client._set_data")
         for k, v in data.iteritems():
             self._data[k] = v
 
     def _get_data(self):
-        self.console.debug("b4_clients.Client._get_data")
+        #self.console.debug("b4_clients.Client._get_data")
         return self._data
 
     data = property(_get_data, _set_data)
@@ -266,7 +269,7 @@ class Client(object):
     # -----------------------
 
     def getGroups(self):
-        self.console.debug("b4_clients.Client.getGroups")
+        #self.console.debug("b4_clients.Client.getGroups")
         if not self._groups:
             self._groups = []
             groups = self.console.storage.getGroups()
@@ -426,11 +429,11 @@ class Client(object):
 
     _connections = 0
     def _set_connections(self, v):
-        self.console.debug("b4_clients.Client._set_connections")
+        #self.console.debug("b4_clients.Client._set_connections")
         self._connections = int(v)
 
     def _get_connections(self):
-        self.console.debug("b4_clients.Client._get_connections")
+        #self.console.debug("b4_clients.Client._get_connections")
         return self._connections
 
     connections = property(_get_connections, _set_connections)
@@ -438,11 +441,11 @@ class Client(object):
     # -----------------------
 
     def _set_greeting(self, greeting):
-        self.console.debug("b4_clients.Client._set_greeting")
+        #self.console.debug("b4_clients.Client._set_greeting")
         self._greeting = greeting
 
     def _get_greeting(self):
-        self.console.debug("b4_clients.Client._get_greeting")
+        #self.console.debug("b4_clients.Client._get_greeting")
         return self._greeting
 
     greeting = property(_get_greeting, _set_greeting)
@@ -450,26 +453,26 @@ class Client(object):
     # -----------------------
 
     def _set_groupBits(self, bits):
-        self.console.debug("b4_clients.Client._set_groupBits")
+        #self.console.debug("b4_clients.Client._set_groupBits")
         self._groupBits = int(bits)
         self.refreshLevel()
 
     def _get_groupBits(self):
-        self.console.debug("b4_clients.Client._get_groupBits")
+        #self.console.debug("b4_clients.Client._get_groupBits")
         return self._groupBits
 
     groupBits = property(_get_groupBits, _set_groupBits)
 
     def addGroup(self, group):
-        self.console.debug("b4_clients.Client.addGroup")
+        #self.console.debug("b4_clients.Client.addGroup")
         self.groupBits = self.groupBits | group.id
 
     def setGroup(self, group):
-        self.console.debug("b4_clients.Client.setGroup")
+        #self.console.debug("b4_clients.Client.setGroup")
         self.groupBits = group.id
 
     def remGroup(self, group):
-        self.console.debug("b4_clients.Client.remGroup")
+        #self.console.debug("b4_clients.Client.remGroup")
         self.groupBits = self.groupBits ^ group.id
 
     def inGroup(self, group):
@@ -479,7 +482,7 @@ class Client(object):
     # -----------------------
 
     def _set_guid(self, guid):
-        self.console.debug("b4_clients.Client._set_guid")
+        #self.console.debug("b4_clients.Client._set_guid")
         if guid and len(guid) > 2:
             if self._guid and self._guid != guid:
                 self.console.error('Client has guid but its not the same %s <> %s', self._guid, guid)
@@ -491,7 +494,7 @@ class Client(object):
             self._guid = ''
 
     def _get_guid(self):
-        self.console.debug("b4_clients.Client._get_guid")
+        #self.console.debug("b4_clients.Client._get_guid")
         return self._guid
 
     guid = property(_get_guid, _set_guid)
@@ -499,14 +502,14 @@ class Client(object):
     # -----------------------
 
     def _set_id(self, v):
-        self.console.debug("b4_clients.Client._set_id")
+        #self.console.debug("b4_clients.Client._set_id")
         if not v:
             self._id = 0
         else:
             self._id = int(v)
 
     def _get_id(self):
-        self.console.debug("b4_clients.Client._get_id")
+        #self.console.debug("b4_clients.Client._get_id")
         return self._id
 
     id = property(_get_id, _set_id)
@@ -514,7 +517,7 @@ class Client(object):
     # -----------------------
 
     def _set_ip(self, ip):
-        self.console.debug("b4_clients.Client._set_ip")
+        #self.console.debug("b4_clients.Client._set_ip")
         if ':' in ip:
             ip = ip[0:ip.find(':')]
         if self._ip != ip:
@@ -522,7 +525,7 @@ class Client(object):
         self._ip = ip
 
     def _get_ip(self):
-        self.console.debug("b4_clients.Client._get_ip")
+        #self.console.debug("b4_clients.Client._get_ip")
         return self._ip
 
     ip = property(_get_ip, _set_ip)
@@ -600,7 +603,7 @@ class Client(object):
     # -----------------------
 
     def _set_name(self, name):
-        self.console.debug("b4_clients.Client._set_name")
+        #self.console.debug("b4_clients.Client._set_name")
         if self.console:
             newName = self.console.stripColors(name)
         else:
@@ -623,11 +626,11 @@ class Client(object):
             self.console.queueEvent(self.console.getEvent('EVT_CLIENT_NAME_CHANGE', self.name, self))
 
     def _get_name(self):
-        self.console.debug("b4_clients.Client._get_name")
+        #self.console.debug("b4_clients.Client._get_name")
         return self._name
 
     def _get_exactName(self):
-        self.console.debug("b4_clients.Client._get_exactName")
+        #self.console.debug("b4_clients.Client._get_exactName")
         return self._exactName
 
     name = property(_get_name, _set_name)               # cleaned
@@ -648,11 +651,11 @@ class Client(object):
     # -----------------------
 
     def _set_pbid(self, pbid):
-        self.console.debug("b4_clients.Client._set_pbid")
+        #self.console.debug("b4_clients.Client._set_pbid")
         self._pbid = pbid
 
     def _get_pbid(self):
-        self.console.debug("b4_clients.Client._get_pbid")
+        #self.console.debug("b4_clients.Client._get_pbid")
         return self._pbid
 
     pbid = property(_get_pbid, _set_pbid)
@@ -660,7 +663,7 @@ class Client(object):
     # -----------------------
 
     def _set_timeAdd(self, timeAdd):
-        self.console.debug("b4_clients.Client._set_timeAdd")
+        #self.console.debug("b4_clients.Client._set_timeAdd")
         self._timeAdd = int(timeAdd)
 
     def _get_timeAdd(self):
@@ -672,14 +675,50 @@ class Client(object):
     # -----------------------
 
     def _set_timeEdit(self, timeEdit):
-        self.console.debug("b4_clients.Client._set_timeEdit")
+        #self.console.debug("b4_clients.Client._set_timeEdit")
         self._timeEdit = int(timeEdit)
 
     def _get_timeEdit(self):
-        self.console.debug("b4_clients.Client._get_timeEdit")
+        #self.console.debug("b4_clients.Client._get_timeEdit")
         return self._timeEdit
 
     timeEdit = property(_get_timeEdit, _set_timeEdit)
+
+    # -----------------------
+
+    def _set_app(self, app):
+        #self.console.debug("b4_clients.Client._set_app")
+        self._app = app
+
+    def _get_app(self):
+        #self.console.debug("b4_clients.Client._get_app")
+        return self._app
+
+    app = property(_get_app, _set_app)
+
+    # -----------------------
+
+    def _set_isocode(self, isocode):
+        #self.console.debug("b4_clients.Client._set_isocode")
+        self._isocode = isocode
+
+    def _get_isocode(self):
+        #self.console.debug("b4_clients.Client._get_isocode")
+        return self._isocode
+
+    isocode = property(_get_isocode, _set_isocode)
+
+    # -----------------------
+
+    def _set_permmute(self, permmute):
+        #self.console.debug("b4_clients.Client._set_permmute")
+        self._permmute = int(permmute)
+
+    def _get_permmute(self):
+        #self.console.debug("b4_clients.Client._get_permmute")
+        return self._permmute
+
+    permmute = property(_get_permmute, _set_permmute)
 
     ####################################################################################################################
     #                                                                                                                  #
@@ -1768,7 +1807,7 @@ class Clients(dict):
         """
         Reset the indexes.
         """
-        self.console.debug("b4_clients.Clients.resetIndex")
+        #self.console.debug("b4_clients.Clients.resetIndex")
         self._nameIndex = {}
         self._guidIndex = {}
         self._exactNameIndex = {}

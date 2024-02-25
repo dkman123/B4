@@ -747,7 +747,7 @@ class AbstractParser(b4.b4_parser.Parser):
             m = None
             for f in self._reCvar:
                 m = re.match(f, val)
-                self.log.info("abstractParser looking for match for %s in cvar %s" % (val, f))
+                self.log.info("abstractParser looking for match for %s in cvar %s" % (cvar_name, val))
                 if m:
                     break
 

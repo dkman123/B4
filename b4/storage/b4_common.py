@@ -233,7 +233,7 @@ class DatabaseStorage(Storage):
         Return a client object fetching data from the storage.
         :param client: The client object to fill with fetch data.
         """
-        sys.stdout.write("b4_common DatabaseStorage getClient\n")
+        #sys.stdout.write("b4_common DatabaseStorage getClient\n")
         self.console.debug('Storage: getClient %s' % client)
         where = {'id': client.id} if client.id > 0 else {'guid': client.guid}
         # self.console.debug("NOISY guid %s" % client.guid)

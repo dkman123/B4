@@ -1278,7 +1278,7 @@ class Parser(object):
         """
         QueEvents.gevent for processing.
         """
-        sys.stdout.write("b4_parser.Parser.queueEvent\n")
+        #sys.stdout.write("b4_parser.Parser.queueEvent\n")
         if not hasattr(event, 'type'):
             return False
         elif event.type in self._handlers:  # queue only if there are handlers to listen for this event
@@ -1347,7 +1347,7 @@ class Parser(object):
         if self.output:
             res = self.output.write(str(msg))
             self.output.flush()
-            return res
+            return str(res)
 
     def writelines(self, msg):
         """
@@ -1594,7 +1594,7 @@ class Parser(object):
         :param text: the text to clean from color codes.
         :return: str
         """
-        sys.stdout.write("b4_parser.Parser.stripColors\n")
+        #sys.stdout.write("b4_parser.Parser.stripColors\n")
         return re.sub(self._reColor, '', text).strip()
 
     def isFrostbiteGame(self, gamename=None):
