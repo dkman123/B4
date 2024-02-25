@@ -255,7 +255,8 @@ def decode(text):
     if type(text) == bytes:
         return text.decode(sys.getfilesystemencoding())
     else:
-        return text.encode(sys.getfilesystemencoding())
+        #return text.encode(sys.getfilesystemencoding())
+        return text
 
 
 def clamp(value, minv=None, maxv=None):

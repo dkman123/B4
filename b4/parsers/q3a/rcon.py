@@ -49,7 +49,7 @@ class Rcon(object):
     rconreplystring = '\377\377\377\377print\n'
     qserversendstring = '\377\377\377\377%s\n'
 
-    # default expiretime for the status cache in seconds and cache type
+    # default expire time for the status cache in seconds and cache type
     status_cache_expire_time = 2
     status_cache = False
     status_cache_expired = None
@@ -98,8 +98,10 @@ class Rcon(object):
         self.console.info("rcon encode_data")
         try:
             if isinstance(data, bytes):
-                data = str(data, errors='ignore')
+                data = str(data, 'utf_8', errors='ignore')
             data = data.encode(self.console.encoding, 'replace')
+            #if isinstance(data, str):
+            #    data = bytes(data, 'utf_8', errors='ignore')
         except Exception as msg:
             self.console.warning('%s: error encoding data: %r', source, msg)
             data = 'Encoding error'
@@ -188,7 +190,8 @@ class Rcon(object):
                 self.console.warning('RCON: %s', str(errors))
             elif len(writeables) > 0:
                 try:
-                    writeables[0].send(self.rconsendstring % (self.password, data))
+                    # convert the string to bytes before sending
+                    writeables[0].send(bytes(self.rconsendstring % (self.password, data), 'utf-8'))
                 except Exception as msg:
                     self.console.warning('RCON: error sending: %r', msg)
                 else:
@@ -262,20 +265,20 @@ class Rcon(object):
                 self.console.verbose2('Using Status: Cached %s' % cmd)
                 return self.status_cache_data
             else:
-                with self.lock:
-                    data = self.sendRcon(cmd, maxRetries=maxRetries, socketTimeout=socketTimeout)
-                    if data:
-                        self.status_cache_data = data
-                        self.status_cache_expired = time.time() + self.status_cache_expire_time
-                        self.console.verbose2('Using Status: Fresh %s' % cmd)
-                    else:
-                        # if no data returned set the cached status to empty, but don't update the expired timer so next attempt will try 
-                        # to read a new value
-                        self.status_cache_data = ''
+                #with self.lock:
+                data = self.sendRcon(cmd, maxRetries=maxRetries, socketTimeout=socketTimeout)
+                if data:
+                    self.status_cache_data = data
+                    self.status_cache_expired = time.time() + self.status_cache_expire_time
+                    self.console.verbose2('Using Status: Fresh %s' % cmd)
+                else:
+                    # if no data returned set the cached status to empty, but don't update the expired timer so next attempt will try
+                    # to read a new value
+                    self.status_cache_data = ''
                 return self.status_cache_data
         
-        with self.lock:
-            data = self.sendRcon(cmd, maxRetries=maxRetries, socketTimeout=socketTimeout)
+        #with self.lock:
+        data = self.sendRcon(cmd, maxRetries=maxRetries, socketTimeout=socketTimeout)
         return data if data else ''
 
     def flush(self):

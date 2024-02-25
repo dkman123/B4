@@ -424,7 +424,7 @@ class Parser(object):
                 else:
                     self.screen.write('OK\n')
         except Exception as ex:
-            self.log.error("b4_parser testing rcon %s", ex)
+            self.log.error("b4_parser testing rcon: %s", ex)
 
         self.bot('b4_parser Loading events')
         self.loadEvents()
@@ -958,7 +958,7 @@ class Parser(object):
         """
         sys.stdout.write("b4_parser.Parser.pluginImport\n")
         if path is None:
-            path = os.path.join(b4.getB4Path(True), 'plugins')
+            path = os.path.join(str(b4.getB4Path(True)), 'plugins')
 
         spec = importlib.util.spec_from_file_location(name, path)
         if spec is None:
