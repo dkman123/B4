@@ -178,6 +178,7 @@ class DatabaseStorage(Storage):
         Establish and return a connection with the storage layer.
         :return The connection instance if established successfully, otherwise None.
         """
+        sys.stdout.write("b4_common DatabaseStorage connect\n")
         raise NotImplementedError
 
     def getConnection(self):
@@ -185,18 +186,21 @@ class DatabaseStorage(Storage):
         Return the database connection. If the connection has not been established yet, will establish a new one.
         :return The connection instance, or None if no connection can be established.
         """
+        sys.stdout.write("b4_common DatabaseStorage getConnection\n")
         raise NotImplementedError
 
     def shutdown(self):
         """
         Close the current active database connection.
         """
+        sys.stdout.write("b4_common DatabaseStorage shutdown\n")
         raise NotImplementedError
 
     def closeConnection(self):
         """
         Just an alias for shutdown (backwards compatibility).
         """
+        sys.stdout.write("b4_common DatabaseStorage closeConnection\n")
         self.shutdown()
 
     ####################################################################################################################
@@ -209,6 +213,7 @@ class DatabaseStorage(Storage):
         """
         Return a dictionary containing the number of clients, Bans, Kicks, Warnings and Tempbans.
         """
+        sys.stdout.write("b4_common DatabaseStorage getCounts\n")
         counts = {'clients': 0, 'Bans': 0, 'Kicks': 0, 'Warnings': 0, 'TempBans': 0}
         cursor = self.query("""SELECT COUNT(id) total FROM clients""")
         if cursor.rowcount:
@@ -228,6 +233,7 @@ class DatabaseStorage(Storage):
         Return a client object fetching data from the storage.
         :param client: The client object to fill with fetch data.
         """
+        sys.stdout.write("b4_common DatabaseStorage getClient\n")
         self.console.debug('Storage: getClient %s' % client)
         where = {'id': client.id} if client.id > 0 else {'guid': client.guid}
         # self.console.debug("NOISY guid %s" % client.guid)
@@ -291,6 +297,7 @@ class DatabaseStorage(Storage):
         Return a list of clients matching the given data:
         :param match: The data to match clients against.
         """
+        sys.stdout.write("b4_common DatabaseStorage getClientsMatching\n")
         self.console.debug('Storage: getClientsMatching %s' % match)
         cursor = self.query(
             b4.b4_querybuilder.QueryBuilder(self.db).SelectQuery('*', 'clients', match, 'time_edit DESC', 5))
@@ -313,6 +320,7 @@ class DatabaseStorage(Storage):
         :param client: The client to be saved.
         :return: The ID of the client stored into the database.
         """
+        sys.stdout.write("b4_common DatabaseStorage setClient\n")
         self.console.debug('Storage: setClient %s' % client)
         fields = ('ip', 'greeting', 'connections', 'time_edit',
                   'guid', 'pbid', 'name', 'time_add', 'auto_login',
@@ -347,6 +355,7 @@ class DatabaseStorage(Storage):
         :param alias: The alias to be saved.
         :return: The ID of the alias stored into the database.
         """
+        sys.stdout.write("b4_common DatabaseStorage setClientAlias\n")
         self.console.debug('Storage: setClientAlias %s' % alias)
         fields = ('num_used', 'alias', 'client_id', 'time_add', 'time_edit')
         data = {'id': alias.id} if alias.id else {}
@@ -371,6 +380,7 @@ class DatabaseStorage(Storage):
         :param alias: The alias object to fill with fetch data.
         :return: The alias object given in input with all the fields set.
         """
+        sys.stdout.write("b4_common DatabaseStorage getClientAlias\n")
         self.console.debug('Storage: getClientAlias %s' % alias)
         if hasattr(alias, 'id') and alias.id > 0:
             query = b4.b4_querybuilder.QueryBuilder(self.db).SelectQuery('*', 'aliases', {'id': alias.id}, None, 1)
@@ -402,6 +412,7 @@ class DatabaseStorage(Storage):
         :param client: The client whose aliases we want to retrieve.
         :return: List of b4_clients.Alias instances.
         """
+        sys.stdout.write("b4_common DatabaseStorage getClientAliases\n")
         self.console.debug('Storage: getClientAliases %s' % client)
         cursor = self.query(b4.b4_querybuilder.QueryBuilder(self.db)
                             .SelectQuery('*', 'aliases', {'client_id': client.id}, 'id'))
@@ -427,6 +438,7 @@ class DatabaseStorage(Storage):
         Insert/update an ipalias in the storage.
         :param ipalias: The ipalias to be saved.
         """
+        sys.stdout.write("b4_common DatabaseStorage setClientIpAddress\n")
         self.console.debug('Storage: setClientIpAddress %s' % ipalias)
         fields = ('num_used', 'ip', 'client_id', 'time_add', 'time_edit')
         data = {'id': ipalias.id} if ipalias.id else {}
@@ -451,6 +463,7 @@ class DatabaseStorage(Storage):
         :param ipalias: The ipalias object to fill with fetch data.
         :return: The ip alias object given in input with all the fields set.
         """
+        sys.stdout.write("b4_common DatabaseStorage getClientIpAddress\n")
         self.console.debug('Storage: getClientIpAddress %s' % ipalias)
         if hasattr(ipalias, 'id') and ipalias.id > 0:
             query = (b4.b4_querybuilder.QueryBuilder(self.db)
@@ -483,6 +496,7 @@ class DatabaseStorage(Storage):
         :param client: The client whose ip aliases we want to retrieve.
         :return: List of b4_clients.IpAlias instances
         """
+        sys.stdout.write("b4_common DatabaseStorage getClientIpAddresses\n")
         self.console.debug('Storage: getClientIpAddresses %s' % client)
         cursor = self.query(b4.b4_querybuilder.QueryBuilder(self.db)
                             .SelectQuery('*', 'ipaliases', {'client_id': client.id}, 'id'))
@@ -509,6 +523,7 @@ class DatabaseStorage(Storage):
         :param types: The penalties type.
         :param num: The amount of penalties to retrieve.
         """
+        sys.stdout.write("b4_common DatabaseStorage getLastPenalties\n")
         penalties = []
         where = b4.b4_querybuilder.QueryBuilder(self.db).WhereClause({'type': types, 'inactive': 0})
         where += ' AND (time_expire = -1 OR time_expire > %s)' % int(time())
@@ -528,6 +543,7 @@ class DatabaseStorage(Storage):
         :param penalty: The penalty to be saved.
         :return: The ID of the penalty saved in the storage.
         """
+        sys.stdout.write("b4_common DatabaseStorage setClientPenalty\n")
         fields = ('type', 'duration', 'inactive', 'admin_id',
                   'time_add', 'time_edit', 'time_expire', 'reason',
                   'keyword', 'client_id', 'data')
@@ -572,6 +588,7 @@ class DatabaseStorage(Storage):
         :param penalty: The penalty object to fill with fetch data.
         :return: The penalty given as input with all the fields set.
         """
+        sys.stdout.write("b4_common DatabaseStorage getClientPenalty\n")
         self.console.debug('Storage: getClientPenalty %s' % penalty)
         cursor = self.query(b4.b4_querybuilder.QueryBuilder(self.db)
                             .SelectQuery('*', 'penalties', {'id': penalty.id}, None, 1))
@@ -596,6 +613,7 @@ class DatabaseStorage(Storage):
         # .SelectQuery('*', 'penalties', where, 'time_add DESC'))
 
         # DK: testing get client penalties by IP
+        sys.stdout.write("b4_common DatabaseStorage getClientPenalties\n")
         self.console.debug('Storage: getClientPenalties %s' % client)
         where = b4.b4_querybuilder.QueryBuilder(self.db).WhereClause({'type': penType, 'inactive': 0})
         where += ' AND (time_expire = -1 OR time_expire > %s)' % int(time())
@@ -627,6 +645,7 @@ class DatabaseStorage(Storage):
         # .SelectQuery('*', 'penalties', where, 'time_add DESC', 1))
 
         # DK: testing get client penalties by IP
+        sys.stdout.write("b4_common DatabaseStorage getClientLastPenalty\n")
         self.console.debug('Storage: getClientPenalties %s' % client)
         where = b4.b4_querybuilder.QueryBuilder(self.db).WhereClause({'type': penType, 'inactive': 0})
         where += ' AND (time_expire = -1 OR time_expire > %s)' % int(time())
@@ -648,6 +667,7 @@ class DatabaseStorage(Storage):
         :param penType: The type of the penalty we want to retrieve.
         :return: The first penalty added for the given client.
         """
+        sys.stdout.write("b4_common DatabaseStorage getClientFirstPenalty\n")
         where = b4.b4_querybuilder.QueryBuilder(self.db).WhereClause(
             {'type': penType, 'client_id': client.id, 'inactive': 0})
         where += ' AND (time_expire = -1 OR time_expire > %s)' % int(time())
@@ -666,6 +686,7 @@ class DatabaseStorage(Storage):
         :param client: The client whose penalties we want to disable.
         :param penType: The type of the penalties we want to disable.
         """
+        sys.stdout.write("b4_common DatabaseStorage disableClientPenalties\n")
         self.query(b4.b4_querybuilder.QueryBuilder(self.db).UpdateQuery({'inactive': 1}, 'penalties',
                                                                         {'type': penType, 'client_id': client.id,
                                                                          'inactive': 0}))
@@ -683,6 +704,7 @@ class DatabaseStorage(Storage):
         # cursor = self.query("""SELECT COUNT(id) total FROM penalties WHERE %s""" % where)
 
         # DK: testing get client penalties by IP
+        sys.stdout.write("b4_common DatabaseStorage numPenalties\n")
         self.console.debug('Storage: getClientPenalties %s' % client)
         where = b4.b4_querybuilder.QueryBuilder(self.db).WhereClause({'type': penType, 'inactive': 0})
         where += ' AND (time_expire = -1 OR time_expire > %s)' % int(time())
@@ -700,6 +722,7 @@ class DatabaseStorage(Storage):
         """
         Return a list of available client groups.
         """
+        sys.stdout.write("b4_common DatabaseStorage getGroups\n")
         if not self._groups:
             cursor = self.query(b4.b4_querybuilder.QueryBuilder(self.db).SelectQuery('*', 'usergroups', None, 'level'))
             self._groups = []
@@ -724,6 +747,7 @@ class DatabaseStorage(Storage):
         :param group: A group object with level or keyword filled.
         :return: The group instance given in input with all the fields set.
         """
+        sys.stdout.write("b4_common DatabaseStorage getGroup\n")
         if hasattr(group, 'keyword') and group.keyword:
             query = b4.b4_querybuilder.QueryBuilder(self.db).SelectQuery('*', 'usergroups', dict(keyword=group.keyword),
                                                                          None, 1)
@@ -759,6 +783,7 @@ class DatabaseStorage(Storage):
         :param table: The database table or a collection of tables
         :raise KeyError: If the table is not present in the database
         """
+        sys.stdout.write("b4_common DatabaseStorage truncateTable\n")
         raise NotImplementedError
 
     def getTables(self):
@@ -766,6 +791,7 @@ class DatabaseStorage(Storage):
         List the tables of the current database.
         :return: list of strings.
         """
+        sys.stdout.write("b4_common DatabaseStorage getTables\n")
         raise NotImplementedError
 
     def setMapResult(self, mapresult):
@@ -774,6 +800,7 @@ class DatabaseStorage(Storage):
         :param mapresult: the map details for the record.
         :return: The ID of the record stored into the database.
         """
+        sys.stdout.write("b4_common DatabaseStorage setMapResult\n")
         # self.console.debug('Storage: setMapResult %s. %s, %s. %s'
         # % (mapresult.mapname, mapresult.redscore, mapresult.bluescore, mapresult.maptime))
         fields = ('mapname', 'redscore', 'bluescore', 'maptime', 'lowplayer', 'highplayer', 'createddate')
@@ -807,16 +834,29 @@ class DatabaseStorage(Storage):
         :param bindata: Data to bind to the given query.
         :raise Exception: If the query cannot be evaluated.
         """
-        self._lock.acquire()
+        #sys.stdout.write("b4_common DatabaseStorage _query\n")
+        self.console.info("b4_common DatabaseStorage _query")
+        #self._lock.acquire()
         try:
             cursor = self.db.cursor()
             if bindata is None:
+                #self.console.info("b4_common _query executing cursor")
                 cursor.execute(query)
             else:
+                #self.console.info("b4_common _query executing cursor with bindata")
                 cursor.execute(query, bindata)
+            #self.console.info("b4_common _query setting dbcursor")
             dbcursor = b4.storage.b4_cursor.Cursor(cursor, self.db)
-        finally:
-            self._lock.release()
+        except Exception as ex:
+            self.console.error("b4_common _query exception %s\n" % ex)
+        #finally:
+        #    self._lock.release()
+        self.console.info("b4_common _query returning dbcursor with type %s" % type(dbcursor).__name__)
+        # DEBUG lines
+        #if dbcursor:
+        #    self.console.info("b4_common _query says dbcursor looks OK")
+        #if not dbcursor:
+        #    self.console.info("b4_common _query says dbcursor looks BAD!")
         return dbcursor
 
     def query(self, query, bindata=None):
@@ -826,12 +866,16 @@ class DatabaseStorage(Storage):
         :param bindata: Data to bind to the given query.
         :raise Exception: If the query cannot be evaluated.
         """
+        #sys.stdout.write("b4_common DatabaseStorage query\n")
+        self.console.info("b4_common DatabaseStorage query")
         # use existing connection or create a new one
         connection = self.getConnection()
         if not connection:
+            self.console.error("b4_common lost connection with the storage layer during query")
             raise Exception('lost connection with the storage layer during query')
 
         try:
+            #self.console.info("b4_common calling _query")
             # always return a cursor instance (also when EOF is reached)
             return self._query(query=query, bindata=bindata)
         except Exception as e:
@@ -855,6 +899,7 @@ class DatabaseStorage(Storage):
         :param query: The query to execute.
         :param bindata: Data to bind to the given query.
         """
+        sys.stdout.write("b4_common DatabaseStorage query2\n")
         cursor = None
         try:
             cursor = self.query(query, bindata)
@@ -867,9 +912,10 @@ class DatabaseStorage(Storage):
         """
         This method executes an external sql file on the current database.
         :param fp: The filepath of the file containing the SQL statements.
-        :param silent: Whether or not to silence MySQL warnings.
+        :param silent: Whether to silence MySQL warnings.
         :raise Exception: If the query cannot be evaluated or if the given path cannot be resolved.
         """
+        sys.stdout.write("b4_common DatabaseStorage queryFromFile\n")
         # use existing connection or create a new one
         # duplicate code of query() method which is needed not to spam the database
         # with useless connection attempts (one for each query in the SQL file)
@@ -908,6 +954,7 @@ class DatabaseStorage(Storage):
         Check whether the connection with the storage layer is active or not.
         :return True if the connection is active, False otherwise.
         """
+        sys.stdout.write("b4_common DatabaseStorage status\n")
         raise NotImplementedError
 
     def getField(self, name):
@@ -915,6 +962,7 @@ class DatabaseStorage(Storage):
         Return a database field name given the correspondent variable name.
         :param name: The variable name.
         """
+        sys.stdout.write("b4_common DatabaseStorage getField\n")
         return self._reName.sub(r'_\1', name)
 
     def getVar(self, name):
@@ -922,6 +970,7 @@ class DatabaseStorage(Storage):
         Return a variable name given the correspondent database field name.
         :param name: The database field name.
         """
+        sys.stdout.write("b4_common DatabaseStorage getVar\n")
         return self._reVar.sub(lambda m: m.group(1).upper(), name)
 
     @staticmethod
@@ -931,6 +980,7 @@ class DatabaseStorage(Storage):
         :param sqlfile: An open file pointer to a SQL script file.
         :return: List of strings
         """
+        sys.stdout.write("b4_common DatabaseStorage getQueriesFromFile\n")
         lines = [x.strip() for x in sqlfile if x and not x.startswith('#') and not x.startswith('--')]
         return [x.strip() for x in ' '.join(lines).split(';') if x]
 
@@ -940,6 +990,7 @@ class DatabaseStorage(Storage):
         Create a Penalty object given a result set row.
         :param row: The result set row
         """
+        sys.stdout.write("b4_common DatabaseStorage _createPenaltyFromRow\n")
         constructors = {
             'Warning': b4.b4_clients.ClientWarning,
             'TempBan': b4.b4_clients.ClientTempBan,

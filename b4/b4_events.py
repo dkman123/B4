@@ -155,7 +155,7 @@ class Events:
         Load default events.
         :param events: A collection of Event tuples
         """
-        sys.stdout.write("b4_events.Events.loadEvents\n")
+        #sys.stdout.write("b4_events.Events.loadEvents\n")
         for k, n in events:
             self.createEvent(k, n)
 

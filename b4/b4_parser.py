@@ -512,7 +512,7 @@ class Parser(object):
         Set the config file to load
         """
         # DEBUG
-        sys.stdout.write("self.log is type %s\n" % type(self).name)
+        sys.stdout.write("self is type %s. self.log is not set yet.\n" % type(self).__name__)
         sys.stdout.write("b4_parser.Parser.loadConfig\n")
         if not conf:
             return False

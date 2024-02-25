@@ -56,6 +56,7 @@ class PymysqlStorage(b4.storage.b4_common.DatabaseStorage):
         Return the database connection. If the connection has not been established yet, will establish a new one.
         :return The connection instance, or None if no connection can be established.
         """
+        sys.stdout.write("b4_mysql PymysqlStorage getConnection\n")
         if self.db and self.db.open:
             return self.db
         return self.connect()
@@ -64,6 +65,7 @@ class PymysqlStorage(b4.storage.b4_common.DatabaseStorage):
         """
         Close the current active database connection.
         """
+        sys.stdout.write("b4_mysql PymysqlStorage shutdown\n")
         if self.db and self.db.open:
             # checking 'open' will prevent exception raising
             self.console.bot('Closing connection with MySQL database...')
@@ -81,6 +83,7 @@ class PymysqlStorage(b4.storage.b4_common.DatabaseStorage):
         Check whether the connection with the storage layer is active or not.
         :return True if the connection is active, False otherwise.
         """
+        sys.stdout.write("b4_mysql PymysqlStorage status\n")
         if self.db and self.db.open:
             return True
         return False
@@ -112,6 +115,7 @@ class MysqlConnectorStorage(b4.storage.b4_common.DatabaseStorage):
         Return the database connection. If the connection has not been established yet, will establish a new one.
         :return The connection instance, or None if no connection can be established.
         """
+        sys.stdout.write("b4_mysql MysqlConnectorStorage getConnection\n")
         self.console.info("b4_mysql.MysqlConnectorStorage.getConnection")
         if self.db and self.db._socket is not None:
             return self.db
@@ -121,6 +125,7 @@ class MysqlConnectorStorage(b4.storage.b4_common.DatabaseStorage):
         """
         Close the current active database connection.
         """
+        sys.stdout.write("b4_mysql MysqlConnectorStorage shutdown\n")
         self.console.info("b4_mysql.MysqlConnectorStorage.shutdown")
         if self.db and self.db._socket is not None:
             # the shutdown method is already exception safe
@@ -139,6 +144,7 @@ class MysqlConnectorStorage(b4.storage.b4_common.DatabaseStorage):
         Check whether the connection with the storage layer is active or not.
         :return True if the connection is active, False otherwise.
         """
+        sys.stdout.write("b4_mysql MysqlConnectorStorage status\n")
         self.console.info("b4_mysql.MysqlConnectorStorage.status")
         if self.db and self.db._socket is not None:
             return True
@@ -171,6 +177,7 @@ class MySQLdbStorage(b4.storage.b4_common.DatabaseStorage):
         Return the database connection. If the connection has not been established yet, will establish a new one.
         :return The connection instance, or None if no connection can be established.
         """
+        sys.stdout.write("b4_mysql MySQLdbStorage connect\n")
         if self.db and self.db.open:
             return self.db
         return self.connect()
@@ -179,6 +186,7 @@ class MySQLdbStorage(b4.storage.b4_common.DatabaseStorage):
         """
         Close the current active database connection.
         """
+        sys.stdout.write("b4_mysql MySQLdbStorage shutdown\n")
         if self.db and self.db.open:
             # checking 'open' will prevent exception raising
             self.console.bot('Closing connection with MySQL database...')
@@ -196,6 +204,7 @@ class MySQLdbStorage(b4.storage.b4_common.DatabaseStorage):
         Check whether the connection with the storage layer is active or not.
         :return True if the connection is active, False otherwise.
         """
+        sys.stdout.write("b4_mysql MySQLdbStorage status\n")
         if self.db and self.db.open:
             return True
         return False
@@ -280,6 +289,7 @@ class MysqlStorage(b4.storage.b4_common.DatabaseStorage):
         Will store the connection object also in the 'db' attribute so in the future we can reuse it.
         :return The connection instance if established successfully, otherwise None.
         """
+        sys.stdout.write("b4_mysql MysqlStorage connect\n")
         self.console.info("b4_mysql.MysqlStorage.connect")
         # do not retry too soon because the MySQL server could
         # have connection troubles and we do not want to spam it
@@ -320,7 +330,9 @@ class MysqlStorage(b4.storage.b4_common.DatabaseStorage):
                 # necessary tables: if database is empty, then AdminPlugin will raise an exception upon loading
                 # hence B4 won't be operational. I placed the check here since it doesn't make sense to keep
                 # loading plugins if B4 will crash.
-                if not self.getTables():
+                #sys.stdout.write("mysql about to getTables\n")
+                localCursor = list(self.getTables())
+                if not localCursor:
 
                     try:
                         self.console.info("Missing MySQL database tables: importing SQL file: %s..."
@@ -354,18 +366,24 @@ class MysqlStorage(b4.storage.b4_common.DatabaseStorage):
         List the tables of the current database.
         :return: list of strings.
         """
+        #sys.stdout.write("b4_mysql MysqlStorage getTables\n")
         self.console.info("b4_mysql.MysqlStorage.getTables")
         tables = []
-        cursor = self.query("SHOW TABLES")
-        if cursor and not cursor.EOF:
-            while not cursor.EOF:
-                row = cursor.getRow()
-                tables.append(row.values()[0])
-                cursor.moveNext()
-            sys.stdout.write("cursor is not empty\n")
-        else:
-            sys.stdout.write("cursor is empty\n")
-        cursor.close()
+        #self.console.info("about to query")
+        try:
+            cursor = self.query("SHOW TABLES")
+            if cursor and not cursor.EOF:
+                while not cursor.EOF:
+                    row = cursor.getRow()
+                    tables.append(row.values()[0])
+                    cursor.moveNext()
+                sys.stdout.write("cursor is not empty\n")
+            else:
+                sys.stdout.write("cursor is empty\n")
+            cursor.close()
+        except Exception as ex:
+            self.console.error("b4_mysql.MysqlStorage.getTables %s" % ex)
+            raise ex
         return tables
 
     def truncateTable(self, table):
@@ -374,6 +392,7 @@ class MysqlStorage(b4.storage.b4_common.DatabaseStorage):
         :param table: The database table or a collection of tables
         :raise KeyError: If the table is not present in the database
         """
+        sys.stdout.write("b4_mysql MysqlStorage truncateTable\n")
         self.console.info("b4_mysql.MysqlStorage.truncateTable")
         try:
             self.query("""SET FOREIGN_KEY_CHECKS=0;""")
