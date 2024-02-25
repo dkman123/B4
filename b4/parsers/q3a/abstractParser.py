@@ -739,7 +739,7 @@ class AbstractParser(b4.b4_parser.Parser):
         Return a CVAR from the server.
         :param cvar_name: The CVAR name.
         """
-        self.log.info("getCvar %s" % cvar_name)
+        self.log.info("iourt43 getCvar %s" % cvar_name)
         if self._reCvarName.match(cvar_name):
             val = self.write(cvar_name)
             self.debug('Get cvar %s = [%s]', cvar_name, val)

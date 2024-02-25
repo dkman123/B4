@@ -444,8 +444,8 @@ class Parser(object):
             queuesize = 50
             self.warning(err)
 
-        self.bot('b4_parser Creating the event queue')
-        self.log.debug("Creating the event queue with size %s", queuesize)
+        #self.bot('b4_parser Creating the event queue')
+        self.log.debug("Parser Creating the event queue with size %s", queuesize)
         self.queue = queue.Queue(queuesize)
 
         atexit.register(self.shutdown)
@@ -900,7 +900,7 @@ class Parser(object):
         """
         Load must have plugins.
         """
-        sys.stdout.write("b4_parser.Parser.loadArbPlugins\n")
+        #sys.stdout.write("b4_parser.Parser.loadArbPlugins\n")
         # if we fail to load one of those plugins, B4 will exit
         _mandatory_plugins = ['ftpytail', 'sftpytail', 'httpytail']
 
@@ -910,7 +910,7 @@ class Parser(object):
             :param console: The current console instance
             :param plugin_name: The name of the plugin to load
             """
-            sys.stdout.write("b4_parser.Parser._load_plugin")
+            #sys.stdout.write("b4_parser.Parser._load_plugin")
             try:
                 console.bot('Loading plugin : %s', plugin_name)
                 plugin_module = console.pluginImport(plugin_name)
@@ -1345,7 +1345,7 @@ class Parser(object):
         """
         sys.stdout.write("b4_parser.Parser.write\n")
         if self.output:
-            res = self.output.write(bytes(msg))
+            res = self.output.write(str(msg))
             self.output.flush()
             return res
 

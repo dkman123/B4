@@ -558,7 +558,7 @@ class Iourt43Parser(Iourt41Parser):
         """
         Called after the parser is created before run().
         """
-        self.debug("b4.parsers.Iourt43Parser.startup\n")
+        #self.debug("b4.parsers.Iourt43Parser.startup\n")
         try:
             cvar = self.getCvar('gamename')
             gamename = cvar.getString() if cvar else None
