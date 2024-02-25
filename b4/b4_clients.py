@@ -247,7 +247,7 @@ class Client(object):
 
     def _set_data(self, data):
         #self.console.debug("b4_clients.Client._set_data")
-        for k, v in data.iteritems():
+        for k, v in data.items():
             self._data[k] = v
 
     def _get_data(self):
@@ -416,11 +416,11 @@ class Client(object):
     ####################################################################################################################
 
     def _set_auto_login(self, autoLogin):
-        self.console.debug("b4_clients.Client._set_auto_login")
+        #self.console.debug("b4_clients.Client._set_auto_login")
         self._autoLogin = autoLogin
 
     def _get_auto_login(self):
-        self.console.debug("b4_clients.Client._get_auto_login")
+        #self.console.debug("b4_clients.Client._get_auto_login")
         return self._autoLogin
 
     autoLogin = property(_get_auto_login, _set_auto_login)
@@ -545,12 +545,12 @@ class Client(object):
     # -----------------------
 
     def _set_maskGroup(self, g):
-        self.console.debug("b4_clients.Client._set_maskGroup")
+        #self.console.debug("b4_clients.Client._set_maskGroup")
         self.maskLevel = g.level
         self._maskGroup = None
 
     def _get_maskGroup(self):
-        self.console.debug("b4_clients.Client._get_maskGroup")
+        #self.console.debug("b4_clients.Client._get_maskGroup")
         if not self.maskLevel:
             return None
         elif not self._maskGroup:
@@ -569,7 +569,7 @@ class Client(object):
     # -----------------------
 
     def _get_maskedGroup(self):
-        self.console.debug("b4_clients.Client._get_maskedGroup")
+        #self.console.debug("b4_clients.Client._get_maskedGroup")
         group = self.maskGroup
         return group if group else self.maxGroup
 
@@ -578,12 +578,12 @@ class Client(object):
     # -----------------------
 
     def _set_maskLevel(self, v):
-        self.console.debug("b4_clients.Client._set_maskLevel")
+        #self.console.debug("b4_clients.Client._set_maskLevel")
         self._maskLevel = int(v)
         self._maskGroup = None
 
     def _get_maskLevel(self):
-        self.console.debug("b4_clients.Client._get_maskLevel")
+        #self.console.debug("b4_clients.Client._get_maskLevel")
         return self._maskLevel
 
     maskLevel = property(_get_maskLevel, _set_maskLevel)
@@ -615,7 +615,7 @@ class Client(object):
             return
         if self.cid == '-1' or self.cid == 'Server': # bfbc2 addition
             if self.console:
-                self.console.verbose2('Aborted making alias for cid %s: must be B3' % self.cid)
+                self.console.verbose2('Aborted making alias for cid %s: must be B4' % self.cid)
             return
 
         self.makeAlias(self._name)
@@ -730,7 +730,7 @@ class Client(object):
         """
         Refresh the client level.
         """
-        self.console.debug("b4_clients.Client.refreshLevel")
+        #self.console.debug("b4_clients.Client.refreshLevel")
         self._maxLevel = None
         self._groups = None
 
@@ -738,7 +738,7 @@ class Client(object):
         """
         Disconnect the client.
         """
-        self.console.debug("b4_clients.Client.disconnect")
+        #self.console.debug("b4_clients.Client.disconnect")
         self.console.clients.disconnect(self)
 
     def kick(self, reason='', keyword=None, admin=None, silent=False, data='', *kwargs):
@@ -981,7 +981,7 @@ class Client(object):
         """
         Save the current client in the storage.
         """
-        self.console.debug("b4_clients.Client.save")
+        #self.console.debug("b4_clients.Client.save")
         self.timeEdit = time.time()
         if self.guid is None or str(self.guid) == '0':
             # can't save a client without a guid
@@ -999,7 +999,7 @@ class Client(object):
         """
         Authorize this client.
         """
-        self.console.debug("b4_clients.Client.auth")
+        #self.console.debug("b4_clients.Client.auth")
         if not self.authed and self.guid and not self.authorizing:
             self.authorizing = True
 
@@ -1818,7 +1818,7 @@ class Clients(dict):
         :param cid: The client slot number
         :param kwargs: The client attributes
         """
-        self.console.debug("b4_clients.Clients.newClient")
+        #self.console.debug("b4_clients.Clients.newClient")
         client = Client(console=self.console, cid=cid, timeAdd=self.console.time(), **kwargs)
         self[client.cid] = client
         self.resetIndex()
@@ -1859,7 +1859,7 @@ class Clients(dict):
         # remove existing clients
         self.clear()
         # add list of matching clients
-        for cid, c in mlist.iteritems():
+        for cid, c in mlist.items():
             self[cid] = c
 
     def authorizeClients(self):

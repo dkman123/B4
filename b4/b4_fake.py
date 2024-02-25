@@ -195,6 +195,7 @@ class FakeConsole(b4.b4_parser.Parser):
             print("### %s" % msg)
     
     def writelines(self, lines):
+        self.log.info("b4_fake writelines")
         for line in lines:
             self.write(line)
 

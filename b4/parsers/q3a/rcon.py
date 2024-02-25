@@ -169,7 +169,7 @@ class Rcon(object):
         :param maxRetries: How many times we have to retry the sending upon failure
         :param socketTimeout: The socket timeout value
         """
-        #self.console.info("rcon sendRcon")
+        self.console.info("rcon sendRcon")
         if socketTimeout is None:
             socketTimeout = self.socket_timeout
         if maxRetries is None:
@@ -177,8 +177,8 @@ class Rcon(object):
 
         data = data.strip()
         # encode the data
-        if self.console.encoding:
-            data = self.encode_data(data, 'RCON')
+        #if self.console.encoding:
+        #    data = self.encode_data(data, 'RCON')
 
         if type(data) is not str:
             data = data.decode('utf-8')
@@ -241,7 +241,7 @@ class Rcon(object):
         """
         Write multiple RCON commands on the socket.
         """
-        #self.console.info("rcon _writelines")
+        self.console.info("rcon _writelines")
         while not self._stopEvent.is_set():
             lines = self.queue.get(True)
             for cmd in lines:
@@ -255,7 +255,7 @@ class Rcon(object):
         Enqueue multiple RCON commands for later processing.
         :param lines: A list of RCON commands.
         """
-        #self.console.info("rcon writelines")
+        self.console.info("rcon writelines")
         self.queue.put(lines)
 
     def write(self, cmd, maxRetries=None, socketTimeout=None):
@@ -265,7 +265,7 @@ class Rcon(object):
         :param maxRetries: How many times we have to retry the sending upon failure
         :param socketTimeout: The socket timeout value
         """
-        #self.console.info("rcon write")
+        self.console.info("rcon write")
         # intercept status request for caching construct
         if (cmd == 'status' or cmd == 'PB_SV_PList') and self.status_cache:
             if time.time() < self.status_cache_expired:
@@ -303,14 +303,25 @@ class Rcon(object):
         data = ''
         while time.time() - start_time < 1:
             try:
-                d = str(sock.recv(4096))
+                d = sock.recv(4096)
             except socket.error as detail:
                 self.console.debug('RCON: error reading: %s' % detail)
                 break
             else:
                 if d:
                     # remove rcon header
-                    data += d.replace(self.rconreplystring, '')
+                    #data += d.replace(self.rconreplystring, '')
+
+                    #self.console.verbose2("rcon d part is %r\n" % d[4:9])
+                    if d[4:9] == b'print':
+                        d = d[10:]
+                        #self.console.verbose2("rcon d is %r\n" % d)
+
+                    if type(d) is not str:
+                        #self.console.verbose2("rcon attempting decode of received data %r\n" % d)
+                        d = d.decode('utf-8')
+
+                    data = d
                 elif len(data) > 0 and ord(data[-1:]) == 10:
                     break
 
@@ -335,14 +346,22 @@ class Rcon(object):
             return ''
 
         while len(readables):
-            d = str(sock.recv(size))
+            d = sock.recv(size)
 
             if d:
-                self.console.info("attempting decode of received data %r" % d)
-                if type(d) is not str:
-                    d = d.decode('utf-8')
                 # remove rcon header
-                data += d.replace(self.rconreplystring, '')
+                #data += d.replace(self.rconreplystring, '')
+
+                #self.console.verbose2("rcon d part is %r\n" % d[4:9])
+                if d[4:9] == b'print':
+                    d = d[10:]
+                    #self.console.verbose2("rcon d is %r\n" % d)
+
+                if type(d) is not str:
+                    # self.console.verbose2("rcon attempting decode of received data %r\n" % d)
+                    d = d.decode('utf-8')
+
+                data = d
 
             readables, writeables, errors = select.select([sock], [], [sock], socketTimeout)
             if len(readables):
