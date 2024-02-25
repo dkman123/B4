@@ -235,8 +235,8 @@ class Parser(object):
             self._publicIp = self.config.get('server', 'public_ip')
             self._port = self.config.getint('server', 'port')
 
-        self._rconPort = self._port  # if rcon port is the same as the game port, rcon_port can be ommited
-        self._rconIp = self._publicIp  # if rcon ip is the same as the game port, rcon_ip can be ommited
+        self._rconPort = self._port  # if rcon port is the same as the game port, rcon_port can be omitted
+        self._rconIp = self._publicIp  # if rcon ip is the same as the game port, rcon_ip can be omitted
 
         if self.config.has_option('server', 'rcon_ip'):
             self._rconIp = self.config.get('server', 'rcon_ip')
@@ -311,12 +311,15 @@ class Parser(object):
             # Plugin loading, so it makes no sense to keep going with the console initialization
             self.critical('Could not setup storage module: %s', e)
 
+        sys.stdout.write("Parser about to connect storage")
         # establish a connection with the database
         self.storage.connect()
 
+        sys.stdout.write("Parser looking for game_log")
         if self.config.has_option('server', 'game_log'):
             # open log file
             game_log = self.config.get('server', 'game_log')
+            sys.stdout.write("Parser found setting for game_log %s" % game_log)
             if game_log[0:6] == 'ftp://' or game_log[0:7] == 'sftp://' or game_log[0:7] == 'http://':
                 self.remoteLog = True
                 self.bot('Working in remote-log mode: %s', game_log)
@@ -346,6 +349,7 @@ class Parser(object):
             else:
                 self.bot('Game log is: %s', game_log)
                 f = self.config.getpath('server', 'game_log')
+                sys.stdout.write("Parser opened game_log")
 
             self.bot('Starting bot reading file: %s', os.path.abspath(f))
             self.screen.write('Using gamelog    : %s\n' % b4.getShortPath(os.path.abspath(f)))
@@ -435,7 +439,7 @@ class Parser(object):
             queuesize = 50
             self.warning(err)
 
-        self.debug("Creating the event queue with size %s", queuesize)
+        self.log.debug("Creating the event queue with size %s", queuesize)
         self.queue = queue.Queue(queuesize)
 
         atexit.register(self.shutdown)
@@ -446,21 +450,21 @@ class Parser(object):
         :param path: the relative path we want to expand
         :param decode: True to decode bytes, False for string
         """
-        self.debug("b4_parser.Parser.getAbsolutePath\n")
+        sys.stdout.write("b4_parser.Parser.getAbsolutePath\n")
         return b4.getAbsolutePath(path, decode=decode)
 
     def _dumpEventsStats(self):
         """
         Dump event statistics into the B4 log file.
         """
-        self.debug("b4_parser.Parser._dumpEventsStats\n")
+        sys.stdout.write("b4_parser.Parser._dumpEventsStats\n")
         self._eventsStats.dumpStats()
 
     def start(self):
         """
         Start B4
         """
-        self.debug("b4_parser.Parser.start\n")
+        sys.stdout.write("b4_parser.Parser.start\n")
         self.bot("Starting parser..")
         self.startup()
         self.say('%s ^2[ONLINE]' % b4.version)
@@ -480,7 +484,7 @@ class Parser(object):
         """
         Stop B4 with the die exit status (222)
         """
-        self.debug("b4_parser.Parser.die\n")
+        sys.stdout.write("b4_parser.Parser.die\n")
         self.shutdown()
         self.finalize()
         time.sleep(5)
@@ -490,7 +494,7 @@ class Parser(object):
         """
         Stop B4 with the restart exit status (221)
         """
-        self.debug("b4_parser.Parser.restart\n")
+        sys.stdout.write("b4_parser.Parser.restart\n")
         self.shutdown()
         time.sleep(5)
         self.bot('Restarting...')
@@ -500,14 +504,16 @@ class Parser(object):
         """
         Amount of time B4 has been running
         """
-        self.debug("b4_parser.Parser.upTime\n")
+        sys.stdout.write("b4_parser.Parser.upTime\n")
         return self.time() - self._timeStart
 
     def loadConfig(self, conf):
         """
         Set the config file to load
         """
-        self.debug("b4_parser.Parser.loadConfig\n")
+        # DEBUG
+        sys.stdout.write("self.log is type %s\n" % type(self).name)
+        sys.stdout.write("b4_parser.Parser.loadConfig\n")
         if not conf:
             return False
 
@@ -519,7 +525,7 @@ class Parser(object):
         """
         Save configration changes
         """
-        self.debug("b4_parser.Parser.saveConfig\n")
+        sys.stdout.write("b4_parser.Parser.saveConfig\n")
         self.bot('Saving config: %s', self.config.fileName)
         return self.config.save()
 
@@ -528,7 +534,7 @@ class Parser(object):
         Called after the parser is created before run(). Overwrite this
         for anything you need to initialize you parser with.
         """
-        self.debug("b4_parser.Parser.startup\n")
+        sys.stdout.write("b4_parser.Parser.startup\n")
         pass
 
     def pluginsStarted(self):
@@ -536,14 +542,14 @@ class Parser(object):
         Called after the parser loaded and started all plugins. 
         Overwrite this in parsers to take actions once plugins are ready
         """
-        self.debug("b4_parser.Parser.pluginsStarted\n")
+        sys.stdout.write("b4_parser.Parser.pluginsStarted\n")
         pass
 
     def pause(self):
         """
         Pause B4 log parsing
         """
-        self.debug("b4_parser.Parser.pause\n")
+        sys.stdout.write("b4_parser.Parser.pause\n")
         self.bot('PAUSING')
         self._paused = True
 
@@ -551,7 +557,7 @@ class Parser(object):
         """
         Unpause B4 log parsing
         """
-        self.debug("b4_parser.Parser.unpause\n")
+        sys.stdout.write("b4_parser.Parser.unpause\n")
         self._paused = False
         self._pauseNotice = False
         self.input.seek(0, os.SEEK_END)
@@ -560,14 +566,14 @@ class Parser(object):
         """
         Load events from event manager
         """
-        self.debug("b4_parser.Parser.loadEvents\n")
+        sys.stdout.write("b4_parser.Parser.loadEvents\n")
         self._events = self.Events.events
 
     def createEvent(self, key, name=None):
         """
         Create a new event
         """
-        self.debug("b4_parser.Parser.createEvent\n")
+        sys.stdout.write("b4_parser.Parser.createEvent\n")
         self.Events.createEvent(key, name)
         self._events = self.Events.events
         return self._events[key]
@@ -576,35 +582,35 @@ class Parser(object):
         """
         Get the numeric ID of an event key
         """
-        self.debug("b4_parser.Parser.getEventID\n")
+        sys.stdout.write("b4_parser.Parser.getEventID\n")
         return self.Events.getId(key)
 
     def getEvent(self, key, data=None, client=None, target=None):
         """
         Return a new Event object for an event name
         """
-        self.debug("b4_parser.Parser.getEvent\n")
+        sys.stdout.write("b4_parser.Parser.getEvent\n")
         return b4.b4_events.Event(self.Events.getId(key), data, client, target)
 
     def getEventName(self, key):
         """
         Get the name of an event by its key
         """
-        self.debug("b4_parser.Parser.getEventName\n")
+        sys.stdout.write("b4_parser.Parser.getEventName\n")
         return self.Events.getName(key)
 
     def getEventKey(self, event_id):
         """
         Get the key of a given event ID
         """
-        self.debug("b4_parser.Parser.getEventKey\n")
+        sys.stdout.write("b4_parser.Parser.getEventKey\n")
         return self.Events.getKey(event_id)
 
     def getPlugin(self, plugin):
         """
         Get a reference to a loaded plugin
         """
-        self.debug("b4_parser.Parser.getPlugin\n")
+        sys.stdout.write("b4_parser.Parser.getPlugin\n")
         try:
             return self._plugins[plugin]
         except KeyError:
@@ -614,7 +620,7 @@ class Parser(object):
         """
         Reload all config files
         """
-        self.debug("b4_parser.Parser.reloadConfigs\n")
+        sys.stdout.write("b4_parser.Parser.reloadConfigs\n")
         # reload main config
         self.config.load(self.config.fileName)
         for k in self._plugins:
@@ -626,7 +632,7 @@ class Parser(object):
         """
         Load plugins specified in the config
         """
-        self.debug("b4_parser.Parser.loadPlugins\n")
+        sys.stdout.write("b4_parser.Parser.loadPlugins\n")
         self.screen.write('Loading plugins  : ')
         self.screen.flush()
 
@@ -640,24 +646,24 @@ class Parser(object):
             :param p_clazz: The class implementing the plugin
             :param p_config_path: The plugin configuration file path
             """
-            self.debug("b4_parser.Parser._get_plugin_config")
+            sys.stdout.write("b4_parser.Parser._get_plugin_config")
 
             def _search_config_file(match):
                 """
                 Helper that returns a list of configuration files.
                 :param match: The plugin name
                 """
-                self.debug("b4_parser.Parser._search_config_file\n")
+                sys.stdout.write("b4_parser.Parser._search_config_file\n")
                 # first look in the built-in plugins directory
                 search = '%s%s*%s*' % (b4.getAbsolutePath('@conf\\', decode=True), os.path.sep, match)
-                self.debug('Searching for configuration file(s) matching: %s' % search)
+                self.log.debug('Searching for configuration file(s) matching: %s' % search)
                 collection = glob.glob(search)
                 if len(collection) > 0:
                     return collection
                 # if none is found, then search in the extplugins directory
                 search = '%s%s*%s*' % (
                     os.path.join(b4.getAbsolutePath(extplugins_dir, decode=True), match, 'conf'), os.path.sep, match)
-                self.debug('Searching for configuration file(s) matching: %s' % search)
+                self.log.debug('Searching for configuration file(s) matching: %s' % search)
                 collection = glob.glob(search)
                 return collection
 
@@ -665,7 +671,7 @@ class Parser(object):
                 # no plugin configuration file path specified: we can still load the plugin
                 # if there is non need for a configuration file, otherwise we will look up one
                 if not p_clazz.requiresConfigFile:
-                    self.debug('No configuration file specified for plugin %s: is not required either' % p_name)
+                    self.log.debug('No configuration file specified for plugin %s: is not required either' % p_name)
                     return None
 
                 # lookup a configuration file for this plugin
@@ -751,7 +757,7 @@ class Parser(object):
             :param p_data: A PluginData containing plugin information
             :return: list[PluginData] a list of PluginData of plugins needed by the current one
             """
-            self.debug("b4_parser.Parser._get_plugin_data\n")
+            sys.stdout.write("b4_parser.Parser._get_plugin_data\n")
             if p_data.clazz:
 
                 # check for correct B4 version
@@ -783,10 +789,10 @@ class Parser(object):
                         if r not in plugins and r not in plugin_required:
                             try:
                                 # missing requirement, try to load it
-                                self.debug('Plugin %s has unmet dependency : %s : trying to load plugin %s...' % (
+                                self.log.debug('Plugin %s has unmet dependency : %s : trying to load plugin %s...' % (
                                     p_data.name, r, r))
                                 collection += _get_plugin_data(PluginData(name=r))
-                                self.debug('Plugin %s dependency satisfied: %s' % (p_data.name, r))
+                                self.log.debug('Plugin %s dependency satisfied: %s' % (p_data.name, r))
                             except Exception as ex:
                                 raise MissingRequirement(
                                     'missing required plugin: %s : %s' % (r, extract_tb(sys.exc_info()[2])), ex)
@@ -798,7 +804,7 @@ class Parser(object):
                 # we are at the bottom step where we load a new requirement by importing the
                 # plugin module, class and configuration file. If the following generate an exception, recursion
                 # will catch it here above and raise it back so we can exclude the first plugin in the list from load
-                self.debug('Looking for plugin %s module and configuration file...' % p_data.name)
+                self.log.debug('Looking for plugin %s module and configuration file...' % p_data.name)
                 p_data.module = self.pluginImport(p_data.name)
                 p_data.clazz = getattr(p_data.module, '%sPlugin' % p_data.name.title())
                 p_data.conf = _get_plugin_config(p_data.name, p_data.clazz)
@@ -879,7 +885,7 @@ class Parser(object):
         """
         For each loaded plugin, call the onLoadConfig hook.
         """
-        self.debug("b4_parser.Parser.call_plugins_onLoadConfig\n")
+        sys.stdout.write("b4_parser.Parser.call_plugins_onLoadConfig\n")
         for plugin_name in self._plugins:
             p = self._plugins[plugin_name]
             p.onLoadConfig()
@@ -888,7 +894,7 @@ class Parser(object):
         """
         Load must have plugins.
         """
-        self.debug("b4_parser.Parser.loadArbPlugins\n")
+        sys.stdout.write("b4_parser.Parser.loadArbPlugins\n")
         # if we fail to load one of those plugins, B4 will exit
         _mandatory_plugins = ['ftpytail', 'sftpytail', 'httpytail']
 
@@ -898,7 +904,7 @@ class Parser(object):
             :param console: The current console instance
             :param plugin_name: The name of the plugin to load
             """
-            self.debug("b4_parser.Parser._load_plugin")
+            sys.stdout.write("b4_parser.Parser._load_plugin")
             try:
                 console.bot('Loading plugin : %s', plugin_name)
                 plugin_module = console.pluginImport(plugin_name)
@@ -944,7 +950,7 @@ class Parser(object):
         Import a single plugin.
         :param name: The plugin name
         """
-        self.debug("b4_parser.Parser.pluginImport\n")
+        sys.stdout.write("b4_parser.Parser.pluginImport\n")
         if path is None:
             path = os.path.join(b4.getB4Path(True), 'plugins')
 
@@ -963,7 +969,7 @@ class Parser(object):
         """
         Start all loaded plugins.
         """
-        self.debug("b4_parser.Parser.startPlugins\n")
+        sys.stdout.write("b4_parser.Parser.startPlugins\n")
         self.screen.write('Starting plugins : ')
         self.screen.flush()
 
@@ -973,7 +979,7 @@ class Parser(object):
             :param console: the console instance
             :param p_name: the plugin name
             """
-            self.debug("b4_parser.Parser.start_plugin")
+            sys.stdout.write("b4_parser.Parser.start_plugin")
             p = console._plugins[p_name]
             p.onStartup()
             p.start()
@@ -1000,7 +1006,7 @@ class Parser(object):
         """
         Disable all plugins except for 'admin', 'publist', 'ftpytail', 'sftpytail', 'httpytail', 'cod7http'
         """
-        self.debug("b4_parser.Parser.disablePlugins\n")
+        sys.stdout.write("b4_parser.Parser.disablePlugins\n")
         for k in self._plugins:
             if k not in ('admin', 'publist', 'ftpytail', 'sftpytail', 'httpytail', 'cod7http'):
                 p = self._plugins[k]
@@ -1011,7 +1017,7 @@ class Parser(object):
         """
         Enable all plugins except for 'admin', 'publist', 'ftpytail', 'sftpytail', 'httpytail', 'cod7http'
         """
-        self.debug("b4_parser.Parser.enablePlugins\n")
+        sys.stdout.write("b4_parser.Parser.enablePlugins\n")
         for k in self._plugins:
             if k not in ('admin', 'publist', 'ftpytail', 'sftpytail', 'httpytail', 'cod7http'):
                 p = self._plugins[k]
@@ -1022,7 +1028,7 @@ class Parser(object):
         """
         Return a message from the config file
         """
-        self.debug("b4_parser.Parser.getMessage\n")
+        sys.stdout.write("b4_parser.Parser.getMessage\n")
         try:
             msg = self._messages[msg]
         except KeyError:
@@ -1060,14 +1066,14 @@ class Parser(object):
                     variables[cleanattr] = getattr(obj, attr)
 
         for key, obj in kwargs.items():
-            # self.debug('Type of kwarg %s: %s' % (key, type(obj).__name__))
+            # self.log.debug('Type of kwarg %s: %s' % (key, type(obj).__name__))
             if obj is None:
                 continue
             if type(obj).__name__ in ('str', 'unicode'):
                 if key not in variables:
                     variables[key] = obj
             # elif type(obj).__name__ == 'instance':
-            # self.debug('Classname of object %s: %s' % (key, obj.__class__.__name__))
+            # self.log.debug('Classname of object %s: %s' % (key, obj.__class__.__name__))
             else:
                 for attr in vars(obj):
                     pattern = re.compile('[\W_]+')
@@ -1081,7 +1087,7 @@ class Parser(object):
         """
         Return a reference to a loaded command
         """
-        self.debug("b4_parser.Parser.getCommand\n")
+        sys.stdout.write("b4_parser.Parser.getCommand\n")
         try:
             cmd = self._commands[cmd]
         except KeyError:
@@ -1096,7 +1102,7 @@ class Parser(object):
         <data> can be either a group keyword or a group level.
         Raises KeyError if group is not found.
         """
-        self.debug("b4_parser.Parser.getGroup\n")
+        sys.stdout.write("b4_parser.Parser.getGroup\n")
         if type(data) is int or isinstance(data, str) and data.isdigit():
             g = b4.b4_clients.Group(level=data)
         else:
@@ -1109,7 +1115,7 @@ class Parser(object):
         <data> can be either a group keyword or a group level.
         Raises KeyError if group is not found.
         """
-        self.debug("b4_parser.Parser.getGroupLevel\n")
+        sys.stdout.write("b4_parser.Parser.getGroupLevel\n")
         group = self.getGroup(data)
         return group.level
 
@@ -1119,7 +1125,7 @@ class Parser(object):
         :param tz_name: The timezone name
         :return: tuple
         """
-        self.debug("b4_parser.Parser.getTzOffsetFromName\n")
+        sys.stdout.write("b4_parser.Parser.getTzOffsetFromName\n")
         if tz_name:
             if not tz_name in b4.b4_timezones.timezones:
                 self.warning(
@@ -1130,7 +1136,7 @@ class Parser(object):
                 return b4.b4_timezones.timezones[tz_name], tz_name
 
         # AUTO-DETECT TZ NAME/OFFSET
-        self.debug("Auto detecting timezone information...")
+        self.log.debug("Auto detecting timezone information...")
 
         # this will compute the timezone offset from UTC
         tz_info = datetime.timedelta(hours=time.timezone / -3600)
@@ -1144,7 +1150,7 @@ class Parser(object):
         :param gmttime: The current GMT time
         :param tz_name: The timezone name to be used for time formatting
         """
-        self.debug("b4_parser.Parser.formatTime\n")
+        sys.stdout.write("b4_parser.Parser.formatTime\n")
         if tz_name:
             # if a timezone name has been specified try to use it to format the given gmttime
             tz_name = str(tz_name).strip().upper()
@@ -1164,14 +1170,14 @@ class Parser(object):
             tz_offset, tz_name = self.getTzOffsetFromName(tz_name)
 
         time_format = self.config.get('b4', 'time_format').replace('%Z', tz_name).replace('%z', tz_name)
-        self.debug('Formatting time with timezone [%s], tzOffset : %s' % (tz_name, tz_offset))
+        self.log.debug('Formatting time with timezone [%s], tzOffset : %s' % (tz_name, tz_offset))
         return time.strftime(time_format, time.gmtime(gmttime + int(tz_offset * 3600)))
 
     def run(self):
         """
         Main worker thread for B4
         """
-        self.debug("b4_parser.Parser.run\n")
+        sys.stdout.write("b4_parser.Parser.run\n")
         self.screen.write('Startup complete : B4 is running! Let\'s get to work!\n\n')
         self.screen.write('If you run into problems check your B4 log file for more information\n')
         self.screen.flush()
@@ -1200,7 +1206,7 @@ class Parser(object):
                                     # Time in log has reset
                                     log_time_start = log_time_current
                                     log_time_last = 0
-                                    self.debug('log time reset %d' % log_time_current)
+                                    self.log.debug('log time reset %d' % log_time_current)
                                 elif not log_time_start:
                                     log_time_start = log_time_current
 
@@ -1235,7 +1241,7 @@ class Parser(object):
         """
         Parse a single line from the log file
         """
-        self.debug("b4_parser.Parser.parseLine\n")
+        sys.stdout.write("b4_parser.Parser.parseLine\n")
         m = re.match(self._lineFormat, line)
         if m:
             self.queueEvent(b4.b4_events.Event(self.getEventID('EVT_UNKNOWN'), m.group(2)[:1]))
@@ -1244,8 +1250,8 @@ class Parser(object):
         """
         Register an event handler.
         """
-        self.debug("b4_parser.Parser.registerHandler\n")
-        self.debug('%s: register event <%s>', event_handler.__class__.__name__, self.getEventName(event_name))
+        sys.stdout.write("b4_parser.Parser.registerHandler\n")
+        self.log.debug('%s: register event <%s>', event_handler.__class__.__name__, self.getEventName(event_name))
         if not event_name in self._handlers:
             self._handlers[event_name] = []
         if event_handler not in self._handlers[event_name]:
@@ -1255,10 +1261,10 @@ class Parser(object):
         """
         Unregister an event handler.
         """
-        self.debug("b4_parser.Parser.unregisterHandler\n")
+        sys.stdout.write("b4_parser.Parser.unregisterHandler\n")
         for event_name in self._handlers:
             if event_handler in self._handlers[event_name]:
-                self.debug('%s: unregister event <%s>', event_handler.__class__.__name__, self.getEventName(event_name))
+                self.log.debug('%s: unregister event <%s>', event_handler.__class__.__name__, self.getEventName(event_name))
                 self._handlers[event_name].remove(event_handler)
 
     def queueEvent(self, event, expire=30):
@@ -1266,7 +1272,7 @@ class Parser(object):
         """
         QueEvents.gevent for processing.
         """
-        self.debug("b4_parser.Parser.queueEvent\n")
+        sys.stdout.write("b4_parser.Parser.queueEvent\n")
         if not hasattr(event, 'type'):
             return False
         elif event.type in self._handlers:  # queue only if there are handlers to listen for this event
@@ -1285,7 +1291,7 @@ class Parser(object):
         """
         Event handler thread.
         """
-        self.debug("b4_parser.Parser.handleEvents\n")
+        sys.stdout.write("b4_parser.Parser.handleEvents\n")
         while self.working:
             added, expire, event = self.queue.get(True)
             if event.type == self.getEventID('EVT_EXIT') or event.type == self.getEventID('EVT_STOP'):
@@ -1331,7 +1337,7 @@ class Parser(object):
         """
         Write a message to Rcon/Console
         """
-        self.debug("b4_parser.Parser.write\n")
+        sys.stdout.write("b4_parser.Parser.write\n")
         if self.output:
             res = self.output.write(msg)
             self.output.flush()
@@ -1342,7 +1348,7 @@ class Parser(object):
         Write a sequence of messages to Rcon/Console. Optimized for speed.
         :param msg: The message to be sent to Rcon/Console.
         """
-        self.debug("b4_parser.Parser.writelines\n")
+        sys.stdout.write("b4_parser.Parser.writelines\n")
         if self.output and msg:
             res = self.output.writelines(msg)
             self.output.flush()
@@ -1353,7 +1359,7 @@ class Parser(object):
         Read lines from the log file
         :param game_log: The game log file pointer
         """
-        self.debug("b4_parser.Parser.__read_input\n")
+        sys.stdout.write("b4_parser.Parser.__read_input\n")
         return game_log.readlines()
 
     def ___read_input_darwin(self, game_log):
@@ -1361,14 +1367,14 @@ class Parser(object):
         Read lines from the log file (darwin version)
         :param game_log: The game log file pointer
         """
-        self.debug("b4_parser.Parser.___read_input_darwin\n")
+        sys.stdout.write("b4_parser.Parser.___read_input_darwin\n")
         return [game_log.readline()]
 
     def read(self):
         """
         Read from game server log file
         """
-        self.debug("b4_parser.Parser.read\n")
+        sys.stdout.write("b4_parser.Parser.read\n")
         if not hasattr(self, 'input'):
             self.critical("Cannot read game log file: check that you have a correct "
                           "value for the 'game_log' setting in your main config file")
@@ -1379,7 +1385,7 @@ class Parser(object):
         # if the cursor is at a number higher than the game log size, then
         # there's a problem
         if self.input.tell() > filestats.st_size:
-            self.debug('Parser: game log is suddenly smaller than it was before (%s bytes, now %s), '
+            self.log.debug('Parser: game log is suddenly smaller than it was before (%s bytes, now %s), '
                        'the log was probably either rotated or emptied. B4 will now re-adjust to the new '
                        'size of the log' % (str(self.input.tell()), str(filestats.st_size)))
             self.input.seek(0, os.SEEK_END)
@@ -1390,7 +1396,7 @@ class Parser(object):
         """
         Shutdown B4.
         """
-        self.debug("b4_parser.Parser.shutdown\n")
+        sys.stdout.write("b4_parser.Parser.shutdown\n")
         try:
             if self.working and self.exiting.acquire():
                 self.bot('Shutting down...')
@@ -1411,7 +1417,7 @@ class Parser(object):
         Commons operation to be done on B4 shutdown.
         Called internally by b4_parser.die()
         """
-        self.debug("b4_parser.Parser.finalize\n")
+        sys.stdout.write("b4_parser.Parser.finalize\n")
         if b4.getPlatform() in ('linux', 'darwin'):
             # check for PID file if B4 has been started using the provided BASH initialization scripts.
             b4_name = os.path.basename(self.config.fileName)
@@ -1434,7 +1440,7 @@ class Parser(object):
         And wrap if \n character encountered.
         :param text: The text that needs to be split.
         """
-        self.debug("b4_parser.Parser.getWrap\n")
+        sys.stdout.write("b4_parser.Parser.getWrap\n")
         if not text:
             return []
 
@@ -1485,70 +1491,70 @@ class Parser(object):
         """
         Log an ERROR message.
         """
-        #self.debug("b4_parser.Parser.error\n")
+        #sys.stdout.write("b4_parser.Parser.error\n")
         self.log.error(msg, *args, **kwargs)
 
     def debug(self, msg, *args, **kwargs):
         """
         Log a DEBUG message.
         """
-        #self.debug("b4_parser.Parser.debug\n")
+        #sys.stdout.write("b4_parser.Parser.debug\n")
         self.log.debug(msg, *args, **kwargs)
 
     def bot(self, msg, *args, **kwargs):
         """
         Log a BOT message.
         """
-        #self.debug("b4_parser.Parser.bot\n")
+        #sys.stdout.write("b4_parser.Parser.bot\n")
         self.log.bot(msg, *args, **kwargs)
 
     def verbose(self, msg, *args, **kwargs):
         """
         Log a VERBOSE message.
         """
-        #self.debug("b4_parser.Parser.verbose\n")
+        #sys.stdout.write("b4_parser.Parser.verbose\n")
         self.log.verbose(msg, *args, **kwargs)
 
     def verbose2(self, msg, *args, **kwargs):
         """
         Log an EXTRA VERBOSE message.
         """
-        #self.debug("b4_parser.Parser.verbose2\n")
+        #sys.stdout.write("b4_parser.Parser.verbose2\n")
         self.log.verbose2(msg, *args, **kwargs)
 
     def console(self, msg, *args, **kwargs):
         """
         Log a CONSOLE message.
         """
-        #self.debug("b4_parser.Parser.console\n")
+        #sys.stdout.write("b4_parser.Parser.console\n")
         self.log.console(msg, *args, **kwargs)
 
     def warning(self, msg, *args, **kwargs):
         """
         Log a WARNING message.
         """
-        #self.debug("b4_parser.Parser.warning\n")
+        #sys.stdout.write("b4_parser.Parser.warning\n")
         self.log.warning(msg, *args, **kwargs)
 
     def info(self, msg, *args, **kwargs):
         """
         Log an INFO message.
         """
-        #self.debug("b4_parser.Parser.info\n")
+        #sys.stdout.write("b4_parser.Parser.info\n")
         self.log.info(msg, *args, **kwargs)
 
     def exception(self, msg, *args, **kwargs):
         """
         Log an EXCEPTION message.
         """
-        #self.debug("b4_parser.Parser.exception\n")
+        #sys.stdout.write("b4_parser.Parser.exception\n")
         self.log.exception(msg, *args, **kwargs)
 
     def critical(self, msg, *args, **kwargs):
         """
         Log a CRITICAL message and shutdown B4.
         """
-        #self.debug("b4_parser.Parser.critical\n")
+        #sys.stdout.write("b4_parser.Parser.critical\n")
         self.log.critical(msg, *args, **kwargs)
         self.shutdown()
         self.finalize()
@@ -1568,7 +1574,7 @@ class Parser(object):
         """
         Instantiate the main Cron object.
         """
-        self.debug("b4_parser.Parser._get_cron\n")
+        sys.stdout.write("b4_parser.Parser._get_cron\n")
         if not self._cron:
             self._cron = b4.b4_cron.Cron(self)
             self._cron.start()
@@ -1582,7 +1588,7 @@ class Parser(object):
         :param text: the text to clean from color codes.
         :return: str
         """
-        self.debug("b4_parser.Parser.stripColors\n")
+        sys.stdout.write("b4_parser.Parser.stripColors\n")
         return re.sub(self._reColor, '', text).strip()
 
     def isFrostbiteGame(self, gamename=None):
@@ -1590,7 +1596,7 @@ class Parser(object):
         Tells whether we are running a Frostbite based game.
         :return: True if we are running a Frostbite game, False otherwise
         """
-        self.debug("b4_parser.Parser.isFrostbiteGame\n")
+        sys.stdout.write("b4_parser.Parser.isFrostbiteGame\n")
         if not gamename:
             gamename = self.gameName
         return gamename in self._frostBiteGameNames
@@ -1599,7 +1605,7 @@ class Parser(object):
         """
         Create a documentation for all available commands.
         """
-        self.debug("b4_parser.Parser.updateDocumentation\n")
+        sys.stdout.write("b4_parser.Parser.updateDocumentation\n")
         if self.config.has_section('autodoc'):
             try:
                 from tools.documentationBuilder import DocBuilder
@@ -1623,7 +1629,7 @@ class Parser(object):
         Query the game server for connected players.
         return a dict having players' id for keys and players' data as another dict for values
         """
-        self.debug("b4_parser.Parser.getPlayerList\n")
+        sys.stdout.write("b4_parser.Parser.getPlayerList\n")
         raise NotImplementedError
 
     def authorizeClients(self):
@@ -1632,7 +1638,7 @@ class Parser(object):
         the user in the database (usualy guid, or punkbuster id, ip) and call the 
         Client.auth() method 
         """
-        self.debug("b4_parser.Parser.authorizeClients\n")
+        sys.stdout.write("b4_parser.Parser.authorizeClients\n")
         raise NotImplementedError
 
     def sync(self):
@@ -1645,35 +1651,35 @@ class Parser(object):
         occupy. On map change, a player A on slot 1 can leave making room for player B who
         connects on slot 1.
         """
-        self.debug("b4_parser.Parser.sync\n")
+        sys.stdout.write("b4_parser.Parser.sync\n")
         raise NotImplementedError
 
     def say(self, msg, *args):
         """
         Broadcast a message to all players
         """
-        self.debug("b4_parser.Parser.say\n")
+        sys.stdout.write("b4_parser.Parser.say\n")
         raise NotImplementedError
 
     def saybig(self, msg, *args):
         """
         Broadcast a message to all players in a way that will catch their attention.
         """
-        self.debug("b4_parser.Parser.saybig\n")
+        sys.stdout.write("b4_parser.Parser.saybig\n")
         raise NotImplementedError
 
     def message(self, client, text, *args):
         """
         Display a message to a given player
         """
-        self.debug("b4_parser.Parser.message\n")
+        sys.stdout.write("b4_parser.Parser.message\n")
         raise NotImplementedError
 
     def kick(self, client, reason='', admin=None, silent=False, *kwargs):
         """
         Kick a given player
         """
-        self.debug("b4_parser.Parser.kick\n")
+        sys.stdout.write("b4_parser.Parser.kick\n")
         raise NotImplementedError
 
     def ban(self, client, reason='', admin=None, silent=False, *kwargs):
@@ -1682,14 +1688,14 @@ class Parser(object):
         fire the event ('EVT_CLIENT_BAN', data={'reason': reason, 
         'admin': admin}, client=target)
         """
-        self.debug("b4_parser.Parser.ban\n")
+        sys.stdout.write("b4_parser.Parser.ban\n")
         raise NotImplementedError
 
     def unban(self, client, reason='', admin=None, silent=False, *kwargs):
         """
         Unban a given player on the game server
         """
-        self.debug("b4_parser.Parser.unban\n")
+        sys.stdout.write("b4_parser.Parser.unban\n")
         raise NotImplementedError
 
     def tempban(self, client, reason='', duration=2, admin=None, silent=False, *kwargs):
@@ -1698,35 +1704,35 @@ class Parser(object):
         fire the event ('EVT_CLIENT_BAN_TEMP', data={'reason': reason, 
         'duration': duration, 'admin': admin}, client=target)
         """
-        self.debug("b4_parser.Parser.tempban\n")
+        sys.stdout.write("b4_parser.Parser.tempban\n")
         raise NotImplementedError
 
     def getMap(self):
         """
         Return the current map/level name
         """
-        self.debug("b4_parser.Parser.getMap\n")
+        sys.stdout.write("b4_parser.Parser.getMap\n")
         raise NotImplementedError
 
     def getNextMap(self):
         """
         Return the next map/level name to be played
         """
-        self.debug("b4_parser.Parser.getNextMap\n")
+        sys.stdout.write("b4_parser.Parser.getNextMap\n")
         raise NotImplementedError
 
     def getMaps(self):
         """
         Return the available maps/levels name
         """
-        self.debug("b4_parser.Parser.getMaps\n")
+        sys.stdout.write("b4_parser.Parser.getMaps\n")
         raise NotImplementedError
 
     def rotateMap(self):
         """
         Load the next map/level
         """
-        self.debug("b4_parser.Parser.rotateMap\n")
+        sys.stdout.write("b4_parser.Parser.rotateMap\n")
         raise NotImplementedError
 
     def changeMap(self, map_name):
@@ -1734,7 +1740,7 @@ class Parser(object):
         Load a given map/level
         Return a list of suggested map names in cases it fails to recognize the map that was provided
         """
-        self.debug("b4_parser.Parser.changeMap\n")
+        sys.stdout.write("b4_parser.Parser.changeMap\n")
         raise NotImplementedError
 
     def getPlayerPings(self, filter_client_ids=None):
@@ -1742,14 +1748,14 @@ class Parser(object):
         Returns a dict having players' id for keys and players' ping for values
         :param filter_client_ids: If filter_client_id is an iterable, only return values for the given client ids.
         """
-        self.debug("b4_parser.Parser.getPlayerPings\n")
+        sys.stdout.write("b4_parser.Parser.getPlayerPings\n")
         raise NotImplementedError
 
     def getPlayerScores(self):
         """
         Returns a dict having players' id for keys and players' scores for values
         """
-        self.debug("b4_parser.Parser.getPlayerScores\n")
+        sys.stdout.write("b4_parser.Parser.getPlayerScores\n")
         raise NotImplementedError
 
     def inflictCustomPenalty(self, penalty_type, client, reason=None, duration=None, admin=None, data=None):
@@ -1759,7 +1765,7 @@ class Parser(object):
         'mute', 'kill' or anything you want.
         /!\ This method must return True if the penalty was inflicted.
         """
-        self.debug("b4_parser.Parser.inflictCustomPenalty\n")
+        sys.stdout.write("b4_parser.Parser.inflictCustomPenalty\n")
         pass
 
 

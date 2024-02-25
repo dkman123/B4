@@ -142,6 +142,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         """
         Load plugin configuration.
         """
+        sys.stdout.write("AdminPlugin onLoadConfig\n")
         self.load_config_warn_reasons()
         self.load_config_messages()
         self.load_config_warn()
@@ -222,6 +223,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         Load section 'messages' from config and put the messages in local cache.
         Optionally apply validation rules.
         """
+        sys.stdout.write("AdminPlugin load_config_messages\n")
         self._messages = {
             # regme_confirmation
             'regme_confirmation': "^7Thanks for your registration. You are now a member of the group %s"
@@ -243,6 +245,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         """
         Load section 'warn' from config.
         """
+        sys.stdout.write("AdminPlugin load_config_warn\n")
         try:
             raw_data = self.config.getint('warn', 'warn_delay')
             if raw_data < 0:
@@ -296,6 +299,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         """
         Load section 'warn_reasons' from config.
         """
+        sys.stdout.write("AdminPlugin load_config_warn_reasons\n")
         re_valid_warn_reason_value_from_config = re.compile(r"""
                 ^
                 (?:
@@ -383,6 +387,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         """
         Plugin startup.
         """
+        sys.stdout.write("AdminPlugin onStartup\n")
         self.registerEvent('EVT_CLIENT_SAY', self.OnSay)
         self.registerEvent('EVT_CLIENT_TEAM_SAY', self.OnSay)
         self.registerEvent('EVT_CLIENT_SQUAD_SAY', self.OnSay)
@@ -489,6 +494,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         :param alias: The command alias
         :param secretLevel: The command secret level
         """
+        sys.stdout.write("AdminPlugin registerCommand\n")
         if not handler:
             self.error('command "%s" registration failed: no handler specified' % command)
             return False
@@ -535,6 +541,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         :param name: The command name
         :return: True if the command can be unregistered, False otherwise
         """
+        sys.stdout.write("AdminPlugin unregisterCommand\n")
         try:
             command = self._commands[name]
             self.debug('unregistering command %s (%s) : %s' % (command.command, command.alias, command.func.__name__))
@@ -557,6 +564,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         """
         Handle EVT_CLIENT_PRIVATE_SAY
         """
+        sys.stdout.write("AdminPlugin OnPrivateSay\n")
         if event.target and event.client.id == event.target.id:
             self.OnSay(event, True)
 
@@ -564,6 +572,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         """
         Handle EVT_CLIENT_SAY
         """
+        sys.stdout.write("AdminPlugin OnSay\n")
         self.debug('OnSay handle %s:"%s"', event.type, event.data)
 
         if len(event.data) >= 3 and event.data[:1] == '#':
@@ -756,6 +765,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         :param client: The client executing the command
         :param delay: The delay between command executions
         """
+        sys.stdout.write("AdminPlugin aquireCmdLock\n")
         if client.maxLevel >= self._admins_level:
             return True
         elif cmd.time + delay <= self.console.time():
@@ -769,6 +779,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         :param c_word: The spelled command
         :param client: The client who executed the command
         """
+        sys.stdout.write("AdminPlugin get_cmdSoundingLike\n")
         c_list = []
         for c, cmd in self._commands.items():
             if cmd.canUse(client):
@@ -781,12 +792,14 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         """
         Return a list of online admins.
         """
+        sys.stdout.write("AdminPlugin getAdmins\n")
         return self.console.clients.getClientsByLevel(self._admins_level)
 
     def getRegulars(self):
         """
         Return a list of online regular players.
         """
+        sys.stdout.write("AdminPlugin getRegulars\n")
         return self.console.clients.getClientsByLevel(min=2, max=2)
 
     def findClientPrompt(self, handle, client=None):
@@ -795,6 +808,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         :param handle: The search handle
         :param client: The client who to notify search results
         """
+        sys.stdout.write("AdminPlugin findClientPrompt\n")
         matches = self.console.clients.getByMagic(handle)
         if matches:
             if len(matches) > 1:
@@ -823,6 +837,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         req: set to True if parameters is required.
         Return None if could cmd is not in the expected format
         """
+        sys.stdout.write("AdminPlugin parseUserCmd\n")
         m = re.match(self._parseUserCmdRE, cmd)
 
         if m:
@@ -845,6 +860,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         Return a group level from group keyword or group level understand level ranges (ie: 20-40 or mod-admin).
         :param level: The group keyword/level
         """
+        sys.stdout.write("AdminPlugin getGroupLevel\n")
         level = str(level)
         if level.lower() == 'none':
             return 'none'
@@ -881,8 +897,9 @@ class AdminPlugin(b4.b4_plugin.Plugin):
     def getReason(self, kword):
         """
         Return a reason according to the given keyword.
-        :param kword: The keyword to use to lookup the reason
+        :param kword: The keyword to use to look up the reason
         """
+        sys.stdout.write("AdminPlugin getReason\n")
         if not kword:
             return ''
 
@@ -895,8 +912,9 @@ class AdminPlugin(b4.b4_plugin.Plugin):
     def getSpam(self, kword):
         """
         Return a spam message according to the given keyword.
-        :param kword: The keyword to use to lookup the spam message
+        :param kword: The keyword to use to look up the spam message
         """
+        sys.stdout.write("AdminPlugin getSpam\n")
         if not kword:
             return ''
 
@@ -919,6 +937,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         """
         Return a warning message according to the given keyword
         """
+        sys.stdout.write("AdminPlugin getWarning\n")
         if not kword:
             kword = 'default'
         return self.warn_reasons.get(kword)
@@ -929,6 +948,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         :param sclient: The client whose warnings needs to be cleared
         :param client: The client removing the warnings
         """
+        sys.stdout.write("AdminPlugin clearAll\n")
         for w in sclient.warnings:
             admin = None
             try:
@@ -955,6 +975,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         :param client: The client who launched the !list command
         :param cmd: The command object instance for sayLoudOrPM method invoke
         """
+        sys.stdout.write("AdminPlugin doList\n")
         names = [self.getMessage('player_id', c.name, c.cid) for c in self.console.clients.getClientsByLevel()]
         cmd.sayLoudOrPM(client, ', '.join(names))
 
@@ -963,6 +984,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         Scheduled execution: will check for banned players still
         connected to the server and kick them if needed.
         """
+        sys.stdout.write("AdminPlugin doPastBansCheck\n")
         counts = self.console.storage.getCounts()
         for k1 in self._past_bans_counts:
             if self._past_bans_counts[k1] != counts[k1]:
@@ -984,6 +1006,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         :param client: The client who launched the !list command
         :param cmd: The command object instance for sayLoudOrPM method invoke
         """
+        sys.stdout.write("AdminPlugin doLonglist\n")
         for c in self.console.clients.getClientsByLevel():
             clientinfo = self.getMessage('player_id_reverse', c.cid, c.name)
             cmd.sayLoudOrPM(client, clientinfo)
@@ -995,6 +1018,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         :param times: How many times the message should be printed
         :param delay: Amount of time between prints
         """
+        sys.stdout.write("AdminPlugin sayMany\n")
         for c in range(1, times + 1):
             self.console.say('^%i%s' % (c, msg))
             time.sleep(delay)
@@ -1010,6 +1034,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         :param admin: The client who issued the punishment
         :param data: Extra data
         """
+        sys.stdout.write("AdminPlugin penalizeClient\n")
         if reason is None:
             reason = self.getReason(keyword)
 
@@ -1041,10 +1066,11 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         :param sclient: The client to warn
         :param keyword: The keyword used for this warning
         :param admin: The admin who issued the warn
-        :param timer: Whether or not to track the warn time
+        :param timer: Whether to track the warn time
         :param data: Extra data
         :param newDuration: A custom duration for this warning
         """
+        sys.stdout.write("AdminPlugin warnClient\n")
         try:
             duration, warning = self.getWarning(keyword)
         except Exception:
@@ -1106,6 +1132,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         :param client: The client who issued the last warning
         :param data: Extra data
         """
+        sys.stdout.write("AdminPlugin checkWarnKick\n")
         if sclient.var(self, 'checkWarn').value:
             sclient.setvar(self, 'checkWarn', False)
             kick_num = self.config.getint('warn', 'alert_kick_num')
@@ -1119,6 +1146,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         Retrieve the duration for a tempban penalty due too many warnings.
         :param sclient: The client who has been warned
         """
+        sys.stdout.write("AdminPlugin warnKickDuration\n")
         if sclient.numWarnings > self.config.getint('warn', 'tempban_num'):
             duration = self.config.getDuration('warn', 'tempban_duration')
             # self.debug("warnKickDuration: from tempban_duration. client %s; duration %s" %
@@ -1156,6 +1184,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         :param client: The client who issued the last warning
         :param data: Extra data
         """
+        sys.stdout.write("AdminPlugin warnKick\n")
         msg = sclient.numWarnings
         keyword = ''
         warn = sclient.lastWarning
@@ -1179,8 +1208,9 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         """
         Send rules to the given client
         :param sclient: The client who to notice rules (may be None)
-        :param big: Whether or not to print a BIG message
+        :param big: Whether to print a BIG message
         """
+        sys.stdout.write("AdminPlugin _sendRules\n")
         rules = []
 
         for i in range(1, 20):
@@ -1207,6 +1237,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
             self.error(err)
 
     def get_clients(self):
+        sys.stdout.write("AdminPlugin get_clients\n")
         return self.console.clients.getList()
 
     ####################################################################################################################
@@ -1219,6 +1250,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         """
         - shutdown b4
         """
+        sys.stdout.write("AdminPlugin cmd_die\n")
         cmd.sayLoudOrPM(client, '^7Shutting down ^3%s' % data)
         self.console.die()
 
@@ -1226,6 +1258,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         """
         - restart b4
         """
+        sys.stdout.write("AdminPlugin cmd_restart\n")
         cmd.sayLoudOrPM(client, '^7Shutting down for restart...')
         self.console.restart()
 
@@ -1233,6 +1266,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         """
         - re-load all configs
         """
+        sys.stdout.write("AdminPlugin cmd_reconfig\n")
         self.console.reloadConfigs()
         cmd.sayLoudOrPM(client, '^7Re-loaded configs')
 
@@ -1240,6 +1274,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         """
         <group> [<name>] - hide level
         """
+        sys.stdout.write("AdminPlugin cmd_mask\n")
         m = self.parseUserCmd(data)
         if not m:
             client.message(self.getMessage('invalid_parameters'))
@@ -1272,6 +1307,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         """
         [<name>] - un-hide level
         """
+        sys.stdout.write("AdminPlugin cmd_unmask\n")
         m = self.parseUserCmd(data)
         if not m:
             sclient = client
@@ -1290,6 +1326,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         """
         [<player>] - clear all tk points and warnings
         """
+        sys.stdout.write("AdminPlugin cmd_clear\n")
         if data:
             sclient = self.findClientPrompt(data, client)
             if sclient:
@@ -1305,6 +1342,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         """
         <map> - switch current map
         """
+        sys.stdout.write("AdminPlugin cmd_map\n")
         if not data:
             client.message('^7You must supply a map to change to')
         else:
@@ -1316,12 +1354,14 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         """
         - switch to the next map in rotation
         """
+        sys.stdout.write("AdminPlugin cmd_maprotate\n")
         self.console.rotateMap()
 
     def cmd_b4(self, data, client, cmd=None):
         """
         - say b4's version info
         """
+        sys.stdout.write("AdminPlugin cmd_b4\n")
         if len(data) > 0 and client.maxLevel >= self._admins_level:
             data = data.lower().strip()
             if data == 'poke':
@@ -1374,6 +1414,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         """
         - register yourself as a basic user
         """
+        sys.stdout.write("AdminPlugin cmd_register\n")
         try:
             group = Group(keyword='user')
             group = self.console.storage.getGroup(group)
@@ -1395,11 +1436,12 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         """
         [<command|level>] - get info on how to use a command, you can use *<command> for partial matches
         """
-
+        sys.stdout.write("AdminPlugin cmd_help\n")
         threading.Thread(target=self.dohelp, args=(client, data, cmd)).start()
 
     def dohelp(self, client, data, cmd):
-    
+
+        sys.stdout.write("AdminPlugin dohelp\n")
         commands = []
         if re.match(r'^[0-9]+$', data):
             mlevel = int(data)
@@ -1440,18 +1482,21 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         """
         - list all connected players
         """
+        sys.stdout.write("AdminPlugin cmd_list\n")
         threading.Thread(target=self.doList, args=(client, cmd), kwargs={'dict': 'of', 'keyword': 'args'},).start()
 
     def cmd_longlist(self, data, client, cmd=None):
         """
         - list all connected players one line at a time, helps find 'funny' unicode names
         """
+        sys.stdout.write("AdminPlugin cmd_longlist\n")
         threading.Thread(target=self.doLonglist, args=(client, cmd), kwargs={'dict': 'of', 'keyword': 'args'},).start()
 
     def cmd_regulars(self, data, client, cmd=None):
         """
         - lists all the online regular players
         """
+        sys.stdout.write("AdminPlugin cmd_regulars\n")
         clist = self.getRegulars()
         if len(clist) > 0:
             nlist = []
@@ -1465,6 +1510,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         """
         - lists all the online admins
         """
+        sys.stdout.write("AdminPlugin cmd_admins\n")
         self.debug('trying to get admins')
         clist = self.getAdmins()
         if len(clist) > 0:
@@ -1484,6 +1530,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         """
         - sync up connected players
         """
+        sys.stdout.write("AdminPlugin cmd_rebuild\n")
         self.console.clients.sync()
         client.message('synchronizing client info')
 
@@ -1491,6 +1538,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         """
         - display your current user status
         """
+        sys.stdout.write("AdminPlugin cmd_regtest\n")
         if client and client.maskGroup:
             cmd.sayLoudOrPM(client, self.getMessage('leveltest', client.exactName, client.id, client.maskGroup.name,
                                                     client.maskGroup.level, self.console.formatTime(client.timeAdd)))
@@ -1505,12 +1553,14 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         """
         - display your current user status
         """
+        sys.stdout.write("AdminPlugin cmd_admintest\n")
         return self.cmd_regtest(cid, client, cmd)
 
     def cmd_leveltest(self, data, client, cmd=None):
         """
         [<name>] - display a user's status
         """
+        sys.stdout.write("AdminPlugin cmd_leveltest\n")
         m = self.parseUserCmd(data)
         if m:
             sclient = self.findClientPrompt(m[0], client)
@@ -1532,6 +1582,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         """
         <name> - add a player in the 'regular' group
         """
+        sys.stdout.write("AdminPlugin cmd_makereg\n")
         m = self.parseUserCmd(data)
         if not m:
             client.message(self.getMessage('invalid_parameters'))
@@ -1560,6 +1611,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         """
         <name> - remove a player from the 'regular' group
         """
+        sys.stdout.write("AdminPlugin cmd_unreg\n")
         m = self.parseUserCmd(data)
         if not m:
             client.message(self.getMessage('invalid_parameters'))
@@ -1594,6 +1646,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         """
         <client> <group> - add a client to a group
         """
+        sys.stdout.write("AdminPlugin cmd_putgroup\n")
         m = re.match('^(.{2,}) ([a-z][a-z0-9]+)$', data, re.I)
         if not m:
             client.message(self.getMessage('invalid_parameters'))
@@ -1623,12 +1676,14 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         """
         - say a message to all players
         """
+        sys.stdout.write("AdminPlugin cmd_say\n")
         self.console.say(self.getMessage('say', client.exactName, data))
 
     def cmd_ungroup(self, cid, client, cmd=None):
         """
         <client> <group> - remove a client from a group
         """
+        sys.stdout.write("AdminPlugin cmd_ungroup\n")
         m = re.match('^([^ ]{2,}) ([a-z]+)$', cid)
         if not m:
             client.message(self.getMessage('invalid_parameters'))
@@ -1655,6 +1710,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         """
         - register yourself as the super admin
         """
+        sys.stdout.write("AdminPlugin cmd_iamgod\n")
         superadmins = self.console.clients.lookupSuperAdmins()
         if len(superadmins) > 0:
             # There are already superadmins, disable this command
@@ -1689,12 +1745,14 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         """
         [<timezone/offset>] - display the servers current time
         """
+        sys.stdout.write("AdminPlugin cmd_time\n")
         cmd.sayLoudOrPM(client, self.getMessage('time', self.console.formatTime(time.time(), data)))
 
     def cmd_seen(self, data, client=None, cmd=None):
         """
         <name> - when was a player last seen?
         """
+        sys.stdout.write("AdminPlugin cmd_seen\n")
         m = self.parseUserCmd(data)
         if not m:
             client.message(self.getMessage('invalid_parameters'))
@@ -1711,6 +1769,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         """
         <name> - lookup a player in the database
         """
+        sys.stdout.write("AdminPlugin cmd_lookup\n")
         if not self.console.storage.status():
             cmd.sayLoudOrPM(client, '^7Cannot lookup: database appears to be ^1DOWN')
         else:
@@ -1730,6 +1789,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         """
         - report status of bot
         """
+        sys.stdout.write("AdminPlugin cmd_status\n")
         if self.console.storage.status():
             cmd.sayLoudOrPM(client, '^7Database appears to be ^2UP')
         else:
@@ -1739,12 +1799,14 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         """
         <message> - yell a message to all player
         """
+        sys.stdout.write("AdminPlugin cmd_scream\n")
         threading.Thread(target=self.sayMany, args=(data, 5, 1)).start()
 
     def cmd_find(self, data, client=None, cmd=None):
         """
         <name> - test to find a connected player
         """
+        sys.stdout.write("AdminPlugin cmd_find\n")
         m = self.parseUserCmd(data)
         if not m:
             client.message(self.getMessage('invalid_parameters'))
@@ -1757,6 +1819,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         """
         <name> <field> - get info about a client
         """
+        sys.stdout.write("AdminPlugin cmd_clientinfo\n")
         m = self.parseUserCmd(data, True)
         if not m:
             client.message(self.getMessage('invalid_parameters'))
@@ -1773,6 +1836,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         """
         <name> [<reason>] - kick a player
         """
+        sys.stdout.write("AdminPlugin cmd_kick\n")
         m = self.parseUserCmd(data)
         if not m:
             msg = self.getMessage('invalid_parameters')
@@ -1805,6 +1869,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         """
         <pattern> [<reason>] - kick all players matching <pattern>
         """
+        sys.stdout.write("AdminPlugin cmd_kickall\n")
         m = self.parseUserCmd(data)
         if not m:
             client.message(self.getMessage('invalid_parameters'))
@@ -1827,6 +1892,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         """
         <name> [<reason>] - spank a player, naughty boy!
         """
+        sys.stdout.write("AdminPlugin cmd_spank\n")
         m = self.parseUserCmd(data)
         if not m:
             client.message(self.getMessage('invalid_parameters'))
@@ -1862,6 +1928,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         """
         <pattern> [<reason>] - kick all players matching <pattern>
         """
+        sys.stdout.write("AdminPlugin cmd_spankall\n")
         m = self.parseUserCmd(data)
         if not m:
             client.message(self.getMessage('invalid_parameters'))
@@ -1891,6 +1958,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         """
         <name> [<reason>] - ban a player permanently
         """
+        sys.stdout.write("AdminPlugin cmd_permban\n")
         m = self.parseUserCmd(data)
         if not m:
             client.message(self.getMessage('invalid_parameters'))
@@ -1925,6 +1993,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         """
         <name> [<reason>] - ban a player
         """
+        sys.stdout.write("AdminPlugin cmd_ban\n")
         m = self.parseUserCmd(data)
         if not m:
             client.message(self.getMessage('invalid_parameters'))
@@ -1961,6 +2030,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         """
         <pattern> [<reason>] - ban all players matching <pattern>
         """
+        sys.stdout.write("AdminPlugin cmd_banall\n")
         m = self.parseUserCmd(data)
         if not m:
             client.message(self.getMessage('invalid_parameters'))
@@ -1987,7 +2057,10 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         """
         - list the 5 last bans
         """
+        sys.stdout.write("AdminPlugin cmd_lastbans\n")
+
         def format_ban(penalty):
+            #sys.stdout.write("AdminPlugin format_ban\n")
             c = self.console.storage.getClient(Client(_id=penalty.clientId))
             txt = "^2@%s^7 %s^7" % (penalty.clientId, c.exactName)
             if penalty.type == 'Ban':
@@ -2011,6 +2084,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         """
         <name> - display how many bans a user has
         """
+        sys.stdout.write("AdminPlugin cmd_baninfo\n")
         m = self.parseUserCmd(data)
         if not m:
             client.message(self.getMessage('invalid_parameters'))
@@ -2028,6 +2102,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         """
         <name> <command> - run a command as a different user
         """
+        sys.stdout.write("AdminPlugin cmd_runas\n")
         m = self.parseUserCmd(data)
         if not m or m[1] == '':
             client.message(self.getMessage('invalid_parameters'))
@@ -2040,6 +2115,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         """
         <name> - un-ban a player
         """
+        sys.stdout.write("AdminPlugin cmd_unban\n")
         m = self.parseUserCmd(data)
         if not m:
             client.message(self.getMessage('invalid_parameters'))
@@ -2066,6 +2142,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         """
         <name> - list a players aliases
         """
+        sys.stdout.write("AdminPlugin cmd_aliases\n")
         m = self.parseUserCmd(data)
         if not m:
             client.message(self.getMessage('invalid_parameters'))
@@ -2094,6 +2171,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         """
         - list warnings
         """
+        sys.stdout.write("AdminPlugin cmd_warns\n")
         client.message('^7Warnings: %s' % ', '.join(
             sorted([x for x in self.warn_reasons.keys() if x not in ('default', 'generic')])))
 
@@ -2101,6 +2179,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         """
         <name> <notice> - add a good/bad behavior note for the player
         """
+        sys.stdout.write("AdminPlugin cmd_notice\n")
         m = self.parseUserCmd(data)
         if not m or m[0] == '' or m[1] == '':
             client.message(self.getMessage('invalid_parameters'))
@@ -2118,6 +2197,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         """
         <name> [<warning>] - warn user
         """
+        sys.stdout.write("AdminPlugin cmd_warn\n")
         m = self.parseUserCmd(data)
         if not m:
             client.message(self.getMessage('invalid_parameters'))
@@ -2139,6 +2219,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         """
         <warning> - test a warning
         """
+        sys.stdout.write("AdminPlugin cmd_warntest\n")
         try:
             duration, warning = self.getWarning(data)
         except Exception:
@@ -2152,6 +2233,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         """
         <name> - remove a users last warning
         """
+        sys.stdout.write("AdminPlugin cmd_warnremove\n")
         m = self.parseUserCmd(data)
         if not m:
             client.message(self.getMessage('invalid_parameters'))
@@ -2182,6 +2264,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         """
         <name> - clear all of a users warnings
         """
+        sys.stdout.write("AdminPlugin cmd_warnclear\n")
         m = self.parseUserCmd(data)
         if not m:
             client.message(self.getMessage('invalid_parameters'))
@@ -2221,6 +2304,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         """
         <name> - display how many warning points a user has
         """
+        sys.stdout.write("AdminPlugin cmd_warninfo\n")
         m = self.parseUserCmd(data)
         if not m:
             client.message(self.getMessage('invalid_parameters'))
@@ -2246,6 +2330,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         """
         - list the server's map rotation
         """
+        sys.stdout.write("AdminPlugin cmd_maps\n")
         if not self.aquireCmdLock(cmd, client, 60, True):
             client.message('^7Do not spam commands')
         else:
@@ -2261,6 +2346,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         """
         - list the next map in rotation
         """
+        sys.stdout.write("AdminPlugin cmd_nextmap\n")
         mapname = self.console.getNextMap()
         if mapname:
             cmd.sayLoudOrPM(client, '^7Next Map: ^2%s' % mapname)
@@ -2271,6 +2357,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         """
         <duration> - pause the bot from parsing
         """
+        sys.stdout.write("AdminPlugin cmd_pause\n")
         m = re.match('^([0-9]+[a-z]*)$', data)
         if not m:
             client.message(self.getMessage('invalid_parameters'))
@@ -2286,6 +2373,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         """
         [player] <message> - spam a predefined message to all players or a given player
         """
+        sys.stdout.write("AdminPlugin cmd_spam\n")
         m = re.match('^((?P<player>\w+)\s+)?(?P<keyword>\w{2,})$', data)
         if not m:
             client.message(self.getMessage('invalid_parameters'))
@@ -2310,6 +2398,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         """
         - say the rules
         """
+        sys.stdout.write("AdminPlugin cmd_rules\n")
         if not self.aquireCmdLock(cmd, client, 60, True):
             client.message('^7Do not spam commands')
         else:
@@ -2334,6 +2423,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         """
         - list spam messages
         """
+        sys.stdout.write("AdminPlugin cmd_spams\n")
         ws = sorted(self.config.options('spamages'))
         if len(ws):
             client.message('^7Spamages: %s' % ', '.join(ws))
@@ -2344,6 +2434,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         """
         <name> <duration> [<reason>] - temporarily ban a player
         """
+        sys.stdout.write("AdminPlugin cmd_tempban\n")
         m = self.parseUserCmd(data)
 
         if not m or not m[1]:
@@ -2392,6 +2483,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         """
         <player> - notify a player that he needs to move
         """
+        sys.stdout.write("AdminPlugin cmd_poke\n")
         m = self.parseUserCmd(data)
         if not m:
             client.message(self.getMessage('invalid_parameters'))
@@ -2462,6 +2554,7 @@ class Command(object):
         Check whether a client can use such command:
         :param client: The client on who to perform the check
         """
+        sys.stdout.write("Command canUse\n")
         if self.level is None:
             return False
         else:
@@ -2473,6 +2566,7 @@ class Command(object):
         :param data: The command parameters
         :param client: The client executing the command
         """
+        sys.stdout.write("Command execute\n")
         self.func(data, client, copy.copy(self))
         self.time = self.plugin.console.time()
 
@@ -2482,6 +2576,7 @@ class Command(object):
         :param data: The command parameters
         :param client: The client executing the command
         """
+        sys.stdout.write("Command executeLoud\n")
         cmd = copy.copy(self)
         cmd.loud = True
         self.func(data, client, cmd)
@@ -2493,6 +2588,7 @@ class Command(object):
         :param data: The command parameters
         :param client: The client executing the command
         """
+        sys.stdout.write("Command executeBig\n")
         cmd = copy.copy(self)
         cmd.big = True
         self.func(data, client, cmd)
@@ -2504,6 +2600,7 @@ class Command(object):
         :param data: The command parameters
         :param client: The client executing the command
         """
+        sys.stdout.write("Command executePrivate\n")
         cmd = copy.copy(self)
         cmd.private = True
         self.func(data, client, cmd)
@@ -2515,6 +2612,7 @@ class Command(object):
         :param client: The client on who to send the message
         :param message: The message to be sent
         """
+        sys.stdout.write("Command sayLoudOrPM\n")
         if self.loud:
             self.plugin.console.say(message, *args)
         elif self.big:
@@ -2526,6 +2624,7 @@ class Command(object):
         """
         Parse command data.
         """
+        sys.stdout.write("Command parseData\n")
         splitdata = self.splitData(data)
         if not len(args):
             return splitdata
@@ -2594,6 +2693,7 @@ class Command(object):
         Split command parameters.
         :param data: The parameters to be split
         """
+        sys.stdout.write("Command splitData\n")
         params = []
         buf = ''
         in_quote = False

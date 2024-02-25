@@ -362,6 +362,9 @@ class MysqlStorage(b4.storage.b4_common.DatabaseStorage):
                 row = cursor.getRow()
                 tables.append(row.values()[0])
                 cursor.moveNext()
+            sys.stdout.write("cursor is not empty\n")
+        else:
+            sys.stdout.write("cursor is empty\n")
         cursor.close()
         return tables
 

@@ -96,7 +96,7 @@ class Events:
         :param key: The event key
         :param name: An optional name to associate to the event
         """
-        sys.stdout.write("b4_events.Events.createEvent\n")
+        #sys.stdout.write("b4_events.Events.createEvent\n")
         g = globals()
 
         try:

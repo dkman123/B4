@@ -164,7 +164,7 @@ def getInstance(logfile='b4_log', loglevel=21, logsize=10485760, log2console=Fal
     :param logfile: The logfile name.
     :param loglevel: The logging level.
     :param logsize: The size of the log file (in bytes)
-    :param log2console: Whether or not to extend logging to the console.
+    :param log2console: Whether to extend logging to the console.
     """
     global __output
 
