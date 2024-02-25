@@ -45,6 +45,7 @@ class Rcon(object):
     queue = None
     console = None
     socket_timeout = 0.80
+    # NOTE: \377 is octal for 0xFF
     rconsendstring = '\377\377\377\377rcon "%s" %s\n'
     rconreplystring = '\377\377\377\377print\n'
     qserversendstring = '\377\377\377\377%s\n'
@@ -95,7 +96,7 @@ class Rcon(object):
         :param data: The string to be encoded
         :param source: Who requested the encoding
         """
-        #self.console.info("rcon encode_data")
+        self.console.info("rcon encode_data %s; source %s" % (data, source))
         try:
             if isinstance(data, bytes):
                 data = str(data, 'utf_8', errors='ignore')
@@ -179,6 +180,8 @@ class Rcon(object):
         if self.console.encoding:
             data = self.encode_data(data, 'RCON')
 
+        if type(data) is not str:
+            data = data.decode('utf-8')
         self.console.verbose('RCON sending (%s:%s) %r', self.host[0], self.host[1], data)
         start_time = time.time()
 
@@ -191,7 +194,11 @@ class Rcon(object):
             elif len(writeables) > 0:
                 try:
                     # convert the string to bytes before sending
-                    writeables[0].send(bytes(self.rconsendstring % (self.password, data), 'utf-8'))
+                    tosend = self.rconsendstring % (self.password, data)
+                    tohex = " ".join("{:02x}".format(ord(c)) for c in tosend)
+                    self.console.info("rcon sending hex %s" % tohex)
+                    # convert to bytes or no?
+                    writeables[0].send(bytearray.fromhex(tohex))
                 except Exception as msg:
                     self.console.warning('RCON: error sending: %r', msg)
                 else:
@@ -331,6 +338,9 @@ class Rcon(object):
             d = str(sock.recv(size))
 
             if d:
+                self.console.info("attempting decode of received data %r" % d)
+                if type(d) is not str:
+                    d = d.decode('utf-8')
                 # remove rcon header
                 data += d.replace(self.rconreplystring, '')
 

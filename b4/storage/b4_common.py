@@ -253,7 +253,7 @@ class DatabaseStorage(Storage):
             if hasattr(client, 'saveIsocode'):
                 saveIsocode = client.isocode
 
-            for k, v in cursor.getRow().iteritems():
+            for k, v in cursor.getRow().items():
                 # if hasattr(client, k) and getattr(client, k):
                 #    # don't set already set items
                 #    continue
@@ -306,7 +306,7 @@ class DatabaseStorage(Storage):
         while not cursor.EOF:
             g = cursor.getRow()
             client = b4.b4_clients.Client()
-            for k, v in g.iteritems():
+            for k, v in g.items():
                 setattr(client, self.getVar(k), v)
             clients.append(client)
             cursor.moveNext()
@@ -970,7 +970,7 @@ class DatabaseStorage(Storage):
         Return a variable name given the correspondent database field name.
         :param name: The database field name.
         """
-        sys.stdout.write("b4_common DatabaseStorage getVar\n")
+        #sys.stdout.write("b4_common DatabaseStorage getVar\n")
         return self._reVar.sub(lambda m: m.group(1).upper(), name)
 
     @staticmethod

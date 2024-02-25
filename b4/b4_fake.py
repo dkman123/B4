@@ -187,7 +187,8 @@ class FakeConsole(b4.b4_parser.Parser):
         """
         Send text to the console.
         """
-        if type(msg) == str:
+        self.log.info("b4_fake write")
+        if type(msg) is str:
             print("### %s" % re.sub(re.compile('\^[0-9]'), '', msg).strip())
         else:
             # which happens for BFBC2

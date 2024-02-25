@@ -44,8 +44,12 @@ VERBOSE2 = 8
 # ERROR = 40
 # WARNING = 30
 # WARN = WARNING
+# CONSOLE = 22
+# BOT = 21
 # INFO = 20
 # DEBUG = 10
+# VERBOSE = 9
+# VERBOSE2 = 8
 # NOTSET = 0
 
 logging.addLevelName(CRITICAL, 'CRITICAL')

@@ -639,11 +639,11 @@ class Client(object):
     # -----------------------
 
     def _set_password(self, password):
-        self.console.debug("b4_clients.Client._set_password")
+        #self.console.debug("b4_clients.Client._set_password")
         self._password = password
 
     def _get_password(self):
-        self.console.debug("b4_clients.Client._get_password")
+        #self.console.debug("b4_clients.Client._get_password")
         return self._password
 
     password = property(_get_password, _set_password)
@@ -667,7 +667,7 @@ class Client(object):
         self._timeAdd = int(timeAdd)
 
     def _get_timeAdd(self):
-        self.console.debug("b4_clients.Client._get_timeAdd")
+        #self.console.debug("b4_clients.Client._get_timeAdd")
         return self._timeAdd
 
     timeAdd = property(_get_timeAdd, _set_timeAdd)

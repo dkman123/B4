@@ -422,6 +422,7 @@ class Parser(object):
                     self.screen.flush()
                     time.sleep(2)
                 else:
+                    #self.log.info("b4_parser rcon test returned %s", res)
                     self.screen.write('OK\n')
         except Exception as ex:
             self.log.error("b4_parser testing rcon: %s", ex)
