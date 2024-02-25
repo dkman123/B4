@@ -1096,7 +1096,7 @@ class Iourt41Parser(AbstractParser):
         plist = self.getPlayerList(maxRetries=4)
         mlist = dict()
 
-        for cid, c in plist.iteritems():
+        for cid, c in plist.items():
             client = self.getByCidOrJoinPlayer(cid)
             if client:
                 # Disconnect the zombies first

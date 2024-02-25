@@ -25,6 +25,9 @@
 __author__  = 'ThorN'
 __version__ = '1.3.0'
 
+import sys
+
+
 class QueryBuilder(object):
 
     def __init__(self, db=None):
@@ -216,6 +219,7 @@ class QueryBuilder(object):
         :param where: A WHERE clause for this select statement.
         :param delayed: Whether to add the DELAYED clause to the query.
         """
+        sys.stdout.write("b4_QueryBuilder UpdateQuery")
         sql = "UPDATE "
 
         if delayed:
@@ -239,6 +243,7 @@ class QueryBuilder(object):
         :param table: The table from where to fetch data.
         :param delayed: Whether to add the DELAYED clause to the query.
         """
+        sys.stdout.write("b4_QueryBuilder InsertQuery")
         sql = "INSERT "
 
         if delayed:
@@ -263,6 +268,7 @@ class QueryBuilder(object):
         :param table: The table from where to fetch data.
         :param delayed: Whether to add the DELAYED clause to the query.
         """
+        sys.stdout.write("b4_QueryBuilder ReplaceQuery")
         sql = "REPLACE "
 
         if delayed:

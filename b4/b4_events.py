@@ -232,7 +232,7 @@ class EventsStats(object):
         self.console.debug("b4_events.EventsStats.dumpStats\n")
         if self.console.log.isEnabledFor(VERBOSE):
             for plugin_name, plugin_timers in self._handling_timers.items():
-                for event_name, event_timers in plugin_timers.iteritems():
+                for event_name, event_timers in plugin_timers.items():
                     mean, stdv = b4.b4_functions.meanstdv(event_timers)
                     if len(event_timers):
                         self.console.verbose("%s %s : (ms) min(%0.1f), max(%0.1f), mean(%0.1f), "
