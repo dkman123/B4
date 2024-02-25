@@ -65,7 +65,7 @@ class PymysqlStorage(b4.storage.b4_common.DatabaseStorage):
         """
         Close the current active database connection.
         """
-        sys.stdout.write("b4_mysql PymysqlStorage shutdown\n")
+        #sys.stdout.write("b4_mysql PymysqlStorage shutdown\n")
         if self.db and self.db.open:
             # checking 'open' will prevent exception raising
             self.console.bot('Closing connection with MySQL database...')
@@ -289,8 +289,8 @@ class MysqlStorage(b4.storage.b4_common.DatabaseStorage):
         Will store the connection object also in the 'db' attribute so in the future we can reuse it.
         :return The connection instance if established successfully, otherwise None.
         """
-        sys.stdout.write("b4_mysql MysqlStorage connect\n")
-        self.console.info("b4_mysql.MysqlStorage.connect")
+        #sys.stdout.write("b4_mysql MysqlStorage connect\n")
+        #self.console.info("b4_mysql.MysqlStorage.connect")
         # do not retry too soon because the MySQL server could
         # have connection troubles and we do not want to spam it
         if time() - self._lastConnectAttempt < self._reconnectDelay:
@@ -367,7 +367,7 @@ class MysqlStorage(b4.storage.b4_common.DatabaseStorage):
         :return: list of strings.
         """
         #sys.stdout.write("b4_mysql MysqlStorage getTables\n")
-        self.console.info("b4_mysql.MysqlStorage.getTables")
+        #self.console.info("b4_mysql.MysqlStorage.getTables")
         tables = []
         #self.console.info("about to query")
         try:

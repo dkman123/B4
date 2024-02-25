@@ -33,7 +33,7 @@ import b4.b4_functions
 from configparser import NoOptionError
 
 __author__ = 'ThorN, Courgette'
-__version__ = '1.13'
+__version__ = '0.2'
 
 
 class Plugin(object):

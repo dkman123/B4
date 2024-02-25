@@ -311,7 +311,7 @@ class Parser(object):
             # Plugin loading, so it makes no sense to keep going with the console initialization
             self.critical('Could not setup storage module: %s', e)
 
-        sys.stdout.write("Parser about to connect storage")
+        #sys.stdout.write("Parser about to connect storage")
         # establish a connection with the database
         self.storage.connect()
 
@@ -426,7 +426,7 @@ class Parser(object):
         except Exception as ex:
             self.log.error("b4_parser testing rcon: %s", ex)
 
-        self.bot('b4_parser Loading events')
+        #self.bot('b4_parser Loading events')
         self.loadEvents()
         self.screen.write('Loading events   : %s events loaded\n' % len(self._events))
         self.clients = b4.b4_clients.Clients(self)
@@ -572,7 +572,7 @@ class Parser(object):
         """
         Load events from event manager
         """
-        sys.stdout.write("b4_parser.Parser.loadEvents\n")
+        #sys.stdout.write("b4_parser.Parser.loadEvents\n")
         self._events = self.Events.events
 
     def createEvent(self, key, name=None):
@@ -958,7 +958,7 @@ class Parser(object):
         """
         sys.stdout.write("b4_parser.Parser.pluginImport\n")
         if path is None:
-            path = os.path.join(str(b4.getB4Path(True)), 'plugins')
+            path = os.path.join(str(b4.getB4Path(True)), 'plugins', name, "__init__.py")
 
         spec = importlib.util.spec_from_file_location(name, path)
         if spec is None:

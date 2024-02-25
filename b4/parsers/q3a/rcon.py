@@ -95,7 +95,7 @@ class Rcon(object):
         :param data: The string to be encoded
         :param source: Who requested the encoding
         """
-        self.console.info("rcon encode_data")
+        #self.console.info("rcon encode_data")
         try:
             if isinstance(data, bytes):
                 data = str(data, 'utf_8', errors='ignore')
@@ -168,7 +168,7 @@ class Rcon(object):
         :param maxRetries: How many times we have to retry the sending upon failure
         :param socketTimeout: The socket timeout value
         """
-        self.console.info("rcon sendRcon")
+        #self.console.info("rcon sendRcon")
         if socketTimeout is None:
             socketTimeout = self.socket_timeout
         if maxRetries is None:
@@ -248,7 +248,7 @@ class Rcon(object):
         Enqueue multiple RCON commands for later processing.
         :param lines: A list of RCON commands.
         """
-        self.console.info("rcon writelines")
+        #self.console.info("rcon writelines")
         self.queue.put(lines)
 
     def write(self, cmd, maxRetries=None, socketTimeout=None):
@@ -258,7 +258,7 @@ class Rcon(object):
         :param maxRetries: How many times we have to retry the sending upon failure
         :param socketTimeout: The socket timeout value
         """
-        self.console.info("rcon write")
+        #self.console.info("rcon write")
         # intercept status request for caching construct
         if (cmd == 'status' or cmd == 'PB_SV_PList') and self.status_cache:
             if time.time() < self.status_cache_expired:
@@ -282,7 +282,7 @@ class Rcon(object):
         return data if data else ''
 
     def flush(self):
-        self.console.info("rcon flush")
+        #self.console.info("rcon flush")
         pass
 
     def readNonBlocking(self, sock):
@@ -316,7 +316,7 @@ class Rcon(object):
         :param size: The read size
         :param socketTimeout: The socket timeout value
         """
-        self.console.info("rcon readSocket")
+        #self.console.info("rcon readSocket")
         if socketTimeout is None:
             socketTimeout = self.socket_timeout
 

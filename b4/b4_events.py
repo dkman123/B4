@@ -163,7 +163,7 @@ class Events:
         """
         Return the Event dict.
         """
-        sys.stdout.write("b4_events.Events._get_events\n")
+        #sys.stdout.write("b4_events.Events._get_events\n")
         return self._events
 
     events = property(_get_events)

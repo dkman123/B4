@@ -358,7 +358,7 @@ class Cfgconfigparser(B4configparserMixin, configparser.ConfigParser):
         Inherits from configparser.configparser to throw our custom exception if needed
         """
         try:
-            configparser.ConfigParser.readfp(self, fp, filename)
+            configparser.ConfigParser.read_file(self, fp, filename)
         except Exception as e:
             raise ConfigFileNotValid("%s" % e)
 

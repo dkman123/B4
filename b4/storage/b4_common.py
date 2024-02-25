@@ -835,7 +835,7 @@ class DatabaseStorage(Storage):
         :raise Exception: If the query cannot be evaluated.
         """
         #sys.stdout.write("b4_common DatabaseStorage _query\n")
-        self.console.info("b4_common DatabaseStorage _query")
+        #self.console.info("b4_common DatabaseStorage _query")
         #self._lock.acquire()
         try:
             cursor = self.db.cursor()
