@@ -747,11 +747,13 @@ class AbstractParser(b4.b4_parser.Parser):
             m = None
             for f in self._reCvar:
                 m = re.match(f, val)
+                self.log.info("abstractParser looking for match for %s in cvar %s" % (val, f))
                 if m:
                     break
 
             if m:
                 if m.group('cvar').lower() == cvar_name.lower():
+                    self.log.info("abstractParser found %s" % m)
                     try:
                         default_value = m.group('default')
                     except IndexError:

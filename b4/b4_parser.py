@@ -347,11 +347,11 @@ class Parser(object):
                     ftptempfile.close()
 
             else:
-                self.bot('Game log is: %s', game_log)
+                #self.bot('Game log is: %s', game_log)
                 f = self.config.getpath('server', 'game_log')
                 #sys.stdout.write("Parser opened game_log")
 
-            self.bot('Starting bot reading file: %s', os.path.abspath(f))
+            self.bot('Parser Starting bot reading file: %s', os.path.abspath(f))
             self.screen.write('Using gamelog    : %s\n' % b4.getShortPath(os.path.abspath(f)))
 
             if os.path.isfile(f):
@@ -470,7 +470,7 @@ class Parser(object):
         """
         Start B4
         """
-        sys.stdout.write("b4_parser.Parser.start\n")
+        #sys.stdout.write("b4_parser.Parser.start\n")
         self.bot("Starting parser..")
         self.startup()
         self.say('%s ^2[ONLINE]' % b4.version)
@@ -548,7 +548,7 @@ class Parser(object):
         Called after the parser loaded and started all plugins. 
         Overwrite this in parsers to take actions once plugins are ready
         """
-        sys.stdout.write("b4_parser.Parser.pluginsStarted\n")
+        #sys.stdout.write("b4_parser.Parser.pluginsStarted\n")
         pass
 
     def pause(self):
@@ -588,21 +588,21 @@ class Parser(object):
         """
         Get the numeric ID of an event key
         """
-        sys.stdout.write("b4_parser.Parser.getEventID\n")
+        #sys.stdout.write("b4_parser.Parser.getEventID\n")
         return self.Events.getId(key)
 
     def getEvent(self, key, data=None, client=None, target=None):
         """
         Return a new Event object for an event name
         """
-        sys.stdout.write("b4_parser.Parser.getEvent\n")
+        #sys.stdout.write("b4_parser.Parser.getEvent\n")
         return b4.b4_events.Event(self.Events.getId(key), data, client, target)
 
     def getEventName(self, key):
         """
         Get the name of an event by its key
         """
-        sys.stdout.write("b4_parser.Parser.getEventName\n")
+        #sys.stdout.write("b4_parser.Parser.getEventName\n")
         return self.Events.getName(key)
 
     def getEventKey(self, event_id):
@@ -638,7 +638,7 @@ class Parser(object):
         """
         Load plugins specified in the config
         """
-        sys.stdout.write("b4_parser.Parser.loadPlugins\n")
+        #sys.stdout.write("b4_parser.Parser.loadPlugins\n")
         self.screen.write('Loading plugins  : ')
         self.screen.flush()
 
@@ -652,7 +652,7 @@ class Parser(object):
             :param p_clazz: The class implementing the plugin
             :param p_config_path: The plugin configuration file path
             """
-            sys.stdout.write("b4_parser.Parser._get_plugin_config")
+            #sys.stdout.write("b4_parser.Parser._get_plugin_config")
 
             def _search_config_file(match):
                 """
@@ -763,7 +763,7 @@ class Parser(object):
             :param p_data: A PluginData containing plugin information
             :return: list[PluginData] a list of PluginData of plugins needed by the current one
             """
-            sys.stdout.write("b4_parser.Parser._get_plugin_data\n")
+            #sys.stdout.write("b4_parser.Parser._get_plugin_data\n")
             if p_data.clazz:
 
                 # check for correct B4 version
@@ -956,7 +956,7 @@ class Parser(object):
         Import a single plugin.
         :param name: The plugin name
         """
-        sys.stdout.write("b4_parser.Parser.pluginImport\n")
+        #sys.stdout.write("b4_parser.Parser.pluginImport\n")
         if path is None:
             path = os.path.join(str(b4.getB4Path(True)), 'plugins', name, "__init__.py")
 
@@ -1256,7 +1256,7 @@ class Parser(object):
         """
         Register an event handler.
         """
-        sys.stdout.write("b4_parser.Parser.registerHandler\n")
+        #sys.stdout.write("b4_parser.Parser.registerHandler\n")
         self.log.debug('%s: register event <%s>', event_handler.__class__.__name__, self.getEventName(event_name))
         if not event_name in self._handlers:
             self._handlers[event_name] = []
@@ -1345,7 +1345,7 @@ class Parser(object):
         """
         sys.stdout.write("b4_parser.Parser.write\n")
         if self.output:
-            res = self.output.write(msg)
+            res = self.output.write(bytes(msg))
             self.output.flush()
             return res
 

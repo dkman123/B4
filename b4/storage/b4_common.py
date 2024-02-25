@@ -851,7 +851,7 @@ class DatabaseStorage(Storage):
             self.console.error("b4_common _query exception %s\n" % ex)
         #finally:
         #    self._lock.release()
-        self.console.info("b4_common _query returning dbcursor with type %s" % type(dbcursor).__name__)
+        #self.console.info("b4_common _query returning dbcursor with type %s" % type(dbcursor).__name__)
         # DEBUG lines
         #if dbcursor:
         #    self.console.info("b4_common _query says dbcursor looks OK")
@@ -867,7 +867,7 @@ class DatabaseStorage(Storage):
         :raise Exception: If the query cannot be evaluated.
         """
         #sys.stdout.write("b4_common DatabaseStorage query\n")
-        self.console.info("b4_common DatabaseStorage query")
+        #self.console.info("b4_common DatabaseStorage query")
         # use existing connection or create a new one
         connection = self.getConnection()
         if not connection:

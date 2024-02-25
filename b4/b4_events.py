@@ -117,7 +117,7 @@ class Events:
         Return an event ID given its key.
         :param key: The event key
         """
-        sys.stdout.write("b4_events.Events.getId\n")
+        #sys.stdout.write("b4_events.Events.getId\n")
         if re.match('^[0-9]+$', str(key)):
             return int(key)
         else:
@@ -144,7 +144,7 @@ class Events:
         Return an event name given its key.
         :param key: The event key
         """
-        sys.stdout.write("b4_events.Events.getName\n")
+        #sys.stdout.write("b4_events.Events.getName\n")
         try:
             return self._eventNames[self.getId(key)]
         except KeyError:

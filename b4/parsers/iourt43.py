@@ -563,7 +563,7 @@ class Iourt43Parser(Iourt41Parser):
             cvar = self.getCvar('gamename')
             gamename = cvar.getString() if cvar else None
             if gamename != 'q3urt43':
-                self.error("The iourt43 B3 parser cannot be used with a game server other than Urban Terror 4.3")
+                self.error("The iourt43 B4 parser cannot be used with a game server other than Urban Terror 4.3")
                 raise SystemExit(220)
         except Exception as e:
             self.warning("Could not query server for gamename.", exc_info=e)
