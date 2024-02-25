@@ -24,6 +24,7 @@
 
 import os
 import re
+import sys
 import time
 
 import b4
@@ -102,7 +103,9 @@ class B4configparserMixin(object):
         :param setting: The configuration file setting.
         :param kwargs: A dict with variables used for string substitution.
         """
+        sys.stdout.write("b4_config getTextTemplate %s.%s" % (section, setting))
         value = b4.b4_functions.vars2printf(self.get(section, setting, True)).strip()
+        sys.stdout.write("b4_config getTextTemplate value = %s" % value)
         if len(kwargs):
             return value % kwargs
         return value
@@ -322,10 +325,7 @@ class Cfgconfigparser(B4configparserMixin, configparser.ConfigParser):
         Return a configuration value as a string.
         """
         try:
-            if (kwargs):
-                value = configparser.ConfigParser.get(self, section, option, args=args)
-            else:
-                value = configparser.ConfigParser.get(self, section, option, kwargs=kwargs)
+            value = configparser.ConfigParser.get(self, section, option, **kwargs)
             if value is None:
                 return ""
             return value

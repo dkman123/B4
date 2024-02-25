@@ -1109,7 +1109,7 @@ class Parser(object):
         <data> can be either a group keyword or a group level.
         Raises KeyError if group is not found.
         """
-        sys.stdout.write("b4_parser.Parser.getGroup\n")
+        #sys.stdout.write("b4_parser.Parser.getGroup\n")
         if type(data) is int or isinstance(data, str) and data.isdigit():
             g = b4.b4_clients.Group(level=data)
         else:
@@ -1122,7 +1122,7 @@ class Parser(object):
         <data> can be either a group keyword or a group level.
         Raises KeyError if group is not found.
         """
-        sys.stdout.write("b4_parser.Parser.getGroupLevel\n")
+        #sys.stdout.write("b4_parser.Parser.getGroupLevel\n")
         group = self.getGroup(data)
         return group.level
 
@@ -1132,7 +1132,7 @@ class Parser(object):
         :param tz_name: The timezone name
         :return: tuple
         """
-        sys.stdout.write("b4_parser.Parser.getTzOffsetFromName\n")
+        #sys.stdout.write("b4_parser.Parser.getTzOffsetFromName\n")
         if tz_name:
             if not tz_name in b4.b4_timezones.timezones:
                 self.warning(

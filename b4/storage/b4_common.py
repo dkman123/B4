@@ -704,7 +704,7 @@ class DatabaseStorage(Storage):
         # cursor = self.query("""SELECT COUNT(id) total FROM penalties WHERE %s""" % where)
 
         # DK: testing get client penalties by IP
-        sys.stdout.write("b4_common DatabaseStorage numPenalties\n")
+        #sys.stdout.write("b4_common DatabaseStorage numPenalties\n")
         self.console.debug('Storage: getClientPenalties %s' % client)
         where = b4.b4_querybuilder.QueryBuilder(self.db).WhereClause({'type': penType, 'inactive': 0})
         where += ' AND (time_expire = -1 OR time_expire > %s)' % int(time())
@@ -722,7 +722,7 @@ class DatabaseStorage(Storage):
         """
         Return a list of available client groups.
         """
-        sys.stdout.write("b4_common DatabaseStorage getGroups\n")
+        #sys.stdout.write("b4_common DatabaseStorage getGroups\n")
         if not self._groups:
             cursor = self.query(b4.b4_querybuilder.QueryBuilder(self.db).SelectQuery('*', 'usergroups', None, 'level'))
             self._groups = []

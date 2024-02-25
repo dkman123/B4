@@ -643,19 +643,19 @@ class Iourt43Parser(Iourt41Parser):
             self.load_conf_permban_with_frozensand()
             self.load_conf_tempban_with_frozensand()
             if self._permban_with_frozensand or self._tempban_with_frozensand:
-                self.info("NOTE: when banning with the Frozen Sand auth system, B3 cannot remove "
+                self.info("iourt43 NOTE: when banning with the Frozen Sand auth system, B3 cannot remove "
                           "the bans on the urbanterror.info website. To unban a player you will "
                           "have to first unban him on B3 and then also unban him on the official Frozen Sand "
                           "website : http://www.urbanterror.info/groups/list/all/?search=%s" % frozensand_auth_owners)
         else:
-            self.info("Ignoring settings about banning with Frozen Sand auth system as the "
+            self.info("iourt43 Ignoring settings about banning with Frozen Sand auth system as the "
                       "auth system is not enabled or auth_owners not set")
 
     def load_conf_permban_with_frozensand(self):
         """
         Load permban configuration from b4_xml.
         """
-        self.debug("b4.parsers.Iourt43Parser.load_conf_permban_with_frozensand\n")
+        #self.debug("b4.parsers.Iourt43Parser.load_conf_permban_with_frozensand\n")
         self._permban_with_frozensand = False
         if self.config.has_option('server', 'permban_with_frozensand'):
             try:
@@ -663,13 +663,13 @@ class Iourt43Parser(Iourt41Parser):
             except ValueError as err:
                 self.warning(err)
 
-        self.info("Send permbans to Frozen Sand : %s" % ('yes' if self._permban_with_frozensand else 'no'))
+        self.info("iourt43 Send permbans to Frozen Sand : %s" % ('yes' if self._permban_with_frozensand else 'no'))
 
     def load_conf_tempban_with_frozensand(self):
         """
         Load tempban configuration from b4_xml.
         """
-        self.debug("b4.parsers.Iourt43Parser.load_conf_tempban_with_frozensand\n")
+        #self.debug("b4.parsers.Iourt43Parser.load_conf_tempban_with_frozensand\n")
         self._tempban_with_frozensand = False
         if self.config.has_option('server', 'tempban_with_frozensand'):
             try:
@@ -677,7 +677,7 @@ class Iourt43Parser(Iourt41Parser):
             except ValueError as err:
                 self.warning(err)
 
-        self.info("Send temporary bans to Frozen Sand : %s" % ('yes' if self._tempban_with_frozensand else 'no'))
+        self.info("iourt43 Send temporary bans to Frozen Sand : %s" % ('yes' if self._tempban_with_frozensand else 'no'))
 
     def load_conf_userinfo_overflow(self):
         """
@@ -691,15 +691,15 @@ class Iourt43Parser(Iourt41Parser):
             except ValueError as err:
                 self.warning(err)
 
-        self.info("Allow userinfo string overflow : %s" % ('yes' if self._allow_userinfo_overflow else 'no'))
+        self.info("iourt43 Allow userinfo string overflow : %s" % ('yes' if self._allow_userinfo_overflow else 'no'))
 
         if self._allow_userinfo_overflow:
-            self.info("NOTE: due to a bug in UrT 4.3 gamecode it is possible to exploit the maximum client name length "
+            self.info("iourt43 NOTE: due to a bug in UrT 4.3 gamecode it is possible to exploit the maximum client name length "
                       "and generate a userinfo string longer than the imposed limits: clients connecting with nicknames "
-                      "longer than 32 characters will be automatically kicked by B3 in order to prevent any sort of error")
+                      "longer than 32 characters will be automatically kicked by B4 in order to prevent any sort of error")
         else:
-            self.info("NOTE: due to a bug in UrT 4.3 gamecode it is possible to exploit the maximum client name length "
-                      "and generate a userinfo string longer than the imposed limits: B3 will truncate nicknames of clients "
+            self.info("iourt43 NOTE: due to a bug in UrT 4.3 gamecode it is possible to exploit the maximum client name length "
+                      "and generate a userinfo string longer than the imposed limits: B4 will truncate nicknames of clients "
                       "which are longer than 32 characters")
 
     ####################################################################################################################
@@ -1365,7 +1365,7 @@ class Iourt43Parser(Iourt41Parser):
         : auth-whois 3
         Client 3 is not active.
         """
-        self.debug("b4.parsers.Iourt43Parser.queryClientFrozenSandAccount\n")
+        #self.debug("b4.parsers.Iourt43Parser.queryClientFrozenSandAccount\n")
         data = self.write('auth-whois %s' % cid)
         if not data:
             return dict()
@@ -1383,7 +1383,7 @@ class Iourt43Parser(Iourt41Parser):
         """
         Query the accounts of all the online clients.
         """
-        self.debug("b4.parsers.Iourt43Parser.queryAllFrozenSandAccount\n")
+        #self.debug("b4.parsers.Iourt43Parser.queryAllFrozenSandAccount\n")
         data = self.write('auth-whois all', maxRetries=max_retries)
         if not data:
             return {}
@@ -1396,7 +1396,7 @@ class Iourt43Parser(Iourt41Parser):
         """
         Check whether the auth system is available.
         """
-        self.debug("b4.parsers.Iourt43Parser.is_frozensand_auth_available\n")
+        #self.debug("b4.parsers.Iourt43Parser.is_frozensand_auth_available\n")
         cvar = self.getCvar('auth')
         if cvar:
             auth = cvar.getInt()
@@ -1408,7 +1408,7 @@ class Iourt43Parser(Iourt41Parser):
         """
         Translate the gametype to a readable format (also for teamkill plugin!)
         """
-        self.debug("b4.parsers.Iourt43Parser.defineGameType\n")
+        #self.debug("b4.parsers.Iourt43Parser.defineGameType\n")
         gametype = str(gametype_int)
 
         if gametype_int == '0':

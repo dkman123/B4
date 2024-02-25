@@ -223,7 +223,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         Load section 'messages' from config and put the messages in local cache.
         Optionally apply validation rules.
         """
-        sys.stdout.write("AdminPlugin load_config_messages\n")
+        self.console.debug("AdminPlugin load_config_messages\n")
         self._messages = {
             # regme_confirmation
             'regme_confirmation': "^7Thanks for your registration. You are now a member of the group %s"
@@ -231,7 +231,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
 
         try:
             msg = self.config.getTextTemplate('messages', 'regme_confirmation')
-            if not '%s' in msg:
+            if '%%s' not in msg:
                 raise ValueError("message regme_confirmation must have a placeholder '%%s' for the group name")
             self._messages['regme_confirmation'] = msg
         except NoOptionError:
@@ -914,7 +914,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         Return a spam message according to the given keyword.
         :param kword: The keyword to use to look up the spam message
         """
-        sys.stdout.write("AdminPlugin getSpam\n")
+        #sys.stdout.write("AdminPlugin getSpam\n")
         if not kword:
             return ''
 
