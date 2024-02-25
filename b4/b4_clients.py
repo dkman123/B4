@@ -360,7 +360,7 @@ class Client(object):
     # -----------------------
 
     def _get_numBans(self):
-        self.console.debug("b4_clients.Client._get_numBans")
+        #self.console.debug("b4_clients.Client._get_numBans")
         if not self.id:
             return 0
         return self.console.storage.numPenalties(self, ('Ban', 'TempBan'))
@@ -370,7 +370,7 @@ class Client(object):
     # -----------------------
 
     def _get_numWarns(self):
-        self.console.debug("b4_clients.Client._get_numWarns")
+        #self.console.debug("b4_clients.Client._get_numWarns")
         if not self.id:
             return 0
         return self.console.storage.numPenalties(self, 'Warning')

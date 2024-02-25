@@ -322,7 +322,10 @@ class Cfgconfigparser(B4configparserMixin, configparser.ConfigParser):
         Return a configuration value as a string.
         """
         try:
-            value = configparser.ConfigParser.get(self, section, option, *args, **kwargs)
+            if (kwargs):
+                value = configparser.ConfigParser.get(self, section, option, args=args)
+            else:
+                value = configparser.ConfigParser.get(self, section, option, kwargs=kwargs)
             if value is None:
                 return ""
             return value

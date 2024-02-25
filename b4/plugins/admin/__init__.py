@@ -362,7 +362,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         def load_mandatory_warn_reason(key, default_duration, default_reason):
             if self.config.has_option('warn_reasons', key):
                 self.warn_reasons[key] = load_warn_reason(key, self.config.getTextTemplate('warn_reasons', key))
-            if not key in self.warn_reasons or self.warn_reasons[key] is None:
+            if key not in self.warn_reasons or self.warn_reasons[key] is None:
                 self.warning("no valid option '%s' in section 'warn_reasons': falling back on default value" % key)
                 self.warn_reasons[key] = b4.b4_functions.time2minutes(default_duration), default_reason
             self.info("warn reason '%s': %s" % (key, self.warn_reasons[key]))

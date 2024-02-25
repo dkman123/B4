@@ -228,7 +228,7 @@ class QueryBuilder(object):
         sql += "`" + table + "` SET "
 
         sets = []
-        for k, v in data.iteritems():
+        for k, v in data.items():
             sets.append(self.FieldClause(k, v))
 
         sql += ", ".join(sets)
@@ -253,7 +253,7 @@ class QueryBuilder(object):
 
         keys = []
         values = []
-        for k, v in data.iteritems():
+        for k, v in data.items():
             keys.append(k)
             values.append(self.escape(v))
 
@@ -278,7 +278,7 @@ class QueryBuilder(object):
 
         keys = []
         values = []
-        for k, v in data.iteritems():
+        for k, v in data.items():
             keys.append(k)
             values.append(self.escape(v))
 

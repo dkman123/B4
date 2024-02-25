@@ -892,7 +892,7 @@ class Parser(object):
         """
         For each loaded plugin, call the onLoadConfig hook.
         """
-        sys.stdout.write("b4_parser.Parser.call_plugins_onLoadConfig\n")
+        #sys.stdout.write("b4_parser.Parser.call_plugins_onLoadConfig\n")
         for plugin_name in self._plugins:
             p = self._plugins[plugin_name]
             p.onLoadConfig()
@@ -1094,7 +1094,7 @@ class Parser(object):
         """
         Return a reference to a loaded command
         """
-        sys.stdout.write("b4_parser.Parser.getCommand\n")
+        #sys.stdout.write("b4_parser.Parser.getCommand\n")
         try:
             cmd = self._commands[cmd]
         except KeyError:
@@ -1447,7 +1447,7 @@ class Parser(object):
         And wrap if \n character encountered.
         :param text: The text that needs to be split.
         """
-        sys.stdout.write("b4_parser.Parser.getWrap\n")
+        #sys.stdout.write("b4_parser.Parser.getWrap\n")
         if not text:
             return []
 

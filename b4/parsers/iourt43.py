@@ -683,7 +683,7 @@ class Iourt43Parser(Iourt41Parser):
         """
         Load userinfo overflow configuration settings.
         """
-        self.debug("b4.parsers.Iourt43Parser.load_conf_userinfo_overflow\n")
+        #self.debug("b4.parsers.Iourt43Parser.load_conf_userinfo_overflow\n")
         self._allow_userinfo_overflow = False
         if self.config.has_option('server', 'allow_userinfo_overflow'):
             try:
