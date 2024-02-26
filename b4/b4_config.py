@@ -103,9 +103,9 @@ class B4configparserMixin(object):
         :param setting: The configuration file setting.
         :param kwargs: A dict with variables used for string substitution.
         """
-        sys.stdout.write("b4_config getTextTemplate %s.%s" % (section, setting))
+        #sys.stdout.write("b4_config getTextTemplate %s.%s" % (section, setting))
         value = b4.b4_functions.vars2printf(self.get(section, setting, True)).strip()
-        sys.stdout.write("b4_config getTextTemplate value = %s" % value)
+        #sys.stdout.write("b4_config getTextTemplate value = %s" % value)
         if len(kwargs):
             return value % kwargs
         return value

@@ -39,7 +39,7 @@ import time
 
 from b4 import getConfPath, getB4Path, getWritableFilePath
 from ..b4_functions import splitDSN
-from cgi import escape
+from html import escape
 from ftplib import FTP
 from xml.dom.minidom import Document
 

@@ -296,11 +296,11 @@ class Client(object):
     # -----------------------
 
     def _get_last_visit(self):
-        sys.stdout.write("b4_clients.Client._get_last_visit")
+        #sys.stdout.write("b4_clients.Client._get_last_visit")
         return self._lastVisit
 
     def _set_last_visit(self, lastVisit):
-        sys.stdout.write("b4_clients.Client._set_last_visit")
+        #sys.stdout.write("b4_clients.Client._set_last_visit")
         self._lastVisit = lastVisit
 
     lastVisit = property(_get_last_visit, _set_last_visit)
@@ -308,7 +308,7 @@ class Client(object):
     # -----------------------
 
     def _get_lastBan(self):
-        sys.stdout.write("b4_clients.Client._get_lastBan")
+        #sys.stdout.write("b4_clients.Client._get_lastBan")
         if not self.id:
             return None
         return self.console.storage.getClientLastPenalty(self, ('Ban', 'TempBan'))
@@ -318,7 +318,7 @@ class Client(object):
     # -----------------------
 
     def _get_lastWarn(self):
-        sys.stdout.write("b4_clients.Client._get_lastWarn")
+        #sys.stdout.write("b4_clients.Client._get_lastWarn")
         if not self.id:
             return None
         return self.console.storage.getClientLastPenalty(self, 'Warning')
@@ -328,7 +328,7 @@ class Client(object):
     # -----------------------
 
     def _get_maxLevel(self):
-        sys.stdout.write("b4_clients.Client._get_maxLevel")
+        #sys.stdout.write("b4_clients.Client._get_maxLevel")
         if self._maxLevel is None:
             if self.groups and len(self.groups):
                 m = -1
@@ -351,7 +351,7 @@ class Client(object):
     # -----------------------
 
     def _get_maxGroup(self):
-        sys.stdout.write("b4_clients.Client._get_maxGroup")
+        #sys.stdout.write("b4_clients.Client._get_maxGroup")
         self._get_maxLevel()
         return self._maxGroup
 
@@ -380,7 +380,7 @@ class Client(object):
     # -----------------------
 
     def _set_team(self, team):
-        sys.stdout.write("b4_clients.Client._set_team")
+        #sys.stdout.write("b4_clients.Client._set_team")
         if self._team != team:
             previous_team = self.team
             self._team = team
@@ -390,7 +390,7 @@ class Client(object):
                                                                                           'new': self.team}, self))
 
     def _get_team(self):
-        sys.stdout.write("b4_clients.Client._get_team")
+        #sys.stdout.write("b4_clients.Client._get_team")
         return self._team
 
     team = property(_get_team, _set_team)
@@ -398,7 +398,7 @@ class Client(object):
     # -----------------------
 
     def getWarnings(self):
-        sys.stdout.write("b4_clients.Client.getWarnings")
+        #sys.stdout.write("b4_clients.Client.getWarnings")
         return self.console.storage.getClientPenalties(self, penType='Warning')
 
     warnings = property(getWarnings)
@@ -406,7 +406,7 @@ class Client(object):
     # -----------------------
 
     def getattr(self, name, default=None):
-        sys.stdout.write("b4_clients.Client.getattr")
+        #sys.stdout.write("b4_clients.Client.getattr")
         return getattr(self, name, default)
 
     ####################################################################################################################
@@ -476,7 +476,7 @@ class Client(object):
         self.groupBits = self.groupBits ^ group.id
 
     def inGroup(self, group):
-        sys.stdout.write("b4_clients.Client.inGroup")
+        #sys.stdout.write("b4_clients.Client.inGroup")
         return self.groupBits & group.id
 
     # -----------------------
@@ -591,7 +591,7 @@ class Client(object):
     # -----------------------
 
     def _get_maskedLevel(self):
-        sys.stdout.write("b4_clients.Client._get_maskedLevel")
+        #sys.stdout.write("b4_clients.Client._get_maskedLevel")
         group = self.maskedGroup
         if group:
             return group.level
@@ -750,7 +750,7 @@ class Client(object):
         :param silent: Whether to announce this kick
         :param data: Extra data to add to the penalty
         """
-        sys.stdout.write("b4_clients.Client.kick")
+        #sys.stdout.write("b4_clients.Client.kick")
         self.console.kick(self, reason, admin, silent)
 
         if self.id:
@@ -777,7 +777,7 @@ class Client(object):
         :param silent: Whether to announce this ban or not
         :param data: Extra data to add to the penalty
         """
-        sys.stdout.write("b4_clients.Client.ban")
+        #sys.stdout.write("b4_clients.Client.ban")
         self.console.ban(self, reason, admin, silent)
 
         if self.id:
@@ -799,7 +799,7 @@ class Client(object):
         """
         Re-apply a ban penalty on this client.
         """
-        sys.stdout.write("b4_clients.Client.reBan")
+        #sys.stdout.write("b4_clients.Client.reBan")
         if ban.timeExpire == -1:
             self.console.ban(self, ban.reason, None, True)
         elif ban.timeExpire > self.console.time():
@@ -812,7 +812,7 @@ class Client(object):
         :param admin: The admin who unbanned this client
         :param silent: Whether to announce this unban
         """
-        sys.stdout.write("b4_clients.Client.unban")
+        #sys.stdout.write("b4_clients.Client.unban")
         self.console.unban(self, reason, admin, silent)
         for ban in self.bans:
             ban.inactive = 1
@@ -828,7 +828,7 @@ class Client(object):
         :param silent: Whether to announce this tempban
         :param data: Extra data to add to the penalty
         """
-        sys.stdout.write("b4_clients.Client.tempban")
+        #sys.stdout.write("b4_clients.Client.tempban")
         duration = b4.b4_functions.time2minutes(duration)
         self.console.tempban(self, reason, duration, admin, silent)
 
@@ -856,7 +856,7 @@ class Client(object):
         :param msg: the message to send
         :param args: substitution arguments (if any).
         """
-        sys.stdout.write("b4_clients.Client.message")
+        #sys.stdout.write("b4_clients.Client.message")
         self.console.message(self, msg, *args)
 
     def warn(self, duration, warning, keyword=None, admin=None, data=''):
@@ -868,7 +868,7 @@ class Client(object):
         :param admin: The admin who performed the ban
         :param data: Extra data to add to the penalty
         """
-        sys.stdout.write("b4_clients.Client.warn")
+        #sys.stdout.write("b4_clients.Client.warn")
         if self.id:
             duration = b4.b4_functions.time2minutes(duration)
             warn = ClientWarning()
@@ -904,7 +904,7 @@ class Client(object):
         :param spare: Wtf is this one?!?!?
         :param admin: The admin who added the notice
         """
-        sys.stdout.write("b4_clients.Client.notice")
+        #sys.stdout.write("b4_clients.Client.notice")
         if self.id:
             notice_object = ClientNotice()
 
@@ -1232,51 +1232,51 @@ class Alias(Struct):
     _timeEdit = 0
 
     def _set_alias(self, v):
-        #sys.stdout.write("b4_clients.Alias.xxxxx")
+        #sys.stdout.write("b4_clients.Alias._set_alias")
         self._alias = v
 
     def _get_alias(self):
-        #sys.stdout.write("b4_clients.Alias.xxxxx")
+        #sys.stdout.write("b4_clients.Alias._get_alias")
         return self._alias
 
     alias = property(_get_alias, _set_alias)
 
     def _set_client_id(self, v):
-        #sys.stdout.write("b4_clients.Alias.xxxxx")
+        #sys.stdout.write("b4_clients.Alias._set_client_id")
         self._clientId = v
 
     def _get_client_id(self):
-        #sys.stdout.write("b4_clients.Alias.xxxxx")
+        #sys.stdout.write("b4_clients.Alias._get_client_id")
         return self._clientId
 
     clientId = property(_get_client_id, _set_client_id)
 
     def _set_num_used(self, v):
-        #sys.stdout.write("b4_clients.Alias.xxxxx")
+        #sys.stdout.write("b4_clients.Alias._set_num_used")
         self._numUsed = v
 
     def _get_num_used(self):
-        #sys.stdout.write("b4_clients.Alias.xxxxx")
+        #sys.stdout.write("b4_clients.Alias._get_num_used")
         return self._numUsed
 
     numUsed = property(_get_num_used, _set_num_used)
 
     def _set_time_add(self, v):
-        #sys.stdout.write("b4_clients.Alias.xxxxx")
+        #sys.stdout.write("b4_clients.Alias._set_time_add")
         self._timeAdd = int(v)
 
     def _get_time_add(self):
-        #sys.stdout.write("b4_clients.Alias.xxxxx")
+        #sys.stdout.write("b4_clients.Alias._get_time_add")
         return self._timeAdd
 
     timeAdd = property(_get_time_add, _set_time_add)
 
     def _set_time_edit(self, v):
-        #sys.stdout.write("b4_clients.Alias.xxxxx")
+        #sys.stdout.write("b4_clients.Alias._set_time_edit")
         self._timeEdit = int(v)
 
     def _get_time_edit(self):
-        #sys.stdout.write("b4_clients.Alias.xxxxx")
+        #sys.stdout.write("b4_clients.Alias._get_time_edit")
         return self._timeEdit
 
     timeEdit = property(_get_time_edit, _set_time_edit)
@@ -1286,7 +1286,7 @@ class Alias(Struct):
         Save the alias in the storage.
         :param console: The console instance.
         """
-        console.info("b4_clients.Alias.xxxxx")
+        #console.info("b4_clients.Alias.save")
         self.timeEdit = console.time()
         if not self.id:
             self.timeAdd = console.time()
@@ -1307,11 +1307,11 @@ class IpAlias(Struct):
     _timeEdit = 0
 
     def _set_ip(self, v):
-        #sys.stdout.write("b4_clients.IpAlias.xxxxx")
+        #sys.stdout.write("b4_clients.IpAlias._set_ip")
         self._ip = v
 
     def _get_ip(self):
-        #sys.stdout.write("b4_clients.IpAlias.xxxxx")
+        #sys.stdout.write("b4_clients.IpAlias._get_ip")
         return self._ip
 
     ip = property(_get_ip, _set_ip)
@@ -1321,13 +1321,13 @@ class IpAlias(Struct):
         self._clientId = v
 
     def _get_client_id(self):
-        #sys.stdout.write("b4_clients.IpAlias.xxxxx")
+        #sys.stdout.write("b4_clients.IpAlias._get_client_id")
         return self._clientId
 
     clientId = property(_get_client_id, _set_client_id)
 
     def _set_num_used(self, v):
-        #sys.stdout.write("b4_clients.IpAlias.xxxxx")
+        #sys.stdout.write("b4_clients.IpAlias._set_num_used")
         self._numUsed = v
 
     def _get_num_used(self):
@@ -1337,21 +1337,21 @@ class IpAlias(Struct):
     numUsed = property(_get_num_used, _set_num_used)
 
     def _set_time_add(self, v):
-        #sys.stdout.write("b4_clients.IpAlias.xxxxx")
+        #sys.stdout.write("b4_clients.IpAlias._set_time_add")
         self._timeAdd = int(v)
 
     def _get_time_add(self):
-        #sys.stdout.write("b4_clients.IpAlias.xxxxx")
+        #sys.stdout.write("b4_clients.IpAlias._get_time_add")
         return self._timeAdd
 
     timeAdd = property(_get_time_add, _set_time_add)
 
     def _set_time_edit(self, v):
-        #sys.stdout.write("b4_clients.IpAlias.xxxxx")
+        #sys.stdout.write("b4_clients.IpAlias._set_time_edit")
         self._timeEdit = int(v)
 
     def _get_time_edit(self):
-        #sys.stdout.write("b4_clients.IpAlias.xxxxx")
+        #sys.stdout.write("b4_clients.IpAlias._get_time_edit")
         return self._timeEdit
 
     timeEdit = property(_get_time_edit, _set_time_edit)
@@ -1361,7 +1361,7 @@ class IpAlias(Struct):
         Save the ip alias in the storage.
         :param console: The console implementation
         """
-        console.info("b4_clients.IpAlias.save")
+        #console.info("b4_clients.IpAlias.save")
         self.timeEdit = console.time()
         if not self.id:
             self.timeAdd = console.time()
@@ -1382,51 +1382,51 @@ class Group(Struct):
     _timeEdit = 0
 
     def _set_name(self, v):
-        #sys.stdout.write("b4_clients.Group.xxxxx")
+        #sys.stdout.write("b4_clients.Group._set_name")
         self._name = v
 
     def _get_name(self):
-        #sys.stdout.write("b4_clients.Group.xxxxx")
+        #sys.stdout.write("b4_clients.Group._get_name")
         return self._name
 
     name = property(_get_name, _set_name)
 
     def _set_keyword(self, v):
-        #sys.stdout.write("b4_clients.Group.xxxxx")
+        #sys.stdout.write("b4_clients.Group._set_keyword")
         self._keyword = v
 
     def _get_keyword(self):
-        #sys.stdout.write("b4_clients.Group.xxxxx")
+        #sys.stdout.write("b4_clients.Group._get_keyword")
         return self._keyword
 
     keyword = property(_get_keyword, _set_keyword)
 
     def _set_level(self, v):
-        #sys.stdout.write("b4_clients.Group.xxxxx")
+        #sys.stdout.write("b4_clients.Group._set_level")
         self._level = int(v)
 
     def _get_level(self):
-        #sys.stdout.write("b4_clients.Group.xxxxx")
+        #sys.stdout.write("b4_clients.Group._get_level")
         return self._level
 
     level = property(_get_level, _set_level)
 
     def _set_time_add(self, v):
-        #sys.stdout.write("b4_clients.Group.xxxxx")
+        #sys.stdout.write("b4_clients.Group._set_time_add")
         self._timeAdd = int(v)
 
     def _get_time_add(self):
-        #sys.stdout.write("b4_clients.Group.xxxxx")
+        #sys.stdout.write("b4_clients.Group._get_time_add")
         return self._timeAdd
 
     timeAdd = property(_get_time_add, _set_time_add)
 
     def _set_time_edit(self, v):
-        #sys.stdout.write("b4_clients.Group.xxxxx")
+        #sys.stdout.write("b4_clients.Group._set_time_edit")
         self._timeEdit = int(v)
 
     def _get_time_edit(self):
-        #sys.stdout.write("b4_clients.Group.xxxxx")
+        #sys.stdout.write("b4_clients.Group._get_time_edit")
         return self._timeEdit
 
     timeEdit = property(_get_time_edit, _set_time_edit)
@@ -1436,7 +1436,7 @@ class Group(Struct):
         Save the group in the storage.
         :param console: The console implementation
         """
-        console.info("b4_clients.Group.save")
+        #console.info("b4_clients.Group.save")
         self.timeEdit = console.time()
         if not self.id:
             self.timeAdd = console.time()
@@ -1481,7 +1481,7 @@ class Clients(dict):
         :param handle: The search input
         :param maxres: A maximum amount of results
         """
-        sys.stdout.write("b4_clients.Clients.find")
+        #sys.stdout.write("b4_clients.Clients.find")
         matches = self.getByMagic(handle)
         if len(matches) == 0:
             return None
@@ -1495,7 +1495,7 @@ class Clients(dict):
         Search a client by matching his name.
         :param name: The name to use for the search
         """
-        sys.stdout.write("b4_clients.Clients.getByName")
+        #sys.stdout.write("b4_clients.Clients.getByName")
         name = name.lower()
         try:
             return self[self._nameIndex[name]]
@@ -1512,7 +1512,7 @@ class Clients(dict):
         Search a client by matching his exact name.
         :param name: The name to use for the search
         """
-        sys.stdout.write("b4_clients.Clients.getByExactName")
+        #sys.stdout.write("b4_clients.Clients.getByExactName")
         name = name.lower() + '^7'
         try:
             c = self[self._exactNameIndex[name]]
@@ -1790,7 +1790,7 @@ class Clients(dict):
         Disconnect a client from the game.
         :param client: The client to disconnect.
         """
-        sys.stdout.write("b4_clients.Clients.disconnect")
+        #sys.stdout.write("b4_clients.Clients.disconnect")
         client.connected = False
         if client.cid is None:
             return
@@ -1836,14 +1836,14 @@ class Clients(dict):
         """
         Empty the clients list
         """
-        sys.stdout.write("b4_clients.Clients.empty")
+        #sys.stdout.write("b4_clients.Clients.empty")
         self.clear()
 
     def clear(self):
         """
         Empty the clients list and reset the indexes.
         """
-        sys.stdout.write("b4_clients.Clients.clear")
+        #sys.stdout.write("b4_clients.Clients.clear")
         self.resetIndex()
         for cid, c in self.items():
             # DK (hide is hiding CI connections)
@@ -1854,7 +1854,7 @@ class Clients(dict):
         """
         Synchronize the clients list.
         """
-        sys.stdout.write("b4_clients.Clients.sync")
+        #sys.stdout.write("b4_clients.Clients.sync")
         mlist = self.console.sync()
         # remove existing clients
         self.clear()
@@ -1866,7 +1866,7 @@ class Clients(dict):
         """
         Authorize the online clients.
         """
-        sys.stdout.write("b4_clients.Clients.authorizeClients")
+        #sys.stdout.write("b4_clients.Clients.authorizeClients")
         if not self._authorizing:
             # lookup is delayed to allow time for auth
             # it will also allow us to batch the lookups if several players
@@ -1880,6 +1880,6 @@ class Clients(dict):
         Authorize the online clients.
         Must not be called directly: always use authorize_clients().
         """
-        sys.stdout.write("b4_clients.Clients._authorizeClients")
+        #sys.stdout.write("b4_clients.Clients._authorizeClients")
         self.console.authorizeClients()
         self._authorizing = False

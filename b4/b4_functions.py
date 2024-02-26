@@ -230,7 +230,7 @@ def minutesStr(timestr):
 
 
 def vars2printf(inputstr):
-    sys.stdout.write("b4_functions vars2printf %s" % inputstr)
+    #sys.stdout.write("b4_functions vars2printf %s" % inputstr)
     if inputstr is not None and inputstr != '':
         return re.sub(r'\$([a-zA-Z_]+)', r'%(\1)s', inputstr)
     else:

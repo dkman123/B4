@@ -2,7 +2,7 @@
 
 # ################################################################### #
 #                                                                     #
-#  BigBrotherBot(B3) (www.bigbrotherbot.net)                          #
+#  BigBrotherBot(B4) (www.bigbrotherbot.net)                          #
 #  Copyright (C) 2005 Michael "ThorN" Thornton                        #
 #                                                                     #
 #  This program is free software; you can redistribute it and/or      #
@@ -83,9 +83,9 @@ class PublistPlugin(b4.b4_plugin.Plugin):
         """
         try:
             # set cvar for advertising purposes
-            self.console.setCvar('_B3', 'B3 %s' % b4.versionId)
+            self.console.setCvar('_B4', 'B4 %s' % b4.versionId)
         except Exception:
-            pass  # some B3 parser have no cvar and no setCvar method (Q3 specific method)
+            pass  # some B4 parser have no cvar and no setCvar method (Q3 specific method)
 
         if self.console._publicIp == '127.0.0.1':
             self.info("publist will not send heartbeat to master server as publicIp is not public")
@@ -103,7 +103,7 @@ class PublistPlugin(b4.b4_plugin.Plugin):
         if _im >= 60:
             _im -= 60
 
-        self.info('initial heartbeat will be sent to B3 master server at %s minutes' % (str(_im).zfill(2)))
+        self.info('initial heartbeat will be sent to B4 master server at %s minutes' % (str(_im).zfill(2)))
         self._cronTab = b4.b4_cron.OneTimeCronTab(self.update, 0, _im, '*', '*', '*', '*')
         self.console.cron + self._cronTab
 
@@ -137,9 +137,9 @@ class PublistPlugin(b4.b4_plugin.Plugin):
 
     def shutdown(self):
         """
-        Send a shutdown heartbeat to B3 master server.
+        Send a shutdown heartbeat to B4 master server.
         """
-        self.info('Sending shutdown info to B3 master')
+        self.info('Sending shutdown info to B4 master')
         info = {
             'action': 'shutdown',
             'ip': self.console._publicIp,
@@ -151,9 +151,9 @@ class PublistPlugin(b4.b4_plugin.Plugin):
     
     def update(self):
         """
-        Send an update heartbeat to B3 master server.
+        Send an update heartbeat to B4 master server.
         """
-        self.debug('sending heartbeat to B3 master...')
+        self.debug('sending heartbeat to B4 master...')
         socket.setdefaulttimeout(10)
         
         plugins = []
@@ -207,7 +207,7 @@ class PublistPlugin(b4.b4_plugin.Plugin):
     
     def sendInfo(self, info=None):
         """
-        Send information to the B3 master server.
+        Send information to the B4 master server.
         """
         if info is None:
             info = {}
@@ -218,30 +218,30 @@ class PublistPlugin(b4.b4_plugin.Plugin):
     
     def sendInfoToMaster(self, url, info=None):
         """
-        Send data to the B3 master server.
+        Send data to the B4 master server.
         """
         if info is None:
             info = {}
         try:
             request = urllib.request.Request('%s?%s' % (url, urllib.parse.urlencode(info)))
-            request.add_header('User-Agent', "B3 Publist plugin/%s" % __version__)
+            request.add_header('User-Agent', "B4 Publist plugin/%s" % __version__)
             response = urllib.request.urlopen(request)
             if len(response) > 0:
                 self.debug("master replied: %s" % response)
         except IOError as e:
             if hasattr(e, 'reason'):
-                self.error('unable to reach B3 masterserver: maybe the service is down or internet was unavailable')
+                self.error('unable to reach B4 masterserver: maybe the service is down or internet was unavailable')
                 self.debug(e.reason)
             elif hasattr(e, 'code'):
                 if e.code == 400:
-                    self.info('B3 masterserver refused the heartbeat: %s: disabling publist', e)
+                    self.info('B4 masterserver refused the heartbeat: %s: disabling publist', e)
                     self.removeCrontab()
                 elif e.code == 403:
-                    self.info('B3 masterserver definitely refused our ping: disabling publist')
+                    self.info('B4 masterserver definitely refused our ping: disabling publist')
                     self.removeCrontab()
                 else:
-                    self.info('unable to reach B3 masterserver: maybe the service is down or internet was unavailable')
+                    self.info('unable to reach B4 masterserver: maybe the service is down or internet was unavailable')
                     self.debug(e)
         except Exception:
-            self.warning('unable to reach B3 masterserver: unknown error')
+            self.warning('unable to reach B4 masterserver: unknown error')
             print(sys.exc_info())

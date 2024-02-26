@@ -986,12 +986,12 @@ class Parser(object):
             :param console: the console instance
             :param p_name: the plugin name
             """
-            sys.stdout.write("b4_parser.Parser.start_plugin")
+            #sys.stdout.write("b4_parser.Parser.start_plugin")
             p = console._plugins[p_name]
             p.onStartup()
-            sys.stdout.write("b4_parser.Parser.start_plugin onStartup complete")
+            #sys.stdout.write("b4_parser.Parser.start_plugin onStartup complete")
             p.start()
-            sys.stdout.write("b4_parser.Parser.start_plugin start complete")
+            #sys.stdout.write("b4_parser.Parser.start_plugin start complete")
 
         plugin_num = 1
 
@@ -1584,11 +1584,11 @@ class Parser(object):
         """
         Instantiate the main Cron object.
         """
-        sys.stdout.write("b4_parser.Parser._get_cron\n")
+        #sys.stdout.write("b4_parser.Parser._get_cron\n")
         if not self._cron:
             self._cron = b4.b4_cron.Cron(self)
             self._cron.start()
-            sys.stdout.write("b4_parser.Parser._get_cron continuing\n")
+            #sys.stdout.write("b4_parser.Parser._get_cron continuing\n")
         return self._cron
 
     cron = property(_get_cron)
@@ -1607,7 +1607,7 @@ class Parser(object):
         Tells whether we are running a Frostbite based game.
         :return: True if we are running a Frostbite game, False otherwise
         """
-        sys.stdout.write("b4_parser.Parser.isFrostbiteGame\n")
+        #sys.stdout.write("b4_parser.Parser.isFrostbiteGame\n")
         if not gamename:
             gamename = self.gameName
         return gamename in self._frostBiteGameNames
@@ -1640,7 +1640,7 @@ class Parser(object):
         Query the game server for connected players.
         return a dict having players' id for keys and players' data as another dict for values
         """
-        sys.stdout.write("b4_parser.Parser.getPlayerList\n")
+        #sys.stdout.write("b4_parser.Parser.getPlayerList\n")
         raise NotImplementedError
 
     def authorizeClients(self):
@@ -1649,7 +1649,7 @@ class Parser(object):
         the user in the database (usualy guid, or punkbuster id, ip) and call the 
         Client.auth() method 
         """
-        sys.stdout.write("b4_parser.Parser.authorizeClients\n")
+        #sys.stdout.write("b4_parser.Parser.authorizeClients\n")
         raise NotImplementedError
 
     def sync(self):
@@ -1662,35 +1662,35 @@ class Parser(object):
         occupy. On map change, a player A on slot 1 can leave making room for player B who
         connects on slot 1.
         """
-        sys.stdout.write("b4_parser.Parser.sync\n")
+        #sys.stdout.write("b4_parser.Parser.sync\n")
         raise NotImplementedError
 
     def say(self, msg, *args):
         """
         Broadcast a message to all players
         """
-        sys.stdout.write("b4_parser.Parser.say\n")
+        #sys.stdout.write("b4_parser.Parser.say\n")
         raise NotImplementedError
 
     def saybig(self, msg, *args):
         """
         Broadcast a message to all players in a way that will catch their attention.
         """
-        sys.stdout.write("b4_parser.Parser.saybig\n")
+        #sys.stdout.write("b4_parser.Parser.saybig\n")
         raise NotImplementedError
 
     def message(self, client, text, *args):
         """
         Display a message to a given player
         """
-        sys.stdout.write("b4_parser.Parser.message\n")
+        #sys.stdout.write("b4_parser.Parser.message\n")
         raise NotImplementedError
 
     def kick(self, client, reason='', admin=None, silent=False, *kwargs):
         """
         Kick a given player
         """
-        sys.stdout.write("b4_parser.Parser.kick\n")
+        #sys.stdout.write("b4_parser.Parser.kick\n")
         raise NotImplementedError
 
     def ban(self, client, reason='', admin=None, silent=False, *kwargs):
@@ -1699,14 +1699,14 @@ class Parser(object):
         fire the event ('EVT_CLIENT_BAN', data={'reason': reason, 
         'admin': admin}, client=target)
         """
-        sys.stdout.write("b4_parser.Parser.ban\n")
+        #sys.stdout.write("b4_parser.Parser.ban\n")
         raise NotImplementedError
 
     def unban(self, client, reason='', admin=None, silent=False, *kwargs):
         """
         Unban a given player on the game server
         """
-        sys.stdout.write("b4_parser.Parser.unban\n")
+        #sys.stdout.write("b4_parser.Parser.unban\n")
         raise NotImplementedError
 
     def tempban(self, client, reason='', duration=2, admin=None, silent=False, *kwargs):
@@ -1715,35 +1715,35 @@ class Parser(object):
         fire the event ('EVT_CLIENT_BAN_TEMP', data={'reason': reason, 
         'duration': duration, 'admin': admin}, client=target)
         """
-        sys.stdout.write("b4_parser.Parser.tempban\n")
+        #sys.stdout.write("b4_parser.Parser.tempban\n")
         raise NotImplementedError
 
     def getMap(self):
         """
         Return the current map/level name
         """
-        sys.stdout.write("b4_parser.Parser.getMap\n")
+        #sys.stdout.write("b4_parser.Parser.getMap\n")
         raise NotImplementedError
 
     def getNextMap(self):
         """
         Return the next map/level name to be played
         """
-        sys.stdout.write("b4_parser.Parser.getNextMap\n")
+        #sys.stdout.write("b4_parser.Parser.getNextMap\n")
         raise NotImplementedError
 
     def getMaps(self):
         """
         Return the available maps/levels name
         """
-        sys.stdout.write("b4_parser.Parser.getMaps\n")
+        #sys.stdout.write("b4_parser.Parser.getMaps\n")
         raise NotImplementedError
 
     def rotateMap(self):
         """
         Load the next map/level
         """
-        sys.stdout.write("b4_parser.Parser.rotateMap\n")
+        #sys.stdout.write("b4_parser.Parser.rotateMap\n")
         raise NotImplementedError
 
     def changeMap(self, map_name):
@@ -1751,7 +1751,7 @@ class Parser(object):
         Load a given map/level
         Return a list of suggested map names in cases it fails to recognize the map that was provided
         """
-        sys.stdout.write("b4_parser.Parser.changeMap\n")
+        #sys.stdout.write("b4_parser.Parser.changeMap\n")
         raise NotImplementedError
 
     def getPlayerPings(self, filter_client_ids=None):
@@ -1759,14 +1759,14 @@ class Parser(object):
         Returns a dict having players' id for keys and players' ping for values
         :param filter_client_ids: If filter_client_id is an iterable, only return values for the given client ids.
         """
-        sys.stdout.write("b4_parser.Parser.getPlayerPings\n")
+        #sys.stdout.write("b4_parser.Parser.getPlayerPings\n")
         raise NotImplementedError
 
     def getPlayerScores(self):
         """
         Returns a dict having players' id for keys and players' scores for values
         """
-        sys.stdout.write("b4_parser.Parser.getPlayerScores\n")
+        #sys.stdout.write("b4_parser.Parser.getPlayerScores\n")
         raise NotImplementedError
 
     def inflictCustomPenalty(self, penalty_type, client, reason=None, duration=None, admin=None, data=None):
@@ -1776,7 +1776,7 @@ class Parser(object):
         'mute', 'kill' or anything you want.
         /!\ This method must return True if the penalty was inflicted.
         """
-        sys.stdout.write("b4_parser.Parser.inflictCustomPenalty\n")
+        #sys.stdout.write("b4_parser.Parser.inflictCustomPenalty\n")
         pass
 
 
