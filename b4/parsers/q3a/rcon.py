@@ -88,7 +88,7 @@ class Rcon(object):
         self.socket.connect(self.host)
 
         self._stopEvent = threading.Event()
-        threading.Thread(target=self._writelines, args=()).start()
+        threading.Thread(target=self._writelines).start()
 
     def encode_data(self, data, source):
         """
@@ -247,8 +247,8 @@ class Rcon(object):
             for cmd in lines:
                 if not cmd:
                     continue
-                with self.lock:
-                    self.sendRcon(cmd, maxRetries=1)
+                #with self.lock:
+                self.sendRcon(cmd, maxRetries=1)
             time.sleep(1)
 
     def writelines(self, lines):
@@ -258,6 +258,7 @@ class Rcon(object):
         """
         self.console.info("rcon writelines")
         self.queue.put(lines)
+        self.console.info(lines)
 
     def write(self, cmd, maxRetries=None, socketTimeout=None):
         """

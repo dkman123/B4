@@ -850,7 +850,8 @@ class DatabaseStorage(Storage):
             #self.console.info("b4_common _query setting dbcursor")
             dbcursor = b4.storage.b4_cursor.Cursor(cursor, self.db)
         except Exception as ex:
-            self.console.error("b4_common _query exception %s\n" % ex)
+            self.console.error("b4_common _query exception %s" % ex)
+            dbcursor = None
         #finally:
         #    self._lock.release()
         #self.console.info("b4_common _query returning dbcursor with type %s" % type(dbcursor).__name__)
