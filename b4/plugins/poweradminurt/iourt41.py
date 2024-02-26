@@ -335,10 +335,11 @@ class Poweradminurt41Plugin(b4.b4_plugin.Plugin):
         # set a max delay, setting it larger than timelimit would be foolish
         timelimit = self.console.getCvar('timelimit')
         sys.stdout.write("iourt41 loadVoteDelayer. timelimit returned %s" % timelimit)
-        if timelimit is not None:
+        if timelimit is not None and timelimit != '':
             timelimit = timelimit.getInt()
         else:
             timelimit = 0
+
         if timelimit == 0 and self._votedelay != 0:
             # endless map or frag limited settings
             self._votedelay = 10
@@ -354,8 +355,17 @@ class Poweradminurt41Plugin(b4.b4_plugin.Plugin):
                                           lambda x: b4.b4_functions.clamp(x, maxv=59))
         self._smaxspectime = self.getSetting('speccheck', 'maxspectime', b4.INT, self._smaxspectime)
         self._smaxlevel = self.getSetting('speccheck', 'maxlevel', b4.LEVEL, self._smaxlevel)
-        maxclients = self.console.getCvar('sv_maxclients').getInt()
-        pvtclients = self.console.getCvar('sv_privateClients').getInt()
+        maxclients = self.console.getCvar('sv_maxclients')
+        if maxclients is not None and maxclients != '':
+            maxclients = maxclients.getInt()
+        else:
+            maxclients = 0
+        pvtclients = self.console.getCvar('sv_privateClients')
+        if pvtclients is not None and pvtclients != '':
+            pvtclients = pvtclients.getInt()
+        else:
+            pvtclients = 0
+
         smaxplayers = maxclients - pvtclients
         self._smaxplayers = self.getSetting('speccheck', 'maxplayers', b4.INT, smaxplayers)
 

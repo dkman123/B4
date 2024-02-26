@@ -182,7 +182,11 @@ class Rcon(object):
 
         if type(data) is not str:
             data = data.decode('utf-8')
-        self.console.verbose('RCON sending (%s:%s) %r', self.host[0], self.host[1], data)
+        if "b'" in data:
+            # if it's a "binary string" then clean it up
+            data = re.sub(r'b\'|\'[\r\n]$', '', data)
+        # verbose
+        self.console.info('RCON sending (%s:%s) %r', self.host[0], self.host[1], data)
         start_time = time.time()
 
         retries = 0
@@ -196,7 +200,7 @@ class Rcon(object):
                     # convert the string to bytes before sending
                     tosend = self.rconsendstring % (self.password, data)
                     tohex = " ".join("{:02x}".format(ord(c)) for c in tosend)
-                    #self.console.verbose2("rcon sending hex %s" % tohex)
+                    self.console.info("rcon sending hex %s" % tohex)
                     # convert to bytes or no?
                     writeables[0].send(bytearray.fromhex(tohex))
                 except Exception as msg:
@@ -204,7 +208,8 @@ class Rcon(object):
                 else:
                     try:
                         data = self.readSocket(self.socket, socketTimeout=socketTimeout)
-                        self.console.verbose2('RCON: received %r' % data)
+                        # verbose
+                        self.console.info('RCON: received %r' % data)
                         return data
                     except Exception as msg:
                         self.console.warning('RCON: error reading: %r', msg)
@@ -227,7 +232,8 @@ class Rcon(object):
 
             self.console.verbose('RCON: retry sending %r (%s/%s)...', data.strip(), retries, maxRetries)
 
-        self.console.debug('RCON: did not send any data')
+        # verbose
+        self.console.info('RCON: did not send any data')
         return ''
 
     def stop(self):
@@ -351,13 +357,14 @@ class Rcon(object):
             d = sock.recv(size)
 
             if d:
+                self.console.info("readSocket got %d readables; %r" % (len(readables), d))
                 # remove rcon header
                 #data += d.replace(self.rconreplystring, '')
 
                 #self.console.verbose2("rcon d part is %r\n" % d[4:9])
                 if d[4:9] == b'print':
                     d = d[10:]
-                    #self.console.verbose2("rcon d is %r\n" % d)
+                    self.console.verbose2("rcon d is %r\n" % d)
 
                 if type(d) is not str:
                     # self.console.verbose2("rcon attempting decode of received data %r\n" % d)

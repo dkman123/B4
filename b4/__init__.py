@@ -45,7 +45,7 @@ __version__ = '0.2'
 modulePath = b4_pkg_handler.resource_directory(__name__)
 
 versionId = 'v%s' % __version__
-version = '^8www.bigbrotherbot.net ^0(^8b4^0) ^9%s ^9[^3LeadAlbatross^9]^3' % versionId
+version = '^8bigbrotherbot ^0(^8b4^0) ^9%s ^9[^3LeadAlbatross^9]^3' % versionId
 
 confdir = None
 console = None

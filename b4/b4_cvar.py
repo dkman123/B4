@@ -87,7 +87,9 @@ class Cvar(object):
         Return the CVAR value as an integer.
         :return int
         """
+        #if self is not None and self != '':
         return int(self.value)
+        #return 0
 
     def getFloat(self):
         """
