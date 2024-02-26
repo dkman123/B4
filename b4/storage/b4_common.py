@@ -213,7 +213,7 @@ class DatabaseStorage(Storage):
         """
         Return a dictionary containing the number of clients, Bans, Kicks, Warnings and Tempbans.
         """
-        sys.stdout.write("b4_common DatabaseStorage getCounts\n")
+        #sys.stdout.write("b4_common DatabaseStorage getCounts\n")
         counts = {'clients': 0, 'Bans': 0, 'Kicks': 0, 'Warnings': 0, 'TempBans': 0}
         cursor = self.query("""SELECT COUNT(id) total FROM clients""")
         if cursor.rowcount:

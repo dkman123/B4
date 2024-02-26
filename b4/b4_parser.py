@@ -457,21 +457,21 @@ class Parser(object):
         :param path: the relative path we want to expand
         :param decode: True to decode bytes, False for string
         """
-        sys.stdout.write("b4_parser.Parser.getAbsolutePath\n")
+        #sys.stdout.write("b4_parser.Parser.getAbsolutePath\n")
         return b4.getAbsolutePath(path, decode=decode)
 
     def _dumpEventsStats(self):
         """
         Dump event statistics into the B4 log file.
         """
-        sys.stdout.write("b4_parser.Parser._dumpEventsStats\n")
+        #sys.stdout.write("b4_parser.Parser._dumpEventsStats\n")
         self._eventsStats.dumpStats()
 
     def start(self):
         """
         Start B4
         """
-        sys.stdout.write("b4_parser.Parser.start\n")
+        #sys.stdout.write("b4_parser.Parser.start\n")
         self.bot("b4_parser Starting parser..")
         self.startup()
         self.say('%s ^2[ONLINE]' % b4.version)
@@ -1187,7 +1187,7 @@ class Parser(object):
         """
         Main worker thread for B4
         """
-        sys.stdout.write("b4_parser.Parser.run\n")
+        #sys.stdout.write("b4_parser.Parser.run\n")
         self.screen.write('Startup complete : B4 is running! Let\'s get to work!\n\n')
         self.screen.write('If you run into problems check your B4 log file for more information\n')
         self.screen.flush()
@@ -1619,7 +1619,7 @@ class Parser(object):
         sys.stdout.write("b4_parser.Parser.updateDocumentation\n")
         if self.config.has_section('autodoc'):
             try:
-                from tools.documentationBuilder import DocBuilder
+                from b4.tools.documentationBuilder import DocBuilder
                 docbuilder = DocBuilder(self)
                 docbuilder.save()
             except Exception as err:

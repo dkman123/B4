@@ -1530,7 +1530,7 @@ class Clients(dict):
         """
         Return the list of line clients.
         """
-        sys.stdout.write("b4_clients.Clients.getList")
+        #sys.stdout.write("b4_clients.Clients.getList")
         clist = []
         for cid, c in self.items():
             # DK (hide is hiding CI connections)
@@ -1545,7 +1545,7 @@ class Clients(dict):
         :param max: The maximum level
         :param masked: Whether to match masked levels
         """
-        sys.stdout.write("b4_clients.Clients.getClientsByLevel")
+        #sys.stdout.write("b4_clients.Clients.getClientsByLevel")
         clist = []
         minlevel, maxlevel = int(min), int(max)
         for cid, c in self.items():
@@ -1567,7 +1567,7 @@ class Clients(dict):
         Return a list of clients matching the given name.
         :param name: The name to match
         """
-        sys.stdout.write("b4_clients.Clients.getClientsByName")
+        #sys.stdout.write("b4_clients.Clients.getClientsByName")
         clist = []
         needle = re.sub(r'\s', '', name.lower())
         for cid,c in self.items():
@@ -1584,7 +1584,7 @@ class Clients(dict):
         Return the client who has the given name in its name (match substring).
         :param name: The name to match
         """
-        sys.stdout.write("b4_clients.Clients.getClientLikeName")
+        #sys.stdout.write("b4_clients.Clients.getClientLikeName")
         name = name.lower()
         for cid, c in self.items():
             # DK (hide is hiding CI connections)
@@ -1598,7 +1598,7 @@ class Clients(dict):
         Return a list ofclients matching the given state.
         :param state: The clients state
         """
-        sys.stdout.write("b4_clients.Clients.getClientsByState")
+        #sys.stdout.write("b4_clients.Clients.getClientsByState")
         clist = []
         for cid, c in self.items():
             # DK (hide is hiding CI connections)
@@ -1611,7 +1611,7 @@ class Clients(dict):
         """
         Return the client matching the given database id.
         """
-        sys.stdout.write("b4_clients.Clients.getByDB")
+        #sys.stdout.write("b4_clients.Clients.getByDB")
         m = re.match(r'^@([0-9]+)$', client_id)
         if m:
             try:
@@ -1643,7 +1643,7 @@ class Clients(dict):
         Return the client matching the given handle.
         :param handle: The handle to use for the search
         """
-        sys.stdout.write("b4_clients.Clients.getByMagic")
+        #sys.stdout.write("b4_clients.Clients.getByMagic")
         handle = handle.strip()
         # if it's all numbers look by client ID
         if re.match(r'^[0-9]+$', handle):
@@ -1672,7 +1672,7 @@ class Clients(dict):
         Return the client matching the given GUID.
         :param guid: The GUID to match
         """
-        sys.stdout.write("b4_clients.Clients.getByGUID")
+        #sys.stdout.write("b4_clients.Clients.getByGUID")
         guid = guid.upper()
         try:
             return self[self._guidIndex[guid]]
@@ -1691,7 +1691,7 @@ class Clients(dict):
         Return the client matching the given slot number.
         :param cid: The client slot number
         """
-        sys.stdout.write("b4_clients.Clients.getByCID")
+        #sys.stdout.write("b4_clients.Clients.getByCID")
         try:
             c = self[cid]
         except KeyError:
@@ -1712,7 +1712,7 @@ class Clients(dict):
         Value should be bytes or unicode.
         Source - https://github.com/PyMySQL/PyMySQL/blob/40f6a706144a9b65baa123e6d5d89d23558646ac/pymysql/converters.py
         """
-        sys.stdout.write("b4_clients.Clients.escape_string")
+        #sys.stdout.write("b4_clients.Clients.escape_string")
         if isinstance(value, str):
             return value.translate(self.escape_table)
         if isinstance(value, (bytes, bytearray)):
@@ -1732,7 +1732,7 @@ class Clients(dict):
         Will search both on the online clients list and in the storage.
         :param name: The client name
         """
-        sys.stdout.write("b4_clients.Clients.lookupByName")
+        #sys.stdout.write("b4_clients.Clients.lookupByName")
         # first check connected users
         c = self.getClientLikeName(name)
         # DK (hide is hiding CI connections)

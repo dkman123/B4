@@ -994,7 +994,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         Scheduled execution: will check for banned players still
         connected to the server and kick them if needed.
         """
-        sys.stdout.write("AdminPlugin doPastBansCheck\n")
+        #sys.stdout.write("AdminPlugin doPastBansCheck\n")
         counts = self.console.storage.getCounts()
         for k1 in self._past_bans_counts:
             if self._past_bans_counts[k1] != counts[k1]:

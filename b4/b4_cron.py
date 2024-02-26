@@ -380,7 +380,7 @@ class Cron(object):
 
     @staticmethod
     def getNextTime():
-        sys.stdout.write("Cron getNextTime")
+        #sys.stdout.write("Cron getNextTime")
         # store the time first, we don't want it to change on us
         t = time.time()
         # current time, minus it's 1 second remainder, plus 1 second
