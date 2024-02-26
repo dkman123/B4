@@ -28,11 +28,11 @@ import b4.b4_plugin
 #import b4.b4_events
 import threading
 
-from .exceptions import GeolocalizationError
-from .geolocators import FreeGeoIpGeolocator
-from .geolocators import IpApiGeolocator
-from .geolocators import MaxMindGeolocator
-from .geolocators import TelizeGeolocator
+from b4.plugins.geolocation.exceptions import GeolocalizationError
+from b4.plugins.geolocation.geolocators import FreeGeoIpGeolocator
+from b4.plugins.geolocation.geolocators import IpApiGeolocator
+from b4.plugins.geolocation.geolocators import MaxMindGeolocator
+from b4.plugins.geolocation.geolocators import TelizeGeolocator
 
 __author__ = 'Fenix'
 __version__ = '1.5'

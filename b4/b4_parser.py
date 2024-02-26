@@ -753,7 +753,7 @@ class Parser(object):
 
         # at this point we have an OrderedDict of PluginData of plugins listed in b4_ini and which can be loaded
         # correctly: all the plugins which have not been installed correctly, but are specified in b4_ini, have
-        # been already excluded. next we build a list of PluginData instances and then we will sort it according
+        # been already excluded. next we build a list of PluginData instances, then we will sort it according
         # to plugin order importance:
         #   - we'll try to load other plugins required by a listed one
         #   - we'll remove plugin that do not meet requirements
@@ -961,7 +961,16 @@ class Parser(object):
         if path is None:
             path = os.path.join(str(b4.getB4Path(True)), 'plugins', name, "__init__.py")
 
-        spec = importlib.util.spec_from_file_location(name, path)
+        try:
+            spec = importlib.util.spec_from_file_location(name, path)
+        except FileNotFoundError:
+            self.log.info("b4_parser %s not found in %s" % (name, path))
+            # look in extplugins
+            if path is None:
+                path = os.path.join(str(b4.getB4Path(True)), 'extplugins', name, "__init__.py")
+
+            spec = importlib.util.spec_from_file_location(name, path)
+
         if spec is None:
             raise ImportError(f"Could not load spec for module '{name}' at: {path}")
         module = importlib.util.module_from_spec(spec)

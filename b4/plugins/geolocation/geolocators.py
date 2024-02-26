@@ -29,9 +29,9 @@ import os
 import os.path
 import urllib.request
 
-from .exceptions import GeolocalizationError
-from .lib.geoip import GeoIP
-from .location import Location
+from b4.plugins.geolocation.exceptions import GeolocalizationError
+from b4.plugins.geolocation.lib.geoip import GeoIP
+from b4.plugins.geolocation.location import Location
 
 
 class Geolocator(object):
