@@ -1369,7 +1369,7 @@ class Parser(object):
         Read lines from the log file
         :param game_log: The game log file pointer
         """
-        sys.stdout.write("b4_parser.Parser.__read_input\n")
+        #sys.stdout.write("b4_parser.Parser.__read_input\n")
         return game_log.readlines()
 
     def ___read_input_darwin(self, game_log):
@@ -1377,14 +1377,14 @@ class Parser(object):
         Read lines from the log file (darwin version)
         :param game_log: The game log file pointer
         """
-        sys.stdout.write("b4_parser.Parser.___read_input_darwin\n")
+        #sys.stdout.write("b4_parser.Parser.___read_input_darwin\n")
         return [game_log.readline()]
 
     def read(self):
         """
         Read from game server log file
         """
-        sys.stdout.write("b4_parser.Parser.read\n")
+        #sys.stdout.write("b4_parser.Parser.read\n")
         if not hasattr(self, 'input'):
             self.critical("Cannot read game log file: check that you have a correct "
                           "value for the 'game_log' setting in your main config file")
@@ -1406,7 +1406,7 @@ class Parser(object):
         """
         Shutdown B4.
         """
-        sys.stdout.write("b4_parser.Parser.shutdown\n")
+        #sys.stdout.write("b4_parser.Parser.shutdown\n")
         try:
             if self.working and self.exiting.acquire():
                 self.bot('Shutting down...')

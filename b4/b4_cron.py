@@ -361,7 +361,7 @@ class Cron(object):
             t = time.gmtime(nexttime)
             #self.console.info("Cron run nexttime %r; now %r" % (nexttime, now))
             for k, c in self._tabs.items():
-                self.console.info("checking tab %s", c.command)
+                #self.console.info("checking tab %s", c.command)
                 if c.match(t):
                     if 0 < c.maxRuns < c.numRuns + 1:
                         # reached max executions, remove tab
