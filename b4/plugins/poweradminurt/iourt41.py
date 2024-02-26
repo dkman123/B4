@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import sys
 
 # ################################################################### #
 #                                                                     #
@@ -328,11 +329,16 @@ class Poweradminurt41Plugin(b4.b4_plugin.Plugin):
 
     def loadVoteDelayer(self):
         """
-        Setup the vote delayer
+        Set up the vote delayer
         """
         self._votedelay = self.getSetting('votedelay', 'votedelay', b4.INT, self._votedelay)
         # set a max delay, setting it larger than timelimit would be foolish
-        timelimit = self.console.getCvar('timelimit').getInt()
+        timelimit = self.console.getCvar('timelimit')
+        sys.stdout.write("iourt41 loadVoteDelayer. timelimit returned %s" % timelimit)
+        if timelimit is not None:
+            timelimit = timelimit.getInt()
+        else:
+            timelimit = 0
         if timelimit == 0 and self._votedelay != 0:
             # endless map or frag limited settings
             self._votedelay = 10
@@ -342,7 +348,7 @@ class Poweradminurt41Plugin(b4.b4_plugin.Plugin):
 
     def loadSpecChecker(self):
         """
-        Setup the spec checker
+        Set up the spec checker
         """
         self._sinterval = self.getSetting('speccheck', 'sinterval', b4.INT, self._sinterval,
                                           lambda x: b4.b4_functions.clamp(x, maxv=59))
@@ -355,7 +361,7 @@ class Poweradminurt41Plugin(b4.b4_plugin.Plugin):
 
     def loadMoonMode(self):
         """
-        Setup the moon mode
+        Set up the moon mode
         """
         self._moon_on_gravity = self.getSetting('moonmode', 'gravity_on', b4.INT, self._moon_on_gravity)
         self._moon_off_gravity = self.getSetting('moonmode', 'gravity_off', b4.INT, self._moon_off_gravity)

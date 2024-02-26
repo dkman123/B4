@@ -746,7 +746,7 @@ class AbstractParser(b4.b4_parser.Parser):
             if type(val) is not str:
                 #self.debug("abstractParser decoding val")
                 val = val.decode('utf-8')
-            #self.debug('abstractParser Get cvar %s = [%s]', cvar_name, val)
+            self.debug('abstractParser Get cvar %s = [%s]', cvar_name, val)
 
             m = None
             for f in self._reCvar:
