@@ -932,7 +932,7 @@ class Client(object):
         Create a new alias for this client.
         :param name: The alias string
         """
-        sys.stdout.write("b4_clients.Client.makeAlias")
+        #sys.stdout.write("b4_clients.Client.makeAlias")
         if not self.id or not name:
             return
 

@@ -472,19 +472,19 @@ class Parser(object):
         Start B4
         """
         sys.stdout.write("b4_parser.Parser.start\n")
-        self.bot("Starting parser..")
+        self.bot("b4_parser Starting parser..")
         self.startup()
         self.say('%s ^2[ONLINE]' % b4.version)
         self.call_plugins_onLoadConfig()
-        self.bot("Starting plugins")
+        self.bot("b4_parser Starting plugins")
         self.startPlugins()
         self._eventsStats_cronTab = b4.b4_cron.CronTab(self._dumpEventsStats)
         self.cron.add(self._eventsStats_cronTab)
-        self.bot("All plugins started")
+        self.bot("b4_parser All plugins started")
         self.pluginsStarted()
-        self.bot("Starting event dispatching thread")
+        self.bot("b4_parser Starting event dispatching thread")
         threading.Thread(target=self.handleEvents, args=()).start()
-        self.bot("Start reading game events")
+        self.bot("b4_parser Start reading game events")
         self.run()
 
     def die(self):
@@ -580,7 +580,7 @@ class Parser(object):
         """
         Create a new event
         """
-        sys.stdout.write("b4_parser.Parser.createEvent\n")
+        #sys.stdout.write("b4_parser.Parser.createEvent\n")
         self.Events.createEvent(key, name)
         self._events = self.Events.events
         return self._events[key]
@@ -976,7 +976,7 @@ class Parser(object):
         """
         Start all loaded plugins.
         """
-        sys.stdout.write("b4_parser.Parser.startPlugins\n")
+        #sys.stdout.write("b4_parser.Parser.startPlugins\n")
         self.screen.write('Starting plugins : ')
         self.screen.flush()
 
@@ -989,7 +989,9 @@ class Parser(object):
             sys.stdout.write("b4_parser.Parser.start_plugin")
             p = console._plugins[p_name]
             p.onStartup()
+            sys.stdout.write("b4_parser.Parser.start_plugin onStartup complete")
             p.start()
+            sys.stdout.write("b4_parser.Parser.start_plugin start complete")
 
         plugin_num = 1
 
@@ -998,6 +1000,7 @@ class Parser(object):
             try:
                 self.bot('Starting plugin #%s : %s' % (plugin_num, plugin_name))
                 start_plugin(self, plugin_name)
+                self.bot('Started plugin #%s : %s' % (plugin_num, plugin_name))
             except Exception as err:
                 self.error("Could not start plugin %s" % plugin_name, exc_info=err)
                 self.screen.write('x')
@@ -1585,6 +1588,7 @@ class Parser(object):
         if not self._cron:
             self._cron = b4.b4_cron.Cron(self)
             self._cron.start()
+            sys.stdout.write("b4_parser.Parser._get_cron continuing\n")
         return self._cron
 
     cron = property(_get_cron)

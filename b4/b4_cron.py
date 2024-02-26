@@ -31,6 +31,7 @@ import time
 import traceback
 import sys
 
+from time import sleep
 from threading import Thread
 
 
@@ -267,7 +268,9 @@ class PluginCronTab(CronTab):
         if self.plugin.isEnabled():
             CronTab.run(self)
 
+
 class Cron(object):
+    cronThread = None
 
     def __init__(self, console):
         """
@@ -290,6 +293,7 @@ class Cron(object):
         """
         Add a CronTab to the list of active cron tabs.
         """
+        sys.stdout.write("b4_cron add %s\n" % tab.command)
         self._tabs[id(tab)] = tab
         self.console.verbose('Added crontab %s (%s) - %ss %sm %sh %sd %sM %sDOW' % (tab.command, id(tab), tab.second,
                                                                                     tab.minute, tab.hour, tab.day,
@@ -316,7 +320,11 @@ class Cron(object):
         """
         Start the cron scheduler in a separate thread.
         """
-        Thread(self.run()).start()
+        sys.stdout.write("b4_cron start")
+        if self.cronThread is None:
+            self.cronThread = (threading.Thread(target=self.run(), name="cron"))
+            self.cronThread.start()
+        sys.stdout.write("b4_cron start complete")
 
     @staticmethod
     def time():
@@ -341,15 +349,19 @@ class Cron(object):
         while not self._stopEvent.is_set():
             now = self.time()
             if now < nexttime:
+                #self.console.info("Cron waiting")
                 self._stopEvent.wait(nexttime - now + .1)
 
             # Check if the time has changed by more than two minutes. This
             # case arises when the system clock is changed. We must reset the timer.
             if abs(self.time() - nexttime) > 120:
+                self.console.verbose("resetting time")
                 nexttime = self.getNextTime()
 
             t = time.gmtime(nexttime)
+            self.console.info("Cron run nexttime %r; now %r" % (nexttime, now))
             for k, c in self._tabs.items():
+                self.console.info("checking tab %s", c.command)
                 if c.match(t):
                     if 0 < c.maxRuns < c.numRuns + 1:
                         # reached max executions, remove tab
@@ -362,11 +374,13 @@ class Cron(object):
                             self.console.error('Exception raised while executing crontab %s: %s\n%s', c.command,
                                                msg, traceback.extract_tb(sys.exc_info()[2]))
             nexttime += 1
+            sleep(1)
 
         self.console.info("Cron scheduler ended")
 
     @staticmethod
     def getNextTime():
+        sys.stdout.write("Cron getNextTime")
         # store the time first, we don't want it to change on us
         t = time.time()
         # current time, minus it's 1 second remainder, plus 1 second

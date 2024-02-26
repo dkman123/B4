@@ -739,13 +739,13 @@ class AbstractParser(b4.b4_parser.Parser):
         Return a CVAR from the server.
         :param cvar_name: The CVAR name.
         """
-        self.log.info("abstractParser getCvar %s" % cvar_name)
+        #self.log.info("abstractParser getCvar %s" % cvar_name)
         if self._reCvarName.match(cvar_name):
             val = self.write(cvar_name)
             if type(val) is not str:
-                self.debug("abstractParser decoding val")
+                #self.debug("abstractParser decoding val")
                 val = val.decode('utf-8')
-            self.debug('abstractParser Get cvar %s = [%s]', cvar_name, val)
+            #self.debug('abstractParser Get cvar %s = [%s]', cvar_name, val)
 
             m = None
             for f in self._reCvar:
@@ -756,7 +756,7 @@ class AbstractParser(b4.b4_parser.Parser):
 
             if m:
                 if m.group('cvar').lower() == cvar_name.lower():
-                    self.log.info("abstractParser found %s" % m)
+                    #self.log.info("abstractParser found %s" % m)
                     try:
                         default_value = m.group('default')
                     except IndexError:

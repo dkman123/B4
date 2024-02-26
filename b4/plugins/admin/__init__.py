@@ -480,14 +480,18 @@ class AdminPlugin(b4.b4_plugin.Plugin):
             else:
                 self.verbose('superadmin(s) found: no need for !iamgod')
 
+        #sys.stdout.write("AdminPlugin onStartup cron\n")
         # install past bans check crontab
         if self._past_bans_check_rate > 0:
             self.debug(
                 'installing past bans check crontab: b4 will check for banned players every %s seconds'
                 % self._past_bans_check_rate)
-            self.console.cron.cancel(id(self._past_bans_crontab))
+            #sys.stdout.write("AdminPlugin onStartup cron cancel\n")
+            #self.console.cron.cancel(id(self._past_bans_crontab))
+            #sys.stdout.write("AdminPlugin onStartup cron set\n")
             self._past_bans_crontab = b4.b4_cron.PluginCronTab(self, self.doPastBansCheck, minute='*',
                                                                second='*/%s' % self._past_bans_check_rate)
+            #sys.stdout.write("AdminPlugin onStartup cron add\n")
             self.console.cron.add(self._past_bans_crontab)
 
     def registerCommand(self, plugin, command, level, handler, alias=None, secretLevel=None):
