@@ -15,7 +15,7 @@ set -ev
 #nosetests --where=tests.plugins.duel --verbosity=3
 #nosetests --where=tests.plugins.firstkill --verbosity=3
 #nosetests --where=tests.plugins.ftpytail --verbosity=3
-#nosetests --where=tests.plugins.geolocation --verbosity=3
+#nosetests --where=tests.plugins.geolocationX --verbosity=3
 #nosetests --where=tests.plugins.ipban --verbosity=3
 ##nosetests --where=tests.plugins.jumper --verbosity=3
 #nosetests --where=tests.plugins.location --verbosity=3

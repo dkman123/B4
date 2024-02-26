@@ -41,7 +41,7 @@ class LocationPlugin(b4.b4_plugin.Plugin):
     _adminPlugin = None
     _announce = True
 
-    requiresPlugins = ['geolocation']
+    requiresPlugins = ['geolocationX']
     loadAfterPlugins = ['countryfilter', 'proxyfilter']
 
     ####################################################################################################################
@@ -133,7 +133,7 @@ class LocationPlugin(b4.b4_plugin.Plugin):
     def getMessageVariables(client):
         """
         Return a dictionary with message substitution variables
-        :param client: The client whose geolocation information we need to display
+        :param client: The client whose geolocationX information we need to display
         :return: dict
         """
         return {
@@ -153,11 +153,11 @@ class LocationPlugin(b4.b4_plugin.Plugin):
         Return the distance between 2 clients (in Km)
         """
         if not client.location or client.location.lat is None:
-            self.debug('could not compute distance: %s has not enough geolocation data', client.name)
+            self.debug('could not compute distance: %s has not enough geolocationX data', client.name)
             return False
         
         if not sclient.location or sclient.location.lat is None:
-            self.debug('could not compute distance: %s has not enough geolocation data', sclient.name)
+            self.debug('could not compute distance: %s has not enough geolocationX data', sclient.name)
             return False
 
         self.verbose('computing distance between %s and %s', client.name, sclient.name)
@@ -188,7 +188,7 @@ class LocationPlugin(b4.b4_plugin.Plugin):
 
     def cmd_locate(self, data, client, cmd=None):
         """
-        <client> - display geolocation info of the specified client
+        <client> - display geolocationX info of the specified client
         """
         if not data: 
             client.message('^7missing data, try ^3!^7help locate')

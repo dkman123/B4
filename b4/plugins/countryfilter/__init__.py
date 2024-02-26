@@ -32,7 +32,7 @@ __author__ = 'guwashi / xlr8or'
 
 class CountryfilterPlugin(b4.b4_plugin.Plugin):
 
-    requiresPlugins = ['geolocation']
+    requiresPlugins = ['geolocationX']
 
     cf_announce_accept = True
     cf_announce_reject = True

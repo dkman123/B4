@@ -44,7 +44,7 @@
 #    * change: show_results_yaml() -> save_data_yaml()
 #    * fixed: save_data_yaml() now saves in a properly formatted yaml standard when saving multiple objects at once
 #    * added: load_data_yaml(), can load several yaml objects from several files at once
-#    * change: paths to b4/lib are now generalized via sys module
+#    * change: paths to b4/geolib are now generalized via sys module
 # 2010-09-14 - 0.9.2 - GrosBedo
 #    * added: save_data_csv and load_data_csv which are much more efficient and quick
 #    * change: replaced pickler by cPickler which should be 1000 times faster (finally cPickler is a little faster than new save_data_csv and load_data_csv functions)
@@ -81,12 +81,12 @@ __author__ = 'GrosBedo'
  
 import os.path, time, re, sys
 pathname = os.path.dirname(sys.argv[0])
-sys.path.append(os.path.join(pathname, 'b4', 'lib'))
+sys.path.append(os.path.join(pathname, 'b4', 'geolib'))
 
 # Maths functions
 import math
 from statlib import stats as mstats
-import corestats  # we need the corestats lib because the mstats implementation of percentile score is broken
+import corestats  # we need the corestats geolib because the mstats implementation of percentile score is broken
 #import itertools
 
 # Output and saving functions

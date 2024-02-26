@@ -966,8 +966,7 @@ class Parser(object):
         except FileNotFoundError:
             self.log.info("b4_parser %s not found in %s" % (name, path))
             # look in extplugins
-            if path is None:
-                path = os.path.join(str(b4.getB4Path(True)), 'extplugins', name, "__init__.py")
+            path = os.path.join(str(b4.getB4Path(True)), 'extplugins', name, "__init__.py")
 
             spec = importlib.util.spec_from_file_location(name, path)
 

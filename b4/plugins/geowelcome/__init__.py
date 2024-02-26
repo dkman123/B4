@@ -40,7 +40,7 @@ __author__  = 'SGT'
 
 class GeowelcomePlugin(WelcomePlugin):
 
-    requiresPlugins = ['geolocation']
+    requiresPlugins = ['geolocationX']
     loadAfterPlugins = ['countryfilter', 'welcome']
 
     _default_messages = {

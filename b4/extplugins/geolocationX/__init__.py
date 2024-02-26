@@ -54,7 +54,7 @@ class GeolocationPlugin(b4_plugin.Plugin):
             # append this one separately since db may be missing
             self._geolocators.append(MaxMindGeolocator())
         except IOError as e:
-            self.debug('MaxMind geolocation not available: %s' % e)
+            self.debug('MaxMind geolocationX not available: %s' % e)
 
     def onStartup(self):
         """
@@ -69,8 +69,8 @@ class GeolocationPlugin(b4_plugin.Plugin):
         self.registerEvent('EVT_CLIENT_UPDATE', self.geolocate)
 
         # create our custom events so other plugins can react when clients are geolocated
-        self.console.createEvent('EVT_CLIENT_GEOLOCATION_SUCCESS', 'Event client geolocation success')
-        self.console.createEvent('EVT_CLIENT_GEOLOCATION_FAILURE', 'Event client geolocation failure')
+        self.console.createEvent('EVT_CLIENT_GEOLOCATION_SUCCESS', 'Event client geolocationX success')
+        self.console.createEvent('EVT_CLIENT_GEOLOCATION_FAILURE', 'Event client geolocationX failure')
 
     ####################################################################################################################
     #                                                                                                                  #
@@ -89,14 +89,14 @@ class GeolocationPlugin(b4_plugin.Plugin):
             for geotool in self._geolocators:
 
                 try:
-                    self.debug('retrieving geolocation data for %s <@%s>...', client.name, client.id)
+                    self.debug('retrieving geolocationX data for %s <@%s>...', client.name, client.id)
                     client.location = geotool.getLocation(client)
-                    self.debug('retrieved geolocation data for %s <@%s>: %r', client.name, client.id, client.location)
+                    self.debug('retrieved geolocationX data for %s <@%s>: %r', client.name, client.id, client.location)
                     break # stop iterating if we collect valid data
                 except GeolocalizationError as e:
-                    self.warning('could not retrieve geolocation data %s <@%s>: %s', client.name, client.id, e)
+                    self.warning('could not retrieve geolocationX data %s <@%s>: %s', client.name, client.id, e)
                 except Exception as e:
-                    self.error('client %s <@%s> geolocation terminated unexpectedtly when using %s service: %s',
+                    self.error('client %s <@%s> geolocationX terminated unexpectedtly when using %s service: %s',
                                client.name, client.id, geotool.__class__.__name__, e)
 
             if client.location is not None:
@@ -106,7 +106,7 @@ class GeolocationPlugin(b4_plugin.Plugin):
 
         # do not use hasattr or try except here: we'd better try to get geodata also when a previous attempt failed
         # and we ended up with NoneType object in client.location (so we have an attribute but it's not useful).
-        # also make sure to launch geolocation only if we have a valid ip address.
+        # also make sure to launch geolocationX only if we have a valid ip address.
         if not getattr(event.client, 'location', None) and event.client.ip:
             t = threading.Thread(target=_threaded_geolocate, args=(event.client,))
             t.daemon = True  # won't prevent b4 from exiting

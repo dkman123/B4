@@ -42,12 +42,12 @@ except:
 import os
 import sys
 pathname = os.path.dirname(sys.argv[0])
-sys.path.append(os.path.join(pathname, 'b4', 'lib'))
+sys.path.append(os.path.join(pathname, 'b4', 'geolib'))
 
 from kthread import *
 from profilebrowser import *
 try:
-	from runsnakerun import runsnake  # runsnakerun needs wxPython lib, if it's not available then we pass
+	from runsnakerun import runsnake  # runsnakerun needs wxPython geolib, if it's not available then we pass
 except:
 	pass
 

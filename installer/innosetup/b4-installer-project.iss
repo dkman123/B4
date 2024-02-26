@@ -12,7 +12,7 @@
 ; NOTE: The value of AppId uniquely identifies this application.
 ; Do not use the same AppId value in installers for other applications.
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
-AppID=5FB180C6-A3B3-46CF-85E0-F00168F1569D
+AppID=5FB180C6-A3B4-46CF-85E0-F00168F1569D
 AppName=BigBrotherBot
 AppVerName=BigBrotherBot {#B4_VERSION_NUMBER}{#B4_VERSION_SUFFIX}
 AppPublisher=BigBrotherBot
@@ -42,15 +42,15 @@ WizardImageBackColor=clBlack
 WindowVisible=false
 BackColor=clBlack
 BackColor2=clGray
-WizardSmallImageFile=../assets_common\WizB3SmallImage.bmp
-WizardImageFile=../assets_common\WizB3Image.bmp
+WizardSmallImageFile=../assets_common\WizB4SmallImage.bmp
+WizardImageFile=../assets_common\WizB4Image.bmp
 UsePreviousAppDir=true
 AlwaysShowDirOnReadyPage=true
 AlwaysShowGroupOnReadyPage=true
 VersionInfoCompany=BigBrotherBot.net
 WindowShowCaption=false
 WindowResizable=false
-SetupIconFile=../assets_common\b3.ico
+SetupIconFile=../assets_common\b4.ico
 EnableDirDoesntExistWarning=false
 DirExistsWarning=yes
 DisableProgramGroupPage=auto
@@ -81,20 +81,20 @@ Name: "spanish"; MessagesFile: "compiler:Languages\Spanish.isl"
 Name: "ukrainian"; MessagesFile: "compiler:Languages\Ukrainian.isl"
 
 [Icons]
-Name: "{commondesktop}\{cm:executable,b3}"; Filename: "{app}\b3.exe"; WorkingDir: "{app}"; Flags: dontcloseonexit; IconFilename: "{app}\b3.ico"; Comment: "Run BigBrotherBot {#B3_VERSION_NUMBER}{#B3_VERSION_SUFFIX}"
-Name: "{group}\{cm:configWizard,Config wizard}"; Filename: "http://config.bigbrotherbot.net/"; Comment: "Run the B3 setup wizard"
-Name: "{group}\{cm:B3ConfDir,config}"; \
+Name: "{commondesktop}\{cm:executable,b4}"; Filename: "{app}\b4.exe"; WorkingDir: "{app}"; Flags: dontcloseonexit; IconFilename: "{app}\b4.ico"; Comment: "Run BigBrotherBot {#B4_VERSION_NUMBER}{#B4_VERSION_SUFFIX}"
+Name: "{group}\{cm:configWizard,Config wizard}"; Filename: "http://config.bigbrotherbot.net/"; Comment: "Run the B4 setup wizard"
+Name: "{group}\{cm:B4ConfDir,config}"; \
     Filename: "{app}\extplugins\"; \
-    IconFilename: "{app}\b3-plugins-icon.ico"
+    IconFilename: "{app}\b4-plugins-icon.ico"
 Name: "{group}\Extra\{cm:docs,docs}"; \
     Filename: "{uninstallexe}"
-Name: "{group}\Web\{cm:Website,BigBrotherBot}"; Filename: "http://www.bigbrotherbot.net/"
-Name: "{group}\Web\{cm:Manual,Manual}"; Filename: "http://wiki.github.com/BigBrotherBot/big-brother-bot/manual"
-Name: "{group}\Web\{cm:Forums,B3 Forums}"; Filename: "http://forum.bigbrotherbot.net/"
-Name: "{group}\Web\{cm:DownloadPlugins,Download plugins}"; Filename: "http://forum.bigbrotherbot.net/downloads/?cat=4"
-Name: "{group}\Web\{cm:B3configGenerator,B3 config generator}"; Filename: "http://config.bigbrotherbot.net/"
-Name: "{group}\Web\Artwork"; Filename: "http://www.bigbrotherbot.net/logos"
-Name: "{group}\Web\Other tools\{cm:Echelon,Echelon}"; Filename: "http://echelon.bigbrotherbot.net/"
+#Name: "{group}\Web\{cm:Website,BigBrotherBot}"; Filename: "http://www.bigbrotherbot.net/"
+#Name: "{group}\Web\{cm:Manual,Manual}"; Filename: "http://wiki.github.com/BigBrotherBot/big-brother-bot/manual"
+#Name: "{group}\Web\{cm:Forums,B4 Forums}"; Filename: "http://forum.bigbrotherbot.net/"
+#Name: "{group}\Web\{cm:DownloadPlugins,Download plugins}"; Filename: "http://forum.bigbrotherbot.net/downloads/?cat=4"
+#Name: "{group}\Web\{cm:B4configGenerator,B4 config generator}"; Filename: "http://config.bigbrotherbot.net/"
+#Name: "{group}\Web\Artwork"; Filename: "http://www.bigbrotherbot.net/logos"
+Name: "{group}\Web\Other tools\{cm:Echelon,Echelon}"; Filename: "https://github.com/dkman123/Echelon-2/"
 
 ;[Dirs]
 ;Name: {commonappdata}\BigBrotherBot; Permissions: users-full
@@ -105,19 +105,19 @@ Source: {app}\conf\*; DestDir: {app}\conf\backup; Flags: external skipifsourcedo
 Source: ../assets_common\readme-windows.txt; DestDir: "{app}"
 Source: ../assets_common\gpl-2.0.txt; DestDir: {app}; DestName: license.txt;
 Source: ../assets_common\readme-windows.txt; DestDir: {app}; DestName: readme.txt;
-Source: ../assets_common\b3.ico; DestDir: {app}
-Source: ../assets_common\b3-plugins-icon.ico; DestDir: {app}
-Source: {#B3_BUILD_PATH}\b3.exe; DestDir: {app}
-Source: {#B3_BUILD_PATH}\b3.exe; DestDir: {app}
-Source: {#B3_BUILD_PATH}\PKG-INFO; DestDir: {app}
-Source: {#B3_BUILD_PATH}\README.md; DestDir: {app};
-Source: {#B3_BUILD_PATH}\*.dll; DestDir: {app}
-Source: {#B3_BUILD_PATH}\*.pyd; DestDir: {app}
-Source: {#B3_BUILD_PATH}\docs\*; DestDir: {app}\docs; Flags: recursesubdirs
-Source: {#B3_BUILD_PATH}\sql\*; DestDir: {app}\sql; Flags: recursesubdirs
-Source: {#B3_BUILD_PATH}\extplugins\*; DestDir: {app}\extplugins; Flags: recursesubdirs
-Source: {#B3_BUILD_PATH}\conf\*; DestDir: {app}\conf; Flags: recursesubdirs
-Source: {#B3_BUILD_PATH}\plugins\*; DestDir: {app}\plugins; Flags: recursesubdirs
+Source: ../assets_common\b4.ico; DestDir: {app}
+Source: ../assets_common\b4-plugins-icon.ico; DestDir: {app}
+Source: {#B4_BUILD_PATH}\b4.exe; DestDir: {app}
+Source: {#B4_BUILD_PATH}\b4.exe; DestDir: {app}
+Source: {#B4_BUILD_PATH}\PKG-INFO; DestDir: {app}
+Source: {#B4_BUILD_PATH}\README.md; DestDir: {app};
+Source: {#B4_BUILD_PATH}\*.dll; DestDir: {app}
+Source: {#B4_BUILD_PATH}\*.pyd; DestDir: {app}
+Source: {#B4_BUILD_PATH}\docs\*; DestDir: {app}\docs; Flags: recursesubdirs
+Source: {#B4_BUILD_PATH}\sql\*; DestDir: {app}\sql; Flags: recursesubdirs
+Source: {#B4_BUILD_PATH}\extplugins\*; DestDir: {app}\extplugins; Flags: recursesubdirs
+Source: {#B4_BUILD_PATH}\conf\*; DestDir: {app}\conf; Flags: recursesubdirs
+Source: {#B4_BUILD_PATH}\plugins\*; DestDir: {app}\plugins; Flags: recursesubdirs
 Source: ../../examples\*; DestDir: "{app}\examples"; Flags: recursesubdirs
 
 [UninstallDelete]
@@ -127,18 +127,18 @@ Name: {app}\*; Type: filesandordirs
 Website=BigBrotherBot Website
 Forums=Forums
 Manual=Manual
-B3ConfDir=Configuration folder
+B4ConfDir=Configuration folder
 extplugins=Plugins folder
-configWizard=Run B3 config wizard
-updateWizard=Update B3 database
-executable=Run B3
+configWizard=Run B4 config wizard
+updateWizard=Update B4 database
+executable=Run B4
 DownloadPlugins=Download more plugins
 Echelon=Echelon
 Xlrstats=XLRstats
-B3configGenerator=B3 config generator
+B4configGenerator=B4 config generator
 sql=SQL folder
 docs=Docs folder
-executable=Run B3
+executable=Run B4
 
 [Run]
 Filename: "{app}\readme.txt"; Flags: ShellExec SkipIfDoesntExist

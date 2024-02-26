@@ -413,7 +413,7 @@ setup(
             'create_shared_zip': False,
             'append_script_to_exe': True,
             'packages': [
-                'b4.lib',
+                'b4.geolib',
                 'b4.parsers',
                 'b4.tools',
             ],
@@ -431,7 +431,7 @@ setup(
                 #'SocketServer',  # telnet plugin
                 #'paramiko',  # sftpytail plugin (maybe uncomment this one)
                 #'fileinput',  # badrcon plugin
-                #'requests', # geolocation, jumper
+                #'requests', # geolocationX, jumper
             ],
             'include_files': [
                 ('README.md', 'README.md'),

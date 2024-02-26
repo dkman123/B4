@@ -843,7 +843,7 @@ def load(fname,lines_to_ignore=4,type='i'):
     """
     Load in huge, flat, 2D text files.  Can handle differing line-lengths AND
     can strip #/% on UNIX (or with a better NT grep).  Requires wc, grep, and
-    mmapfile.lib/.pyd. Type can be 'i', 'f' or 'd', for ints, floats or doubles,
+    mmapfile.geolib/.pyd. Type can be 'i', 'f' or 'd', for ints, floats or doubles,
     respectively.  Lines_to_ignore determines how many lines at the start of the
     file to ignore (required for non-working grep).
 

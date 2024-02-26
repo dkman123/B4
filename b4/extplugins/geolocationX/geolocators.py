@@ -163,7 +163,7 @@ class MaxMindGeolocator(Geolocator):
         """
         super(MaxMindGeolocator, self).__init__(*args, **kwargs)
         # prefer plugin relative path
-        self._path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'lib', 'geoip', 'db', 'GeoIP.dat')
+        self._path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'geolib', 'geoip', 'db', 'GeoIP.dat')
         if not os.path.isfile(self._path):
             # search system wide (using system path according to installation
             # instructions: http://dev.maxmind.com/geoip/legacy/install/country/

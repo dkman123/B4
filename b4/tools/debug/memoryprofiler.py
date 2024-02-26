@@ -29,7 +29,7 @@ import threading
 import time
 
 pathname = os.path.dirname(sys.argv[0])
-sys.path.append(os.path.join(pathname, 'b3','lib'))
+sys.path.append(os.path.join(pathname, 'b3','geolib'))
 
 try:
     from guppy import hpy
