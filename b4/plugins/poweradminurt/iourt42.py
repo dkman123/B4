@@ -23,6 +23,7 @@
 # ################################################################### #
 
 import b4
+import b4.b4_clients
 import re
 
 from .iourt41 import Poweradminurt41Plugin
@@ -99,7 +100,8 @@ class Poweradminurt42Plugin(Poweradminurt41Plugin):
         Setup the radio spam protection
         """
         self._rsp_enable = self.getSetting('radio_spam_protection', 'enable', b4.BOOL, self._rsp_enable)
-        self._rsp_mute_duration = self.getSetting('radio_spam_protection', 'mute_duration', b4.INT, self._rsp_mute_duration, lambda x: clamp(x, minv=1))
+        self._rsp_mute_duration = self.getSetting('radio_spam_protection', 'mute_duration',
+                                                  b4.INT, self._rsp_mute_duration, lambda x: clamp(x, minv=1))
 
     ####################################################################################################################
     #                                                                                                                  #
@@ -360,7 +362,7 @@ class Poweradminurt42Plugin(Poweradminurt41Plugin):
         self.printgear(client=client, cmd=cmd, gearstr=new_gear_cvar)
 
     ####
-    ## override iourt41 command since Urban Terror 4.2 now provides a /rcon swap command
+    # override iourt41 command since Urban Terror 4.2 now provides a /rcon swap command
     def cmd_paswap(self, data, client, cmd=None):
         """
         <player1> [player2] - Swap two teams for 2 clients. If player2 is not specified, the admin
@@ -386,11 +388,11 @@ class Poweradminurt42Plugin(Poweradminurt41Plugin):
         else:
             client2 = client
 
-        if client1.team == b4.TEAM_SPEC:
+        if client1.team == b4.b4_clients.TEAM_SPEC:
             client.message("%s is a spectator! - Can't be swapped" % client1.name)
             return
 
-        if client2.team == b4.TEAM_SPEC:
+        if client2.team == b4.b4_clients.TEAM_SPEC:
             client.message("%s is a spectator! - Can't be swapped" % client2.name)
             return
 
@@ -427,7 +429,7 @@ class Poweradminurt42Plugin(Poweradminurt41Plugin):
             if not sclient:
                 return
 
-        if sclient.team == b4.TEAM_SPEC:
+        if sclient.team == b4.b4_clients.TEAM_SPEC:
             client.message("%s is a spectator! - Can't set captain status" % sclient.name)
             return
 
@@ -436,7 +438,7 @@ class Poweradminurt42Plugin(Poweradminurt41Plugin):
         # only give  notice if the client is not the admin who issued the command:
         # urban terror already display a server message when the captain flag is changed
         if sclient != client:
-            team = "^1RED" if sclient.team == b4.TEAM_RED else "^4BLUE"
+            team = "^1RED" if sclient.team == b4.b4_clients.TEAM_RED else "^4BLUE"
             sclient.message("^7You were set as captain for the %s ^7team by the Admin" % team)
 
     def cmd_pasub(self, data, client, cmd=None):
@@ -455,7 +457,7 @@ class Poweradminurt42Plugin(Poweradminurt41Plugin):
             if not sclient:
                 return
 
-        if sclient.team == b4.TEAM_SPEC:
+        if sclient.team == b4.b4_clients.TEAM_SPEC:
             client.message("%s is a spectator! - Can't set substitute status" % sclient.name)
             return
 
@@ -464,7 +466,7 @@ class Poweradminurt42Plugin(Poweradminurt41Plugin):
         # only give  notice if the client is not the admin who issued the command:
         # urban terror already display a server message when the substitute flag is changed
         if sclient != client:
-            team = "^1RED" if sclient.team == b4.TEAM_RED else "^4BLUE"
+            team = "^1RED" if sclient.team == b4.b4_clients.TEAM_RED else "^4BLUE"
             sclient.message("^7You were set as substitute for the %s ^7team by the Admin" % team)
 
     ####################################################################################################################

@@ -322,7 +322,7 @@ class Cron(object):
         """
         sys.stdout.write("b4_cron start")
         if self.cronThread is None:
-            self.cronThread = (threading.Thread(target=self.run(), name="cron"))
+            self.cronThread = (threading.Thread(target=self.run, name="cron"))
             self.cronThread.start()
         sys.stdout.write("b4_cron start complete")
 
@@ -359,7 +359,7 @@ class Cron(object):
                 nexttime = self.getNextTime()
 
             t = time.gmtime(nexttime)
-            self.console.info("Cron run nexttime %r; now %r" % (nexttime, now))
+            #self.console.info("Cron run nexttime %r; now %r" % (nexttime, now))
             for k, c in self._tabs.items():
                 self.console.info("checking tab %s", c.command)
                 if c.match(t):
@@ -374,7 +374,7 @@ class Cron(object):
                             self.console.error('Exception raised while executing crontab %s: %s\n%s', c.command,
                                                msg, traceback.extract_tb(sys.exc_info()[2]))
             nexttime += 1
-            sleep(1)
+            sleep(10)
 
         self.console.info("Cron scheduler ended")
 

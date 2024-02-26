@@ -569,7 +569,7 @@ class Banlist(object):
             return "%s" % e
 
     def autoUpdateFromUrl(self):
-        Thread(self._updateFromUrlAndCheckAll()).start()
+        Thread(target=self._updateFromUrlAndCheckAll).start()
 
     def getMessage(self, client):
         """

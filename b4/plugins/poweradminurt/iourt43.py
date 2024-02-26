@@ -23,10 +23,12 @@
 # ################################################################### #
 
 import b4
+import b4.b4_clients
 import re
 
 from .iourt41 import Poweradminurt41Plugin
 from b4.b4_functions import clamp
+
 
 class Poweradminurt43Plugin(Poweradminurt41Plugin):
 
@@ -35,7 +37,8 @@ class Poweradminurt43Plugin(Poweradminurt41Plugin):
     _gears = dict(none='FGHIJKLMNZacefghijklOQRSTUVWX', all='', reset='', stuff='RWUVTSX')
     _weapons = dict(ber='F', de='G', glo='f', colt='g', spas='H', mp5='I', ump='J', mac='h', hk='K',
                     lr='L', g36='M', psg='N', sr8='Z', ak='a', neg='c', m4='e', he='O', smo='Q',
-                    vest='R', hel='W', sil='U', las='V', med='T', nvg='S', ammo='X', frf1='i', ben='j', fnp='k', mag='l')
+                    vest='R', hel='W', sil='U', las='V', med='T', nvg='S', ammo='X', frf1='i',
+                    ben='j', fnp='k', mag='l')
 
     # less likely weapon names to check if we fail
     # to recognize a weapon with the _weapon lists
@@ -105,10 +108,11 @@ class Poweradminurt43Plugin(Poweradminurt41Plugin):
 
     def loadRadioSpamProtection(self):
         """
-        Setup the radio spam protection
+        Set up the radio spam protection
         """
         self._rsp_enable = self.getSetting('radio_spam_protection', 'enable', b4.BOOL, self._rsp_enable)
-        self._rsp_mute_duration = self.getSetting('radio_spam_protection', 'mute_duration', b4.INT, self._rsp_mute_duration, lambda x: clamp(x, minv=1))
+        self._rsp_mute_duration = self.getSetting('radio_spam_protection', 'mute_duration',
+                                                  b4.INT, self._rsp_mute_duration, lambda x: clamp(x, minv=1))
 
     ####################################################################################################################
     #                                                                                                                  #
@@ -455,11 +459,11 @@ class Poweradminurt43Plugin(Poweradminurt41Plugin):
         else:
             client2 = client
 
-        if client1.team == b4.TEAM_SPEC:
+        if client1.team == b4.b4_clients.TEAM_SPEC:
             client.message("%s is a spectator! - Can't be swapped" % client1.name)
             return
 
-        if client2.team == b4.TEAM_SPEC:
+        if client2.team == b4.b4_clients.TEAM_SPEC:
             client.message("%s is a spectator! - Can't be swapped" % client2.name)
             return
 
@@ -496,7 +500,7 @@ class Poweradminurt43Plugin(Poweradminurt41Plugin):
             if not sclient:
                 return
 
-        if sclient.team == b4.TEAM_SPEC:
+        if sclient.team == b4.b4_clients.TEAM_SPEC:
             client.message("%s is a spectator! - Can't set captain status" % sclient.name)
             return
 
@@ -505,7 +509,7 @@ class Poweradminurt43Plugin(Poweradminurt41Plugin):
         # only give  notice if the client is not the admin who issued the command:
         # urban terror already display a server message when the captain flag is changed
         if sclient != client:
-            team = "^1RED" if sclient.team == b4.TEAM_RED else "^4BLUE"
+            team = "^1RED" if sclient.team == b4.b4_clients.TEAM_RED else "^4BLUE"
             sclient.message("^7You were set as captain for the %s ^7team by the Admin" % team)
 
     def cmd_pasub(self, data, client, cmd=None):
@@ -524,7 +528,7 @@ class Poweradminurt43Plugin(Poweradminurt41Plugin):
             if not sclient:
                 return
 
-        if sclient.team == b4.TEAM_SPEC:
+        if sclient.team == b4.b4_clients.TEAM_SPEC:
             client.message("%s is a spectator! - Can't set substitute status" % sclient.name)
             return
 
@@ -533,7 +537,7 @@ class Poweradminurt43Plugin(Poweradminurt41Plugin):
         # only give  notice if the client is not the admin who issued the command:
         # urban terror already display a server message when the substitute flag is changed
         if sclient != client:
-            team = "^1RED" if sclient.team == b4.TEAM_RED else "^4BLUE"
+            team = "^1RED" if sclient.team == b4.b4_clients.TEAM_RED else "^4BLUE"
             sclient.message("^7You were set as substitute for the %s ^7team by the Admin" % team)
 
     ####################################################################################################################
@@ -586,7 +590,7 @@ class Poweradminurt43Plugin(Poweradminurt41Plugin):
             self._teamblue = 0
             
             data = self.console.write('players')
-			
+
             if "[connecting]" not in data:
 
                 for line in data.split('\n')[7:]:
@@ -597,7 +601,7 @@ class Poweradminurt43Plugin(Poweradminurt41Plugin):
                                 self._teamred += 1
                             if line.split(" ")[1].split(":")[1] == "BLUE":
                                 self._teamblue += 1
-				
+
             else:
                 self._teamred = len(self.console.getCvar('g_redteamlist').getString())
                 self._teamblue = len(self.console.getCvar('g_blueteamlist').getString())
@@ -630,7 +634,7 @@ class Poweradminurt43Plugin(Poweradminurt41Plugin):
                 self._balancing = False
                 return True
             else:
-                #teams are not balanced
+                # teams are not balanced
                 self._teamsbalanced = False
                 self.verbose('teambalance: teams are NOT balanced, '
                              'red: %s, blue: %s (diff: %s)' % (self._teamred, self._teamblue, self._teamdiff))
@@ -641,10 +645,10 @@ class Poweradminurt43Plugin(Poweradminurt41Plugin):
 
                 if self._teamred > self._teamblue:
                     newteam = 'blue'
-                    oldteam = b4.TEAM_RED
+                    oldteam = b4.b4_clients.TEAM_RED
                 else:
                     newteam = 'red'
-                    oldteam = b4.TEAM_BLUE
+                    oldteam = b4.b4_clients.TEAM_BLUE
 
                 self.verbose('smaller team is: %s' % newteam)
 
@@ -695,14 +699,15 @@ class Poweradminurt43Plugin(Poweradminurt41Plugin):
                         return False
 
                     # 10/28/2008 - 1.4.0b13 - mindriot
-                    self.verbose('teambalance: red: %s, blue: %s (diff: %s)' % (self._teamred, self._teamblue, self._teamdiff))
+                    self.verbose('teambalance: red: %s, blue: %s (diff: %s)' %
+                                 (self._teamred, self._teamblue, self._teamdiff))
 
                     if self._teamred > self._teamblue:
                         newteam = 'blue'
-                        oldteam = b4.TEAM_RED
+                        oldteam = b4.b4_clients.TEAM_RED
                     else:
                         newteam = 'red'
-                        oldteam = b4.TEAM_BLUE
+                        oldteam = b4.b4_clients.TEAM_BLUE
 
                     self.verbose('smaller team is: %s' % newteam)
 
@@ -729,20 +734,20 @@ class Poweradminurt43Plugin(Poweradminurt41Plugin):
                         if line.split(" ")[1].split(":")[0] == "TEAM":
 
                             if line.split(" ")[1].split(":")[1] == "RED":
-                               return b4.TEAM_RED
+                                return b4.b4_clients.TEAM_RED
                             elif line.split(" ")[1].split(":")[1] == "BLUE":
-                               return b4.TEAM_BLUE
+                                return b4.b4_clients.TEAM_BLUE
                             elif line.split(" ")[1].split(":")[1] == "SPECTATOR":
-                               return b4.TEAM_SPEC
+                                return b4.b4_clients.TEAM_SPEC
                             elif line.split(" ")[1].split(":")[1] == "FREE":
-                               return b4.TEAM_FREE
+                                return b4.b4_clients.TEAM_FREE
                 
         teamred = self.console.getCvar('g_redteamlist').getString()
         teamblue = self.console.getCvar('g_blueteamlist').getString()
 
         if slotstoletters[int(client.cid)] in teamred:
-            return b4.TEAM_RED
+            return b4.b4_clients.TEAM_RED
         elif slotstoletters[int(client.cid)] in teamblue:
-            return b4.TEAM_BLUE
+            return b4.b4_clients.TEAM_BLUE
         else:
-            return b4.TEAM_SPEC
+            return b4.b4_clients.TEAM_SPEC

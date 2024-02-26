@@ -25,6 +25,7 @@
 # 2019.08.02 add pamuteall, pamuteall_under_level config setting
 
 import b4
+import b4.b4_clients
 import b4.b4_config
 import b4.b4_cron
 #import b4.b4_events
@@ -35,7 +36,6 @@ import threading
 import re
 import os
 import random
-#import string
 
 from . import __version__
 from . import __author__
@@ -281,37 +281,50 @@ class Poweradminurt41Plugin(b4.b4_plugin.Plugin):
         """
         Set up the name checker
         """
-        self._ninterval = self.getSetting('namechecker', 'ninterval', b4.INT, self._ninterval, lambda x: b4.b4_functions.clamp(x, maxv=59))
+        self._ninterval = self.getSetting('namechecker', 'ninterval', b4.INT, self._ninterval,
+                                          lambda x: b4.b4_functions.clamp(x, maxv=59))
         self._checkdupes = self.getSetting('namechecker', 'checkdupes', b4.BOOL, self._checkdupes)
         self._checkunknown = self.getSetting('namechecker', 'checkunknown', b4.BOOL, self._checkunknown)
         self._checkbadnames = self.getSetting('namechecker', 'checkbadnames', b4.BOOL, self._checkbadnames)
         self._checkchanges = self.getSetting('namechecker', 'checkchanges', b4.BOOL, self._checkchanges)
-        self._checkallowedchanges = self.getSetting('namechecker', 'checkallowedchanges', b4.INT, self._checkallowedchanges, lambda x: b4.b4_functions.clamp(x, minv=1))
+        self._checkallowedchanges = self.getSetting('namechecker', 'checkallowedchanges',
+                                                    b4.INT, self._checkallowedchanges,
+                                                    lambda x: b4.b4_functions.clamp(x, minv=1))
 
     def loadTeamBalancer(self):
         """
         Set up the teambalancer
         """
-        self._tinterval = self.getSetting('teambalancer', 'tinterval', b4.INT, self._tinterval, lambda x: b4.b4_functions.clamp(x, maxv=59))
-        self._teamdiff = self.getSetting('teambalancer', 'teamdifference', b4.INT, self._teamdiff, lambda x: b4.b4_functions.clamp(x, minv=1, maxv=9))
+        self._tinterval = self.getSetting('teambalancer', 'tinterval', b4.INT, self._tinterval,
+                                          lambda x: b4.b4_functions.clamp(x, maxv=59))
+        self._teamdiff = self.getSetting('teambalancer', 'teamdifference', b4.INT, self._teamdiff,
+                                         lambda x: b4.b4_functions.clamp(x, minv=1, maxv=9))
         self._tmaxlevel = self.getSetting('teambalancer', 'maxlevel', b4.LEVEL, self._tmaxlevel)
         self._announce = self.getSetting('teambalancer', 'announce', b4.INT, self._announce)
         # 10/21/2008 - 1.4.0b9 - mindriot
-        self._team_change_force_balance_enable = self.getSetting('teambalancer', 'team_change_force_balance_enable', b4.BOOL, self._team_change_force_balance_enable)
+        self._team_change_force_balance_enable = self.getSetting('teambalancer',
+                                                                 'team_change_force_balance_enable',
+                                                                 b4.BOOL, self._team_change_force_balance_enable)
         # 10/22/2008 - 1.4.0b10 - mindriot
-        self._autobalance_gametypes = self.getSetting('teambalancer', 'autobalance_gametypes', b4.STR, self._autobalance_gametypes, lambda x: x.lower())
+        self._autobalance_gametypes = self.getSetting('teambalancer', 'autobalance_gametypes', b4.STR,
+                                                      self._autobalance_gametypes, lambda x: x.lower())
         self._autobalance_gametypes_array = re.split(r'[\s,]+', self._autobalance_gametypes)
-        self._teamLocksPermanent = self.getSetting('teambalancer', 'teamLocksPermanent', b4.BOOL, self._teamLocksPermanent)
+        self._teamLocksPermanent = self.getSetting('teambalancer', 'teamLocksPermanent', b4.BOOL,
+                                                   self._teamLocksPermanent)
         self._ignorePlus = self.getSetting('teambalancer', 'timedelay', b4.INT, self._ignorePlus)
 
     def loadSkillBalancer(self):
         """
         Setup the skill balancer
         """
-        self._skinterval = self.getSetting('skillbalancer', 'interval', b4.INT, self._skinterval, lambda x: b4.b4_functions.clamp(x, maxv=59))
-        self._skilldiff = self.getSetting('skillbalancer', 'difference', b4.FLOAT, self._skilldiff, lambda x: b4.b4_functions.clamp(x, minv=0.1, maxv=9.0))
-        self._skill_balance_mode = self.getSetting('skillbalancer', 'mode', b4.INT, self._skill_balance_mode)
-        self._minbalinterval = self.getSetting('skillbalancer', 'min_bal_interval', b4.INT, self._minbalinterval)
+        self._skinterval = self.getSetting('skillbalancer', 'interval', b4.INT, self._skinterval,
+                                           lambda x: b4.b4_functions.clamp(x, maxv=59))
+        self._skilldiff = self.getSetting('skillbalancer', 'difference', b4.FLOAT, self._skilldiff,
+                                          lambda x: b4.b4_functions.clamp(x, minv=0.1, maxv=9.0))
+        self._skill_balance_mode = self.getSetting('skillbalancer', 'mode', b4.INT,
+                                                   self._skill_balance_mode)
+        self._minbalinterval = self.getSetting('skillbalancer', 'min_bal_interval', b4.INT,
+                                               self._minbalinterval)
 
     def loadVoteDelayer(self):
         """
@@ -331,7 +344,8 @@ class Poweradminurt41Plugin(b4.b4_plugin.Plugin):
         """
         Setup the spec checker
         """
-        self._sinterval = self.getSetting('speccheck', 'sinterval', b4.INT, self._sinterval, lambda x: b4.b4_functions.clamp(x, maxv=59))
+        self._sinterval = self.getSetting('speccheck', 'sinterval', b4.INT, self._sinterval,
+                                          lambda x: b4.b4_functions.clamp(x, maxv=59))
         self._smaxspectime = self.getSetting('speccheck', 'maxspectime', b4.INT, self._smaxspectime)
         self._smaxlevel = self.getSetting('speccheck', 'maxlevel', b4.LEVEL, self._smaxlevel)
         maxclients = self.console.getCvar('sv_maxclients').getInt()
@@ -400,8 +414,10 @@ class Poweradminurt41Plugin(b4.b4_plugin.Plugin):
         Setup the bot support
         """
         self._botenable = self.getSetting('botsupport', 'bot_enable', b4.BOOL, self._botenable)
-        self._botskill = self.getSetting('botsupport', 'bot_skill', b4.INT, self._botskill, lambda x: b4.b4_functions.clamp(x, minv=1, maxv=5))
-        self._botminplayers = self.getSetting('botsupport', 'bot_minplayers', b4.INT, self._botminplayers, lambda x: b4.b4_functions.clamp(x, minv=0, maxv=16))
+        self._botskill = self.getSetting('botsupport', 'bot_skill', b4.INT, self._botskill,
+                                         lambda x: b4.b4_functions.clamp(x, minv=1, maxv=5))
+        self._botminplayers = self.getSetting('botsupport', 'bot_minplayers', b4.INT, self._botminplayers,
+                                              lambda x: b4.b4_functions.clamp(x, minv=0, maxv=16))
         self._botmaps = self.getSetting('botsupport', 'bot_maps', b4.LIST, [])
 
         if self._botenable:
@@ -424,22 +440,39 @@ class Poweradminurt41Plugin(b4.b4_plugin.Plugin):
             return x.lower()
 
         self._hsenable = self.getSetting('headshotcounter', 'hs_enable', b4.BOOL, self._hsenable)
-        self._hsresetvars = self.getSetting('headshotcounter', 'reset_vars', b4.STR, self._hsresetvars, validate_reset_vars)
-        self._hsbroadcast = self.getSetting('headshotcounter', 'broadcast', b4.BOOL, self._hsbroadcast)
-        self._hsall = self.getSetting('headshotcounter', 'announce_all', b4.BOOL, self._hsall)
-        self._hspercent = self.getSetting('headshotcounter', 'announce_percentages', b4.BOOL, self._hspercent)
-        self._hspercentmin = self.getSetting('headshotcounter', 'percent_min', b4.INT, self._hspercentmin)
-        self._hswarnhelmet = self.getSetting('headshotcounter', 'warn_helmet', b4.BOOL, self._hswarnhelmet)
-        self._hswarnhelmetnr = self.getSetting('headshotcounter', 'warn_helmet_nr', b4.INT, self._hswarnhelmetnr)
-        self._hswarnkevlar = self.getSetting('headshotcounter', 'warn_kevlar', b4.BOOL, self._hswarnkevlar)
-        self._hswarnkevlarnr = self.getSetting('headshotcounter', 'warn_kevlar_nr', b4.INT, self._hswarnkevlarnr)
+        self._hsresetvars = self.getSetting('headshotcounter', 'reset_vars', b4.STR,
+                                            self._hsresetvars, validate_reset_vars)
+        self._hsbroadcast = self.getSetting('headshotcounter', 'broadcast', b4.BOOL,
+                                            self._hsbroadcast)
+        self._hsall = self.getSetting('headshotcounter', 'announce_all', b4.BOOL,
+                                      self._hsall)
+        self._hspercent = self.getSetting('headshotcounter', 'announce_percentages', b4.BOOL,
+                                          self._hspercent)
+        self._hspercentmin = self.getSetting('headshotcounter', 'percent_min', b4.INT,
+                                             self._hspercentmin)
+        self._hswarnhelmet = self.getSetting('headshotcounter', 'warn_helmet', b4.BOOL,
+                                             self._hswarnhelmet)
+        self._hswarnhelmetnr = self.getSetting('headshotcounter', 'warn_helmet_nr', b4.INT,
+                                               self._hswarnhelmetnr)
+        self._hswarnkevlar = self.getSetting('headshotcounter', 'warn_kevlar', b4.BOOL,
+                                             self._hswarnkevlar)
+        self._hswarnkevlarnr = self.getSetting('headshotcounter', 'warn_kevlar_nr', b4.INT,
+                                               self._hswarnkevlarnr)
         # temp ban for aim bots
-        self._hs_tempban = self.getSetting('headshotcounter', 'hs_tempban', b4.BOOL, self._hs_tempban)
-        self._hs_tempban_nr = self.getSetting('headshotcounter', 'hs_tempban_nr', b4.INT, self._hs_tempban_nr)
-        self._hs_tempban_percent = self.getSetting('headshotcounter', 'hs_tempban_percent', b4.INT, self._hs_tempban_percent)
-        self._hs_tempban_time = self.getSetting('headshotcounter', 'hs_tempban_time', b4.INT, self._hs_tempban_time)
-        self._hs_tempban_immunity_level = self.getSetting('headshotcounter', 'hs_tempban_immunity_level', b4.INT, self._hs_tempban_immunity_level)
-        self._hs_tempban_disable_gear_length = self.getSetting('headshotcounter', 'hs_tempban_disable_gear_length', b4.INT, self._hs_tempban_disable_gear_length)
+        self._hs_tempban = self.getSetting('headshotcounter',
+                                           'hs_tempban', b4.BOOL, self._hs_tempban)
+        self._hs_tempban_nr = self.getSetting('headshotcounter',
+                                              'hs_tempban_nr', b4.INT, self._hs_tempban_nr)
+        self._hs_tempban_percent = self.getSetting('headshotcounter',
+                                                   'hs_tempban_percent', b4.INT, self._hs_tempban_percent)
+        self._hs_tempban_time = self.getSetting('headshotcounter',
+                                                'hs_tempban_time', b4.INT, self._hs_tempban_time)
+        self._hs_tempban_immunity_level = self.getSetting('headshotcounter',
+                                                          'hs_tempban_immunity_level', b4.INT,
+                                                          self._hs_tempban_immunity_level)
+        self._hs_tempban_disable_gear_length = self.getSetting('headshotcounter',
+                                                               'hs_tempban_disable_gear_length', b4.INT,
+                                                               self._hs_tempban_disable_gear_length)
 
         # making sure loghits is enabled to count headshots
         if self._hsenable:
@@ -451,12 +484,17 @@ class Poweradminurt41Plugin(b4.b4_plugin.Plugin):
         """
         self._rmenable = self.getSetting('rotationmanager', 'rm_enable', b4.BOOL, self._rmenable)
         if self._rmenable:
-            self._switchcount1 = self.getSetting('rotationmanager', 'switchcount1', b4.INT, self._switchcount1)
-            self._switchcount2 = self.getSetting('rotationmanager', 'switchcount2', b4.INT, self._switchcount2)
+            self._switchcount1 = self.getSetting('rotationmanager', 'switchcount1', b4.INT,
+                                                 self._switchcount1)
+            self._switchcount2 = self.getSetting('rotationmanager', 'switchcount2', b4.INT,
+                                                 self._switchcount2)
             self._hysteresis = self.getSetting('rotationmanager', 'hysteresis', b4.INT, self._hysteresis)
-            self._rotation_small = self.getSetting('rotationmanager', 'smallrotation', b4.STR, self._rotation_small)
-            self._rotation_medium = self.getSetting('rotationmanager', 'mediumrotation', b4.STR, self._rotation_medium)
-            self._rotation_large = self.getSetting('rotationmanager', 'largerotation', b4.STR, self._rotation_large)
+            self._rotation_small = self.getSetting('rotationmanager', 'smallrotation', b4.STR,
+                                                   self._rotation_small)
+            self._rotation_medium = self.getSetting('rotationmanager', 'mediumrotation', b4.STR,
+                                                    self._rotation_medium)
+            self._rotation_large = self.getSetting('rotationmanager', 'largerotation', b4.STR,
+                                                   self._rotation_large)
             self._gamepath = self.getSetting('rotationmanager', 'gamepath', b4.STR, self._gamepath)
         else:
             self.debug('Rotation Manager is disabled')
@@ -466,8 +504,10 @@ class Poweradminurt41Plugin(b4.b4_plugin.Plugin):
         Set up special configs
         """
         self._slapSafeLevel = self.getSetting('special', 'slap_safe_level', b4.LEVEL, self._slapSafeLevel)
-        self._full_ident_level = self.getSetting('special', 'paident_full_level', b4.LEVEL, self._full_ident_level)
-        self._muteall_under_level = self.getSetting('special', 'pamuteall_under_level', b4.LEVEL, self._muteall_under_level)
+        self._full_ident_level = self.getSetting('special', 'paident_full_level', b4.LEVEL,
+                                                 self._full_ident_level)
+        self._muteall_under_level = self.getSetting('special', 'pamuteall_under_level', b4.LEVEL,
+                                                    self._muteall_under_level)
 
     def installCrontabs(self):
         """
@@ -739,9 +779,9 @@ class Poweradminurt41Plugin(b4.b4_plugin.Plugin):
         nonforced = []
         for c in clients:
             # ignore spectators
-            if c.team in (b4.TEAM_BLUE, b4.TEAM_RED):
+            if c.team in (b4.b4_clients.TEAM_BLUE, b4.b4_clients.TEAM_RED):
                 if checkforced and c.isvar(self, 'paforced'):
-                    if c.team == b4.TEAM_BLUE:
+                    if c.team == b4.b4_clients.TEAM_BLUE:
                         blue.append(c)
                     else:
                         red.append(c)
@@ -768,8 +808,8 @@ class Poweradminurt41Plugin(b4.b4_plugin.Plugin):
         gametype = self._getGameType()
         tdm = (gametype == 'tdm')
         scores = self._getScores(clients, usexlrstats=tdm)
-        blue = [c for c in clients if c.team == b4.TEAM_BLUE]
-        red = [c for c in clients if c.team == b4.TEAM_RED]
+        blue = [c for c in clients if c.team == b4.b4_clients.TEAM_BLUE]
+        red = [c for c in clients if c.team == b4.b4_clients.TEAM_RED]
         self.debug("advise: numblue=%d numred=%d" % (len(blue), len(red)))
 
         if minplayers and len(blue) + len(red) < minplayers:
@@ -867,8 +907,8 @@ class Poweradminurt41Plugin(b4.b4_plugin.Plugin):
         self.debug('move: final red team: ' + ' '.join(c.name for c in red))
 
         # Filter out players already in correct team
-        blue = [c for c in blue if c.team != b4.TEAM_BLUE]
-        red = [c for c in red if c.team != b4.TEAM_RED]
+        blue = [c for c in blue if c.team != b4.b4_clients.TEAM_BLUE]
+        red = [c for c in red if c.team != b4.b4_clients.TEAM_RED]
 
         if not blue and not red:
             return 0
@@ -879,8 +919,8 @@ class Poweradminurt41Plugin(b4.b4_plugin.Plugin):
             bestscore = max(scores[c.id] for c in blue + red)
 
         clients = self.console.clients.getList()
-        numblue = len([c for c in clients if c.team == b4.TEAM_BLUE])
-        numred = len([c for c in clients if c.team == b4.TEAM_RED])
+        numblue = len([c for c in clients if c.team == b4.b4_clients.TEAM_BLUE])
+        numred = len([c for c in clients if c.team == b4.b4_clients.TEAM_RED])
         self.debug('move: num players: blue=%d red=%d' % (numblue, numred))
         self.ignoreSet(30)
 
@@ -979,8 +1019,8 @@ class Poweradminurt41Plugin(b4.b4_plugin.Plugin):
         """
         clients = self.console.clients.getList()
         scores = self._getScores(clients)
-        oldblue = [c for c in clients if c.team == b4.TEAM_BLUE]
-        oldred = [c for c in clients if c.team == b4.TEAM_RED]
+        oldblue = [c for c in clients if c.team == b4.b4_clients.TEAM_BLUE]
+        oldred = [c for c in clients if c.team == b4.b4_clients.TEAM_RED]
         n = len(oldblue) + len(oldred)
         olddiff = self._getTeamScoreDiff(oldblue, oldred, scores)
         self.debug('rand: n=%s' % n)
@@ -1198,7 +1238,8 @@ class Poweradminurt41Plugin(b4.b4_plugin.Plugin):
         self._balancing = True
         clients = self.console.clients.getList()
         scores = self._getScores(clients)
-        decorated = [(scores.get(c.id, 0), c) for c in clients if c.team in (b4.TEAM_BLUE, b4.TEAM_RED)]
+        decorated = [(scores.get(c.id, 0), c) for c in clients if c.team in
+                     (b4.b4_clients.TEAM_BLUE, b4.b4_clients.TEAM_RED)]
         decorated.sort()
         players = [c for score, c in decorated]
         n = len(players) / 2
@@ -1231,8 +1272,8 @@ class Poweradminurt41Plugin(b4.b4_plugin.Plugin):
         self._balancing = True
         olddiff, bestdiff, blue, red, scores = self._randTeams(100, 0.1)
         if client:
-            if (client.team == b4.TEAM_BLUE and client.cid not in [c.cid for c in blue]) or \
-               (client.team == b4.TEAM_RED and client.cid not in [c.cid for c in red]):
+            if (client.team == b4.b4_clients.TEAM_BLUE and client.cid not in [c.cid for c in blue]) or \
+               (client.team == b4.b4_clients.TEAM_RED and client.cid not in [c.cid for c in red]):
                 # don't move player who initiated skuffle
                 blue, red = red, blue
 
@@ -1336,11 +1377,11 @@ class Poweradminurt41Plugin(b4.b4_plugin.Plugin):
         else:
             client2 = client
 
-        if client1.team == b4.TEAM_SPEC:
+        if client1.team == b4.b4_clients.TEAM_SPEC:
             client.message("%s is a spectator! - Can't be swapped" % client1.name)
             return
 
-        if client2.team == b4.TEAM_SPEC:
+        if client2.team == b4.b4_clients.TEAM_SPEC:
             client.message("%s is a spectator! - Can't be swapped" % client2.name)
             return
 
@@ -1348,7 +1389,7 @@ class Poweradminurt41Plugin(b4.b4_plugin.Plugin):
             client.message("%s and %s are on the same team! - Swapped them anyway :p" % (client1.name, client2.name))
             return
 
-        if client1.team == b4.TEAM_RED:
+        if client1.team == b4.b4_clients.TEAM_RED:
             self._move([client1], [client2])
         else:
             self._move([client2], [client1])
@@ -1523,7 +1564,7 @@ class Poweradminurt41Plugin(b4.b4_plugin.Plugin):
             client.message("^7You don't have enough privileges to mute this player")
             return
 
-        if args[1] is not None and re.match('^([0-9]+)\s*$', args[1]):
+        if args[1] is not None and re.match(r'^([0-9]+)\s*$', args[1]):
             duration = int(args[1])
         else:
             duration = ''
@@ -1541,7 +1582,7 @@ class Poweradminurt41Plugin(b4.b4_plugin.Plugin):
         # this will get the duration maybe?
         args = self._adminPlugin.parseUserCmd(data)
         if args:
-            if args[0] is not None and re.match('^([0-9]+)[m]*\s*$', args[0]):
+            if args[0] is not None and re.match(r'^([0-9]+)[m]*\s*$', args[0]):
                 if "m" in args[0]:
                     duration = int(b4.b4_functions.time2minutes(args[0]) * 60)
                 else:
@@ -2039,7 +2080,7 @@ class Poweradminurt41Plugin(b4.b4_plugin.Plugin):
 
         if not self._matchmode and client.isvar(self, 'paforced'):
             forcedteam = client.var(self, 'paforced').value
-            if team != b4.TEAM_UNKNOWN and team != self.console.getTeam(forcedteam):
+            if team != b4.b4_clients.TEAM_UNKNOWN and team != self.console.getTeam(forcedteam):
                 self.console.write('forceteam %s %s' % (client.cid, forcedteam))
                 client.message('^1You are LOCKED! You are NOT allowed to switch!')
                 self.verbose('%s was locked and forced back to %s' % (client.name, forcedteam))
@@ -2066,12 +2107,12 @@ class Poweradminurt41Plugin(b4.b4_plugin.Plugin):
                     return None
 
                 # did player join spectators?
-                if team == b4.TEAM_SPEC:
+                if team == b4.b4_clients.TEAM_SPEC:
                     self.verbose('player joined specs')
                     # done balancing
                     self._balancing = False
                     return None
-                elif team == b4.TEAM_UNKNOWN:
+                elif team == b4.b4_clients.TEAM_UNKNOWN:
                     self.verbose('team is unknown')
                     # done balancing
                     self._balancing = False
@@ -2159,8 +2200,9 @@ class Poweradminurt41Plugin(b4.b4_plugin.Plugin):
         """
         gametype = self._getGameType()
         # run teambalance only if current gametype is in autobalance_gametypes list
-        if not gametype in self._autobalance_gametypes_array:
-            self.debug('current gametype (%s) is not specified in autobalance_gametypes - teambalancer disabled', gametype)
+        if gametype not in self._autobalance_gametypes_array:
+            self.debug('current gametype (%s) is not specified in autobalance_gametypes - teambalancer disabled',
+                       gametype)
             return
 
         if gametype in self._round_based_gametypes:
@@ -2208,10 +2250,10 @@ class Poweradminurt41Plugin(b4.b4_plugin.Plugin):
 
                 if self._teamred > self._teamblue:
                     newteam = 'blue'
-                    oldteam = b4.TEAM_RED
+                    oldteam = b4.b4_clients.TEAM_RED
                 else:
                     newteam = 'red'
-                    oldteam = b4.TEAM_BLUE
+                    oldteam = b4.b4_clients.TEAM_BLUE
 
                 self.verbose('smaller team is: %s' % newteam)
 
@@ -2252,14 +2294,15 @@ class Poweradminurt41Plugin(b4.b4_plugin.Plugin):
                         return False
 
                     # 10/28/2008 - 1.4.0b13 - mindriot
-                    self.verbose('teambalance: red: %s, blue: %s (diff: %s)' % (self._teamred, self._teamblue, self._teamdiff))
+                    self.verbose('teambalance: red: %s, blue: %s (diff: %s)' % (self._teamred, self._teamblue,
+                                                                                self._teamdiff))
 
                     if self._teamred > self._teamblue:
                         newteam = 'blue'
-                        oldteam = b4.TEAM_RED
+                        oldteam = b4.b4_clients.TEAM_RED
                     else:
                         newteam = 'red'
-                        oldteam = b4.TEAM_BLUE
+                        oldteam = b4.b4_clients.TEAM_BLUE
 
                     self.verbose('smaller team is: %s' % newteam)
 
@@ -2288,7 +2331,7 @@ class Poweradminurt41Plugin(b4.b4_plugin.Plugin):
         d = {}
         if self.isEnabled() and self.console.time() > self._ignoreTill:
             for player in self.console.clients.getList():
-                if not player.name in d.keys():
+                if player.name not in d.keys():
                     d[player.name] = [player.cid]
                 else:
                     #l = d[player.name]
@@ -2358,17 +2401,16 @@ class Poweradminurt41Plugin(b4.b4_plugin.Plugin):
                     c.setvar(self, 'namechanges', 0)
             self.debug('Namechanges Reset')
 
-
-########################################################################################################################
-#---Vote delayer at round start-----------------------------------------------------------------------------------------
+#######################################################################################################################
+# ---Vote delayer at round start---------------------------------------------------------------------------------------
 
     def votedelay(self, data=None):
         if not data:
             data = 'on'
         self.cmd_pavote(data)
 
-########################################################################################################################
-#---Spectator Checking--------------------------------------------------------------------------------------------------
+#######################################################################################################################
+# ---Spectator Checking------------------------------------------------------------------------------------------------
 
     def speccheck(self):
         if self.isEnabled() and self._g_maxGameClients == 0 and not self._matchmode:
@@ -2392,13 +2434,13 @@ class Poweradminurt41Plugin(b4.b4_plugin.Plugin):
                 elif c.isvar(self, 'paforced'):
                     self.debug('%s is forced by an admin' % c.name)
                     continue
-                elif c.team == b4.TEAM_SPEC and (self.console.time() - c.var(self, 'teamtime').value) > \
+                elif c.team == b4.b4_clients.TEAM_SPEC and (self.console.time() - c.var(self, 'teamtime').value) > \
                         (self._smaxspectime * 60):
                     self.debug('warning %s for speccing on full server' % c.name)
                     self._adminPlugin.warnClient(c, 'spec')
 
-########################################################################################################################
-#---Bot support---------------------------------------------------------------------------------------------------------
+#######################################################################################################################
+# ---Bot support-------------------------------------------------------------------------------------------------------
 
     def botsupport(self, data=None):
         """
@@ -2512,15 +2554,18 @@ class Poweradminurt41Plugin(b4.b4_plugin.Plugin):
                 else:
                     message = ('^2%s^7: %s %s!' % (attacker.name, int(headshots), hstext))
 
-                # self.verbose("%s [lvl %d] landed %d headshots (%d pct)" % (event.client.name, event.client.maxLevel, headshots, percentage))
+                # self.verbose("%s [lvl %d] landed %d headshots (%d pct)" % (event.client.name,
+                # event.client.maxLevel, headshots, percentage))
                 if self._hs_tempban and headshots > self._hs_tempban_nr \
                         and event.client.maxLevel < self._hs_tempban_immunity_level \
                         and percentage > self._hs_tempban_percent:
                     gearstring = self.console.getCvar('g_gear').getString()
-                    # self.verbose("gearstring length: %d. test < %d", len(gearstring), self._hs_tempban_disable_gear_length)
+                    # self.verbose("gearstring length: %d. test < %d", len(gearstring),
+                    # self._hs_tempban_disable_gear_length)
                     if len(gearstring) < self._hs_tempban_disable_gear_length:
-                        self.info("Temp Banning %s for excessive headshots (naughty monkey, aimbot detected)", event.client.name)
-                        event.client.tempban(reason = "naughty monkey, aimbot detected", duration = self._hs_tempban_time)
+                        self.info("Temp Banning %s for excessive headshots (naughty monkey, aimbot detected)",
+                                  event.client.name)
+                        event.client.tempban(reason="naughty monkey, aimbot detected", duration=self._hs_tempban_time)
                         # event.client.kick("temp kick in place of temp ban")
                         self.console.say("%s is a ^6naughty monkey^7. ^1aimbot detected" % event.client.name)
 
@@ -2544,8 +2589,8 @@ class Poweradminurt41Plugin(b4.b4_plugin.Plugin):
                 victim.message('You were hit in the torso %s times! Wearing kevlar vest will reduce \
                                 your number of deaths!' % self._hswarnkevlarnr)
 
-########################################################################################################################
-#---Rotation Manager----------------------------------------------------------------------------------------------------
+#######################################################################################################################
+# ---Rotation Manager--------------------------------------------------------------------------------------------------
 
     def adjustrotation(self, delta):
         # if the round just started, don't do anything
