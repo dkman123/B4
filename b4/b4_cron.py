@@ -374,7 +374,7 @@ class Cron(object):
                             self.console.error('Exception raised while executing crontab %s: %s\n%s', c.command,
                                                msg, traceback.extract_tb(sys.exc_info()[2]))
             nexttime += 1
-            sleep(10)
+            sleep(1)
 
         self.console.info("Cron scheduler ended")
 

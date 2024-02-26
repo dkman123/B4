@@ -610,14 +610,14 @@ class Parser(object):
         """
         Get the key of a given event ID
         """
-        sys.stdout.write("b4_parser.Parser.getEventKey\n")
+        #sys.stdout.write("b4_parser.Parser.getEventKey\n")
         return self.Events.getKey(event_id)
 
     def getPlugin(self, plugin):
         """
         Get a reference to a loaded plugin
         """
-        sys.stdout.write("b4_parser.Parser.getPlugin\n")
+        #sys.stdout.write("b4_parser.Parser.getPlugin\n")
         try:
             return self._plugins[plugin]
         except KeyError:
@@ -627,7 +627,7 @@ class Parser(object):
         """
         Reload all config files
         """
-        sys.stdout.write("b4_parser.Parser.reloadConfigs\n")
+        #sys.stdout.write("b4_parser.Parser.reloadConfigs\n")
         # reload main config
         self.config.load(self.config.fileName)
         for k in self._plugins:
@@ -660,7 +660,7 @@ class Parser(object):
                 Helper that returns a list of configuration files.
                 :param match: The plugin name
                 """
-                sys.stdout.write("b4_parser.Parser._search_config_file\n")
+                #sys.stdout.write("b4_parser.Parser._search_config_file\n")
                 # first look in the built-in plugins directory
                 search = '%s%s*%s*' % (b4.getAbsolutePath('@conf\\', decode=True), os.path.sep, match)
                 self.log.debug('Searching for configuration file(s) matching: %s' % search)
@@ -1016,7 +1016,7 @@ class Parser(object):
         """
         Disable all plugins except for 'admin', 'publist', 'ftpytail', 'sftpytail', 'httpytail', 'cod7http'
         """
-        sys.stdout.write("b4_parser.Parser.disablePlugins\n")
+        #sys.stdout.write("b4_parser.Parser.disablePlugins\n")
         for k in self._plugins:
             if k not in ('admin', 'publist', 'ftpytail', 'sftpytail', 'httpytail', 'cod7http'):
                 p = self._plugins[k]
@@ -1027,7 +1027,7 @@ class Parser(object):
         """
         Enable all plugins except for 'admin', 'publist', 'ftpytail', 'sftpytail', 'httpytail', 'cod7http'
         """
-        sys.stdout.write("b4_parser.Parser.enablePlugins\n")
+        #sys.stdout.write("b4_parser.Parser.enablePlugins\n")
         for k in self._plugins:
             if k not in ('admin', 'publist', 'ftpytail', 'sftpytail', 'httpytail', 'cod7http'):
                 p = self._plugins[k]
@@ -1038,7 +1038,7 @@ class Parser(object):
         """
         Return a message from the config file
         """
-        sys.stdout.write("b4_parser.Parser.getMessage\n")
+        #sys.stdout.write("b4_parser.Parser.getMessage\n")
         try:
             msg = self._messages[msg]
         except KeyError:
@@ -1061,7 +1061,7 @@ class Parser(object):
         """
         Dynamically generate a dictionary of fields available for messages in config file.
         """
-        sys.stdout.write("b4_parser.Parser.getMessageVariables\n")
+        #sys.stdout.write("b4_parser.Parser.getMessageVariables\n")
         variables = {}
         for obj in args:
             if obj is None:
@@ -1160,7 +1160,7 @@ class Parser(object):
         :param gmttime: The current GMT time
         :param tz_name: The timezone name to be used for time formatting
         """
-        sys.stdout.write("b4_parser.Parser.formatTime\n")
+        #sys.stdout.write("b4_parser.Parser.formatTime\n")
         if tz_name:
             # if a timezone name has been specified try to use it to format the given gmttime
             tz_name = str(tz_name).strip().upper()
@@ -1251,7 +1251,7 @@ class Parser(object):
         """
         Parse a single line from the log file
         """
-        sys.stdout.write("b4_parser.Parser.parseLine\n")
+        #sys.stdout.write("b4_parser.Parser.parseLine\n")
         m = re.match(self._lineFormat, line)
         if m:
             self.queueEvent(b4.b4_events.Event(self.getEventID('EVT_UNKNOWN'), m.group(2)[:1]))
@@ -1271,7 +1271,7 @@ class Parser(object):
         """
         Unregister an event handler.
         """
-        sys.stdout.write("b4_parser.Parser.unregisterHandler\n")
+        #sys.stdout.write("b4_parser.Parser.unregisterHandler\n")
         for event_name in self._handlers:
             if event_handler in self._handlers[event_name]:
                 self.log.debug('%s: unregister event <%s>', event_handler.__class__.__name__, self.getEventName(event_name))
@@ -1301,7 +1301,7 @@ class Parser(object):
         """
         Event handler thread.
         """
-        sys.stdout.write("b4_parser.Parser.handleEvents\n")
+        #sys.stdout.write("b4_parser.Parser.handleEvents\n")
         while self.working:
             added, expire, event = self.queue.get(True)
             if event.type == self.getEventID('EVT_EXIT') or event.type == self.getEventID('EVT_STOP'):
@@ -1320,7 +1320,7 @@ class Parser(object):
                         break
 
                     self.verbose('Parsing event: %s: %s', event_name, hfunc.__class__.__name__)
-                    timer_plugin_begin = time.clock()
+                    timer_plugin_begin = time.perf_counter()
                     try:
                         hfunc.parseEvent(event)
                         time.sleep(0.001)
@@ -1334,7 +1334,7 @@ class Parser(object):
                         self.error('Handler %s could not handle event %s: %s: %s %s', hfunc.__class__.__name__,
                                    event_name, msg.__class__.__name__, msg, extract_tb(sys.exc_info()[2]))
                     finally:
-                        elapsed = time.clock() - timer_plugin_begin
+                        elapsed = time.perf_counter() - timer_plugin_begin
                         self._eventsStats.add_event_handled(hfunc.__class__.__name__, event_name, elapsed * 1000)
 
         self.bot('Shutting down event handler')
@@ -1427,7 +1427,7 @@ class Parser(object):
         Commons operation to be done on B4 shutdown.
         Called internally by b4_parser.die()
         """
-        sys.stdout.write("b4_parser.Parser.finalize\n")
+        #sys.stdout.write("b4_parser.Parser.finalize\n")
         if b4.getPlatform() in ('linux', 'darwin'):
             # check for PID file if B4 has been started using the provided BASH initialization scripts.
             b4_name = os.path.basename(self.config.fileName)
@@ -1616,7 +1616,7 @@ class Parser(object):
         """
         Create a documentation for all available commands.
         """
-        sys.stdout.write("b4_parser.Parser.updateDocumentation\n")
+        #sys.stdout.write("b4_parser.Parser.updateDocumentation\n")
         if self.config.has_section('autodoc'):
             try:
                 from b4.tools.documentationBuilder import DocBuilder
