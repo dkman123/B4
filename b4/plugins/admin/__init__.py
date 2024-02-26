@@ -582,7 +582,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         """
         Handle EVT_CLIENT_SAY
         """
-        sys.stdout.write("AdminPlugin OnSay\n")
+        #sys.stdout.write("AdminPlugin OnSay\n")
         self.debug('OnSay handle %s:"%s"', event.type, event.data)
 
         if len(event.data) >= 3 and event.data[:1] == '#':
@@ -1445,7 +1445,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         """
         [<command|level>] - get info on how to use a command, you can use *<command> for partial matches
         """
-        sys.stdout.write("AdminPlugin cmd_help\n")
+        #sys.stdout.write("AdminPlugin cmd_help\n")
         threading.Thread(target=self.dohelp, args=(client, data, cmd)).start()
 
     def dohelp(self, client, data, cmd):
@@ -2565,7 +2565,7 @@ class Command(object):
         Check whether a client can use such command:
         :param client: The client on who to perform the check
         """
-        sys.stdout.write("Command canUse\n")
+        #sys.stdout.write("Command canUse\n")
         if self.level is None:
             return False
         else:
@@ -2577,7 +2577,7 @@ class Command(object):
         :param data: The command parameters
         :param client: The client executing the command
         """
-        sys.stdout.write("Command execute\n")
+        #sys.stdout.write("Command execute\n")
         self.func(data, client, copy.copy(self))
         self.time = self.plugin.console.time()
 
@@ -2623,7 +2623,7 @@ class Command(object):
         :param client: The client on who to send the message
         :param message: The message to be sent
         """
-        sys.stdout.write("Command sayLoudOrPM\n")
+        #sys.stdout.write("Command sayLoudOrPM\n")
         if self.loud:
             self.plugin.console.say(message, *args)
         elif self.big:

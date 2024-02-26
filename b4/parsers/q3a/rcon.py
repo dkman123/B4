@@ -58,7 +58,7 @@ class Rcon(object):
 
     def __init__(self, console, host, password):
         """
-        Object contructor.
+        Object constructor.
         :param console: The console implementation
         :param host: The host where to send RCON commands
         :param password: The RCON password
@@ -88,7 +88,7 @@ class Rcon(object):
         self.socket.connect(self.host)
 
         self._stopEvent = threading.Event()
-        Thread(target=self._writelines, args=()).start()
+        threading.Thread(target=self._writelines, args=()).start()
 
     def encode_data(self, data, source):
         """
@@ -169,7 +169,7 @@ class Rcon(object):
         :param maxRetries: How many times we have to retry the sending upon failure
         :param socketTimeout: The socket timeout value
         """
-        #self.console.info("rcon sendRcon")
+        self.console.info("rcon sendRcon %s" % data)
         if socketTimeout is None:
             socketTimeout = self.socket_timeout
         if maxRetries is None:
@@ -249,6 +249,7 @@ class Rcon(object):
                     continue
                 with self.lock:
                     self.sendRcon(cmd, maxRetries=1)
+            time.sleep(1)
 
     def writelines(self, lines):
         """

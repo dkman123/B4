@@ -157,7 +157,7 @@ class Client(object):
         :param key: The key associated to the value.
         :return True if there is a value, False otherwise
         """
-        sys.stdout.write("b4_clients.Client.isvar")
+        #sys.stdout.write("b4_clients.Client.isvar")
         try:
             d = self._pluginData[id(plugin)][key]
             return True
@@ -172,7 +172,7 @@ class Client(object):
         :param value: The value of this variable.
         :return The stored variable.
         """
-        sys.stdout.write("b4_clients.Client.setvar")
+        #sys.stdout.write("b4_clients.Client.setvar")
         try:
             self._pluginData[id(plugin)]
         except Exception:
@@ -193,20 +193,20 @@ class Client(object):
         :param default: A default value to be returned if the variable is not stored.
         :return The variable saved under the plugin/key combination or default if it doesn't exists.
         """
-        sys.stdout.write("b4_clients.Client.var")
+        #sys.stdout.write("b4_clients.Client.var")
         try:
             return self._pluginData[id(plugin)][key]
         except Exception:
             return self.setvar(plugin, key, default)
 
     def varlist(self, plugin, key, default=None):
-        sys.stdout.write("b4_clients.Client.varList")
+        #sys.stdout.write("b4_clients.Client.varList")
         if not default:
             default = []
         return self.var(plugin, key, default)
 
     def vardict(self, plugin, key, default=None):
-        sys.stdout.write("b4_clients.Client.vardict")
+        #sys.stdout.write("b4_clients.Client.vardict")
         if not default:
             default = {}
         return self.var(plugin, key, default)
@@ -217,7 +217,7 @@ class Client(object):
         :param plugin: The plugin that stored the variable.
         :param key: The key of the variable.
         """
-        sys.stdout.write("b4_clients.Client.delvar")
+        #sys.stdout.write("b4_clients.Client.delvar")
         try:
             del self._pluginData[id(plugin)][key]
         except Exception:
@@ -230,7 +230,7 @@ class Client(object):
     ####################################################################################################################
 
     def getAliases(self):
-        sys.stdout.write("b4_clients.Client.getAliases")
+        #sys.stdout.write("b4_clients.Client.getAliases")
         return self.console.storage.getClientAliases(self)
 
     aliases = property(getAliases)
@@ -238,7 +238,7 @@ class Client(object):
     # -----------------------
 
     def getBans(self):
-        sys.stdout.write("b4_clients.Client.getBans")
+        #sys.stdout.write("b4_clients.Client.getBans")
         return self.console.storage.getClientPenalties(self, penType=('Ban', 'TempBan'))
 
     bans = property(getBans)
@@ -259,7 +259,7 @@ class Client(object):
     # -----------------------
 
     def _get_firstWarn(self):
-        sys.stdout.write("b4_clients.Client._get_firstWarn")
+        #sys.stdout.write("b4_clients.Client._get_firstWarn")
         if not self.id:
             return None
         return self.console.storage.getClientFirstPenalty(self, 'Warning')
@@ -288,7 +288,7 @@ class Client(object):
     # -----------------------
 
     def getIpAddresses(self):
-        sys.stdout.write("b4_clients.Client.getIpAddresses")
+        #sys.stdout.write("b4_clients.Client.getIpAddresses")
         return self.console.storage.getClientIpAddresses(self)
 
     ip_addresses = property(getIpAddresses)

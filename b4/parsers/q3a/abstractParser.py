@@ -440,6 +440,7 @@ class AbstractParser(b4.b4_parser.Parser):
         Broadcast a message to all players.
         :param text: The message to be broadcasted
         """
+        self.log.info("abstractParser say '%s'" % text)
         lines = []
         message = b4.b4_functions.prefixText([self.msgPrefix], text)
         message = message.strip()
