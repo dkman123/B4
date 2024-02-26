@@ -471,7 +471,7 @@ class Parser(object):
         """
         Start B4
         """
-        #sys.stdout.write("b4_parser.Parser.start\n")
+        sys.stdout.write("b4_parser.Parser.start\n")
         self.bot("Starting parser..")
         self.startup()
         self.say('%s ^2[ONLINE]' % b4.version)

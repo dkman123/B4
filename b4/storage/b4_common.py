@@ -297,12 +297,14 @@ class DatabaseStorage(Storage):
         Return a list of clients matching the given data:
         :param match: The data to match clients against.
         """
-        sys.stdout.write("b4_common DatabaseStorage getClientsMatching\n")
-        self.console.debug('Storage: getClientsMatching %s' % match)
+        #sys.stdout.write("b4_common DatabaseStorage getClientsMatching\n")
+        self.console.debug('b4_common: getClientsMatching %s' % match)
         cursor = self.query(
-            b4.b4_querybuilder.QueryBuilder(self.db).SelectQuery('*', 'clients', match, 'time_edit DESC', 5))
+            b4.b4_querybuilder.QueryBuilder(self.db).SelectQuery('*', 'clients'
+                                                                 , match, 'time_edit DESC', 5))
 
         clients = []
+        self.console.verbose2("b4_common getClientsMatching got %r rows" % cursor.rowcount)
         while not cursor.EOF:
             g = cursor.getRow()
             client = b4.b4_clients.Client()
@@ -747,7 +749,7 @@ class DatabaseStorage(Storage):
         :param group: A group object with level or keyword filled.
         :return: The group instance given in input with all the fields set.
         """
-        sys.stdout.write("b4_common DatabaseStorage getGroup\n")
+        #sys.stdout.write("b4_common DatabaseStorage getGroup\n")
         if hasattr(group, 'keyword') and group.keyword:
             query = b4.b4_querybuilder.QueryBuilder(self.db).SelectQuery('*', 'usergroups', dict(keyword=group.keyword),
                                                                          None, 1)

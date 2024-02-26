@@ -43,14 +43,14 @@ from configparser import NoOptionError
 __version__ = '1.35'
 __author__ = 'ThorN, xlr8or, Courgette, Ozon, Fenix'
 
+
 # pylint: disable-msg=E1103
 class AdminPlugin(b4.b4_plugin.Plugin):
-
     _commands = {}
 
     _tkPlugin = None
     _parseUserCmdRE = re.compile(r"^(?P<cid>'[^']{2,}'|[0-9]+|[^\s]{2,}|@[0-9]+)(\s+(?P<parms>.*))?$")
-    _long_tempban_max_duration = 1440   # 60m/h x 24h = 1440m = 1d
+    _long_tempban_max_duration = 1440  # 60m/h x 24h = 1440m = 1d
     _warn_command_abusers = False
     _announce_registration = True
     _past_bans_check_rate = 10
@@ -70,7 +70,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
     warn_delay = 15
     warn_instant_kick_num = 5
     warn_alert_kick_num = 3
-    warn_reasons = {}                   # dict<warning keyword, tuple(warning duration in minute, warning reason)>
+    warn_reasons = {}  # dict<warning keyword, tuple(warning duration in minute, warning reason)>
 
     _noreason_level = 80
     _long_tempban_level = 80
@@ -94,7 +94,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         "groups_in": "^7%s^7 is in groups %s",
         "say": "^7%s^7: %s",
         "player_id": "^7%s [^2%s^7]",
-        "player_id_reverse":  "[^2%s^7] ^7%s^7",
+        "player_id_reverse": "[^2%s^7] ^7%s^7",
         "seen": "^7%s ^7was last seen on %s",
         "help_no_command": "^7Command not found %s",
         "lookup_found": "^7[^2@%s^7] %s^7 [^3%s^7]",
@@ -231,7 +231,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
 
         try:
             msg = self.config.getTextTemplate('messages', 'regme_confirmation')
-            if '%%s' not in msg:
+            if '%s' not in msg:
                 raise ValueError("message regme_confirmation must have a placeholder '%%s' for the group name")
             self._messages['regme_confirmation'] = msg
         except NoOptionError:
@@ -239,7 +239,8 @@ class AdminPlugin(b4.b4_plugin.Plugin):
                          'using default: %s' % self._messages['regme_confirmation'])
         except ValueError as e:
             self.error('could not load messages/regme_confirmation config value: %s' % e)
-            self.debug('using default value (%s) for messages/regme_confirmation' % self._messages['regme_confirmation'])
+            self.debug(
+                'using default value (%s) for messages/regme_confirmation' % self._messages['regme_confirmation'])
 
     def load_config_warn(self):
         """
@@ -457,12 +458,14 @@ class AdminPlugin(b4.b4_plugin.Plugin):
                 self.debug('%s superadmins found in database' % len(superadmins))
             except Exception as msg:
                 # no proper groups available, cannot continue
-                self.critical('seems your groups table in the database is empty: please recreate your database using '
-                              'the proper sql syntax. To do so you can import in your database the following SQL '
-                              'script: %s - (%s)' % (b4.getAbsolutePath("@b4/sql/%s/b4.sql" % self.console.storage.dsnDict['protocol']), msg))
+                self.critical('Admin: seems your groups table in the database is empty: please recreate your database '
+                              'using the proper sql syntax. To do so you can import in your database the following SQL '
+                              'script: %s - (%s)'
+                              % (b4.getAbsolutePath("@b4/sql/%s/b4.sql"
+                                                    % self.console.storage.dsnDict['protocol']), msg))
 
             if 'iamgod' in self._commands and \
-                self._commands['iamgod'].level is not None and \
+                    self._commands['iamgod'].level is not None and \
                     self._commands['iamgod'].level[0] >= 0:
                 ## here the config file for the admin plugin explicitly enables the iamgod command
                 if len(superadmins) == 0:
@@ -479,9 +482,12 @@ class AdminPlugin(b4.b4_plugin.Plugin):
 
         # install past bans check crontab
         if self._past_bans_check_rate > 0:
-            self.debug('installing past bans check crontab: b4 will check for banned players every %s seconds' % self._past_bans_check_rate)
+            self.debug(
+                'installing past bans check crontab: b4 will check for banned players every %s seconds'
+                % self._past_bans_check_rate)
             self.console.cron.cancel(id(self._past_bans_crontab))
-            self._past_bans_crontab = b4.b4_cron.PluginCronTab(self, self.doPastBansCheck, minute='*', second= '*/%s' % self._past_bans_check_rate)
+            self._past_bans_crontab = b4.b4_cron.PluginCronTab(self, self.doPastBansCheck, minute='*',
+                                                               second='*/%s' % self._past_bans_check_rate)
             self.console.cron.add(self._past_bans_crontab)
 
     def registerCommand(self, plugin, command, level, handler, alias=None, secretLevel=None):
@@ -494,7 +500,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         :param alias: The command alias
         :param secretLevel: The command secret level
         """
-        sys.stdout.write("AdminPlugin registerCommand\n")
+        # sys.stdout.write("AdminPlugin registerCommand\n")
         if not handler:
             self.error('command "%s" registration failed: no handler specified' % command)
             return False
@@ -541,7 +547,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         :param name: The command name
         :return: True if the command can be unregistered, False otherwise
         """
-        sys.stdout.write("AdminPlugin unregisterCommand\n")
+        # sys.stdout.write("AdminPlugin unregisterCommand\n")
         try:
             command = self._commands[name]
             self.debug('unregistering command %s (%s) : %s' % (command.command, command.alias, command.func.__name__))
@@ -860,7 +866,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         Return a group level from group keyword or group level understand level ranges (ie: 20-40 or mod-admin).
         :param level: The group keyword/level
         """
-        sys.stdout.write("AdminPlugin getGroupLevel\n")
+        # sys.stdout.write("AdminPlugin getGroupLevel\n")
         level = str(level)
         if level.lower() == 'none':
             return 'none'
@@ -914,7 +920,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         Return a spam message according to the given keyword.
         :param kword: The keyword to use to look up the spam message
         """
-        #sys.stdout.write("AdminPlugin getSpam\n")
+        # sys.stdout.write("AdminPlugin getSpam\n")
         if not kword:
             return ''
 
@@ -1039,7 +1045,6 @@ class AdminPlugin(b4.b4_plugin.Plugin):
             reason = self.getReason(keyword)
 
         duration = b4.b4_functions.time2minutes(duration)
-
 
         if penalty_type == self.PENALTY_KICK:
             # if reason contains with "Rule #" and client level mod+ (mod = 20) then exit
@@ -1194,7 +1199,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
 
         duration = self.warnKickDuration(sclient)
         # self.debug("warnKick: client %s; duration %s" % (sclient.exactName, duration))
-        if duration > 0:            
+        if duration > 0:
             # if reason contains with "Rule #" and client level mod+ (mod = 20) then exit
             if "Rule #" in warn.reason and client.maxLevel >= 20:
                 # whisper the message to them
@@ -1483,14 +1488,14 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         - list all connected players
         """
         sys.stdout.write("AdminPlugin cmd_list\n")
-        threading.Thread(target=self.doList, args=(client, cmd), kwargs={'dict': 'of', 'keyword': 'args'},).start()
+        threading.Thread(target=self.doList, args=(client, cmd), kwargs={'dict': 'of', 'keyword': 'args'}, ).start()
 
     def cmd_longlist(self, data, client, cmd=None):
         """
         - list all connected players one line at a time, helps find 'funny' unicode names
         """
         sys.stdout.write("AdminPlugin cmd_longlist\n")
-        threading.Thread(target=self.doLonglist, args=(client, cmd), kwargs={'dict': 'of', 'keyword': 'args'},).start()
+        threading.Thread(target=self.doLonglist, args=(client, cmd), kwargs={'dict': 'of', 'keyword': 'args'}, ).start()
 
     def cmd_regulars(self, data, client, cmd=None):
         """
@@ -1688,7 +1693,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         if not m:
             client.message(self.getMessage('invalid_parameters'))
         else:
-        
+
             cid, keyword = m.groups()
 
             try:
@@ -1813,7 +1818,8 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         else:
             sclient = self.findClientPrompt(m[0], client)
             if sclient:
-                cmd.sayLoudOrPM(client, '^7Found player matching %s [^2%s^7] %s' % (m[0], sclient.cid, sclient.exactName))
+                cmd.sayLoudOrPM(client,
+                                '^7Found player matching %s [^2%s^7] %s' % (m[0], sclient.cid, sclient.exactName))
 
     def cmd_clientinfo(self, data, client=None, cmd=None):
         """
@@ -1858,7 +1864,8 @@ class AdminPlugin(b4.b4_plugin.Plugin):
                 if sclient.maskGroup:
                     client.message(self.getMessage('action_denied_masked', {'name': sclient.exactName}))
                 else:
-                    self.console.say(self.getMessage('kick_denied', sclient.exactName, client.exactName, sclient.exactName))
+                    self.console.say(
+                        self.getMessage('kick_denied', sclient.exactName, client.exactName, sclient.exactName))
             else:
                 sclient.kick(reason, keyword, client)
         elif re.match('^[0-9]+$', cid):
@@ -1913,7 +1920,8 @@ class AdminPlugin(b4.b4_plugin.Plugin):
                 if sclient.maskGroup:
                     client.message(self.getMessage('action_denied_masked', {'name': sclient.exactName}))
                 else:
-                    self.console.say(self.getMessage('kick_denied', sclient.exactName, client.exactName, sclient.exactName))
+                    self.console.say(
+                        self.getMessage('kick_denied', sclient.exactName, client.exactName, sclient.exactName))
             else:
                 if reason:
                     self.console.say(self.getMessage('spanked_reason', sclient.exactName, client.exactName, reason))
@@ -2060,7 +2068,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         sys.stdout.write("AdminPlugin cmd_lastbans\n")
 
         def format_ban(penalty):
-            #sys.stdout.write("AdminPlugin format_ban\n")
+            # sys.stdout.write("AdminPlugin format_ban\n")
             c = self.console.storage.getClient(Client(_id=penalty.clientId))
             txt = "^2@%s^7 %s^7" % (penalty.clientId, c.exactName)
             if penalty.type == 'Ban':
@@ -2294,7 +2302,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
 
             if failed and cleared:
                 cmd.sayLoudOrPM(client, '^7Cleared ^3%s ^7warnings and left ^3%s ^7warnings for %s' % (
-                                        failed, cleared, sclient.exactName))
+                    failed, cleared, sclient.exactName))
             elif failed:
                 client.message('^7Could not clear ^3%s ^7warnings for %s' % (failed, sclient.exactName))
             else:
@@ -2365,7 +2373,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
             duration = b4.b4_functions.time2minutes(data)
             self.console.say('^7Sleeping for %s' % b4.b4_functions.minutesStr(duration))
             unpause_task = threading.Timer(duration * 60, self.console.unpause)
-            unpause_task.daemon = True # won't block the bot in case of shutdown
+            unpause_task.daemon = True  # won't block the bot in case of shutdown
             self.console.pause()
             unpause_task.start()
 
@@ -2498,7 +2506,6 @@ class AdminPlugin(b4.b4_plugin.Plugin):
 
 
 class Command(object):
-
     command = ''
     alias = ''
     help = ''
@@ -2676,7 +2683,7 @@ class Command(object):
 
             for a in args:
                 if len(a) == 3:
-                    #optional
+                    # optional
                     parm = '[%s]' % a[0]
                 else:
                     parm = '<%s>' % a[0]
