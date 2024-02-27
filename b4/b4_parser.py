@@ -961,14 +961,12 @@ class Parser(object):
         if path is None:
             path = os.path.join(str(b4.getB4Path(True)), 'plugins', name, "__init__.py")
 
-        spec = importlib.util.spec_from_file_location(name, path)
-
-        if spec is None:
+        if not os.path.isfile(path):
             self.log.info("b4_parser %s not found in %s" % (name, path))
             # look in extplugins
             path = os.path.join(str(b4.getB4Path(True)), 'extplugins', name, "__init__.py")
 
-            spec = importlib.util.spec_from_file_location(name, path)
+        spec = importlib.util.spec_from_file_location(name, path)
 
         if spec is None:
             raise ImportError(f"Could not load spec for module '{name}' at: {path}")

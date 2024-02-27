@@ -31,7 +31,7 @@ import threading
 import time
 
 from b4.b4_functions import getCmd
-from b4.storage.b4_storage import mapresult
+from b4.storage.b4_common import mapresult
 from configparser import NoOptionError
 
 __version__ = '0.2'
