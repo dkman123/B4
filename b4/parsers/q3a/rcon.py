@@ -96,7 +96,7 @@ class Rcon(object):
         :param data: The string to be encoded
         :param source: Who requested the encoding
         """
-        self.console.info("rcon encode_data %s; source %s" % (data, source))
+        #self.console.info("rcon encode_data %s; source %s" % (data, source))
         try:
             if isinstance(data, bytes):
                 data = str(data, 'utf_8', errors='ignore')
@@ -116,7 +116,7 @@ class Rcon(object):
         :param maxRetries: How many times we have to retry the sending upon failure
         :param socketTimeout: The socket timeout value
         """
-        self.console.info("rcon send")
+        #self.console.info("rcon send")
         if socketTimeout is None:
             socketTimeout = self.socket_timeout
         if maxRetries is None:
@@ -230,15 +230,14 @@ class Rcon(object):
 
             self.console.verbose('RCON: retry sending %r (%s/%s)...', data.strip(), retries, maxRetries)
 
-        # verbose
-        self.console.info('RCON: did not send any data')
+        self.console.verbose('RCON: did not send any data')
         return ''
 
     def stop(self):
         """
         Stop the rcon writelines queue.
         """
-        self.console.info("rcon stop")
+        #self.console.info("rcon stop")
         self._stopEvent.set()
 
     def _writelines(self):
@@ -260,9 +259,9 @@ class Rcon(object):
         Enqueue multiple RCON commands for later processing.
         :param lines: A list of RCON commands.
         """
-        self.console.info("rcon writelines")
+        #self.console.info("rcon writelines")
         self.queue.put(lines)
-        self.console.info(lines)
+        #self.console.info(lines)
 
     def write(self, cmd, maxRetries=None, socketTimeout=None):
         """
@@ -303,7 +302,7 @@ class Rcon(object):
         Read data from the socket (non blocking).
         :param sock: The socket from where to read data
         """
-        self.console.info("rcon readNonBlocking")
+        #self.console.info("rcon readNonBlocking")
         sock.settimeout(2)
         start_time = time.time()
         data = ''
@@ -377,11 +376,11 @@ class Rcon(object):
         return data
 
     def close(self):
-        self.console.info("rcon close")
+        #self.console.info("rcon close")
         pass
 
     def getRules(self):
-        self.console.info("rcon getRules")
+        #self.console.info("rcon getRules")
         self.lock.acquire()
         try:
             data = self.send('getstatus')
@@ -390,7 +389,7 @@ class Rcon(object):
         return data if data else ''
 
     def getInfo(self):
-        self.console.info("rcon getInfo")
+        #self.console.info("rcon getInfo")
         self.lock.acquire()
         try:
             data = self.send('getinfo')

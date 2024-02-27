@@ -293,7 +293,8 @@ class Cron(object):
         """
         Add a CronTab to the list of active cron tabs.
         """
-        sys.stdout.write("b4_cron add %s\n" % tab.command)
+        #sys.stdout.write("b4_cron add %s\n" % tab.command)
+
         self._tabs[id(tab)] = tab
         self.console.verbose('Added crontab %s (%s) - %ss %sm %sh %sd %sM %sDOW' % (tab.command, id(tab), tab.second,
                                                                                     tab.minute, tab.hour, tab.day,

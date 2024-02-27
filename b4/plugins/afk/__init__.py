@@ -25,7 +25,7 @@
 
 from threading import Timer
 from time import time
-from b4 import TEAM_SPEC
+from b4.b4_clients import TEAM_SPEC
 from b4.b4_config import NoOptionError
 from b4.b4_plugin import Plugin
 from weakref import WeakKeyDictionary

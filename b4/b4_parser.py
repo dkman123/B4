@@ -1145,7 +1145,7 @@ class Parser(object):
         if tz_name:
             if not tz_name in b4.b4_timezones.timezones:
                 self.warning(
-                    "Unknown timezone name [%s]: falling back to auto-detection mode. Valid timezone codes can "
+                    "b4_parser Unknown timezone name [%s]: falling back to auto-detection mode. Valid timezone codes can "
                     "be found on http://wiki.bigbrotherbot.net/doku.php/usage:available_timezones" % tz_name)
             else:
                 self.info("Using timezone: %s : %s" % (tz_name, b4.b4_timezones.timezones[tz_name]))
@@ -1157,7 +1157,7 @@ class Parser(object):
         # this will compute the timezone offset from UTC
         tz_info = datetime.timedelta(hours=time.timezone / -3600)
 
-        self.info("Using timezone offset of: %s " % (time.timezone / -3600))
+        self.info("b4_parser Using timezone offset of: %s " % (time.timezone / -3600))
         return tz_info
 
     def formatTime(self, gmttime, tz_name=None):
@@ -1186,7 +1186,7 @@ class Parser(object):
             tz_offset, tz_name = self.getTzOffsetFromName(tz_name)
 
         time_format = self.config.get('b4', 'time_format').replace('%Z', tz_name).replace('%z', tz_name)
-        self.log.debug('Formatting time with timezone [%s], tzOffset : %s' % (tz_name, tz_offset))
+        self.log.debug('b4_parser Formatting time with timezone [%s], tzOffset : %s' % (tz_name, tz_offset))
         return time.strftime(time_format, time.gmtime(gmttime + int(tz_offset * 3600)))
 
     def run(self):
