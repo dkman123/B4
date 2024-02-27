@@ -2,7 +2,7 @@
 
 # ################################################################### #
 #                                                                     #
-#  BigBrotherBot(B3) (www.bigbrotherbot.net)                          #
+#  BigBrotherBot(B4) (www.bigbrotherbot.net)                          #
 #  Copyright (C) 2005 Michael "ThorN" Thornton                        #
 #                                                                     #
 #  This program is free software; you can redistribute it and/or      #
@@ -96,7 +96,8 @@ class XlrstatsPlugin(b4.b4_plugin.Plugin):
     kill_bonus = 1.5
     assist_bonus = 0.5
     assist_timespan = 2  # on non damage based games: damage before death timespan
-    damage_assist_release = 10  # on damage based games: release the assist (will overwrite self.assist_timespan on startup)
+    damage_assist_release = 10  # on damage based games: release the assist
+    # (will overwrite self.assist_timespan on startup)
     prematch_maxtime = 70
     announce = False  # announces points gained/lost to players after confrontations
     keep_history = True
@@ -105,7 +106,8 @@ class XlrstatsPlugin(b4.b4_plugin.Plugin):
     _xlrstats_active = False  # parsing events based on min_players?
     _current_nr_players = 0  # current number of players present
     silent = False  # Disables the announcement when collecting stats = stealth mode
-    provisional_ranking = True  # First Kswitch_confrontations will not alter opponents stats (unless both are under the limit)
+    provisional_ranking = True  # First Kswitch_confrontations will not alter opponents stats
+    # (unless both are under the limit)
     auto_correct = True  # Autocorrect skill points every two hours to maintain a healthy pool
     _auto_correct_ignore_days = 60  # How many days before ignoring a players skill in the autocorrect calculation
     auto_purge = False  # Purge players and associated data automatically (cannot be undone!)
@@ -139,7 +141,8 @@ class XlrstatsPlugin(b4.b4_plugin.Plugin):
 
     _defaultTableNames = True
     _default_messages = {
-        'cmd_xlrstats': '^3XLR Stats: ^7$name ^7: K ^2$kills ^7D ^3$deaths ^7TK ^1$teamkills ^7Ratio ^5$ratio ^7Skill ^3$skill',
+        'cmd_xlrstats': '^3XLR Stats: ^7$name ^7: K ^2$kills ^7D ^3$deaths ^7TK ^1$teamkills '
+                        '^7Ratio ^5$ratio ^7Skill ^3$skill',
         'cmd_xlrtopstats': '^3# $number: ^7$name ^7: Skill ^3$skill ^7Ratio ^5$ratio ^7Kills: ^2$kills',
     }
 
@@ -217,7 +220,7 @@ class XlrstatsPlugin(b4.b4_plugin.Plugin):
 
         if sclient is not None:
             self._world_clientid = sclient.id
-            self.debug('got client id for B3: %s; %s' % (self._world_clientid, sclient.name))
+            self.debug('xlrstats onStartup got client id for B4: %s; %s' % (self._world_clientid, sclient.name))
             # make sure its hidden in the webfront
             player = self.get_PlayerStats(sclient)
             if player:
@@ -240,18 +243,18 @@ class XlrstatsPlugin(b4.b4_plugin.Plugin):
                                     self.mapstats_table, self.playermaps_table, self.actionstats_table,
                                     self.playeractions_table, self.history_monthly_table, self.history_weekly_table]
 
-            self.verbose('starting subplugin XLRstats History')
+            self.verbose('starting sub-plugin XLRstats History')
             self._xlrstatsHistoryPlugin = XlrstatshistoryPlugin(self.console, self.history_weekly_table,
                                                                 self.history_monthly_table, self.playerstats_table)
             self._xlrstatsHistoryPlugin.onStartup()
 
         # let's try and get some variables from our webfront installation
         if self.webfront_url and self.webfront_url != '':
-            self.debug('webfront set to: %s' % self.webfront_url)
+            self.debug('xlrstats onStartup webfront set to: %s' % self.webfront_url)
             thread1 = threading.Thread(target=self.getWebsiteVariables)
             thread1.start()
         else:
-            self.debug('no webfront url available: using default')
+            self.debug('xlrstats onStartup no webfront url available: using default')
 
         # Analyze the ELO pool of points
         self.correctStats()
@@ -277,7 +280,7 @@ class XlrstatsPlugin(b4.b4_plugin.Plugin):
         # get the map we're in, in case this is a new map and we need to create a db record for it.
         mapstats = self.get_MapStats(self.console.game.mapName)
         if mapstats:
-            self.verbose('map %s ready' % mapstats.name)
+            self.verbose('xlrstats onStartup map %s ready' % mapstats.name)
 
         # check number of online players (if available)
         self.checkMinPlayers()
@@ -291,25 +294,29 @@ class XlrstatsPlugin(b4.b4_plugin.Plugin):
         """
 
         def validate_server_nr(x):
-            """validate the server number and it it's wrong will leave a message in the log file"""
+            """validate the server number and if it's wrong will leave a message in the log file"""
             if x < 0:
-                raise ValueError("servernumber cannot be lower than 0")
+                raise ValueError("xlrstats validate_server_nr server number cannot be lower than 0")
             return x
 
-        self.provisional_ranking = self.getSetting('settings', 'provisional_ranking', b4.BOOL, self.provisional_ranking)
+        self.provisional_ranking = self.getSetting('settings', 'provisional_ranking',
+                                                   b4.BOOL, self.provisional_ranking)
         self.auto_correct = self.getSetting('settings', 'auto_correct', b4.BOOL, self.auto_correct)
         self.auto_purge = self.getSetting('settings', 'auto_purge', b4.BOOL, self.auto_purge)
         self.silent = self.getSetting('settings', 'silent', b4.BOOL, self.silent)
         self.hide_bots = self.getSetting('settings', 'hide_bots', b4.BOOL, self.hide_bots)
         self.exclude_bots = self.getSetting('settings', 'exclude_bots', b4.BOOL, self.exclude_bots)
-        self.min_players = self.getSetting('settings', 'minplayers', b4.INT, self.min_players, lambda x: int(max(x, 0)))
-        self.webfront_version = self.getSetting('settings', 'webfrontversion', b4.STR, self.webfront_version)
+        self.min_players = self.getSetting('settings', 'minplayers', b4.INT, self.min_players,
+                                           lambda x: int(max(x, 0)))
+        self.webfront_version = self.getSetting('settings', 'webfrontversion',
+                                                b4.STR, self.webfront_version)
         self.webfront_url = self.getSetting('settings', 'webfronturl', b4.STR, self.webfront_url)
-        self.webfront_config_nr = self.getSetting('settings', 'servernumber', b4.INT, self.webfront_config_nr,
-                                                  validate_server_nr)
+        self.webfront_config_nr = self.getSetting('settings', 'servernumber',
+                                                  b4.INT, self.webfront_config_nr, validate_server_nr)
         self.keep_history = self.getSetting('settings', 'keep_history', b4.BOOL, self.keep_history)
         self.onemaponly = self.getSetting('settings', 'onemaponly', b4.BOOL, self.onemaponly)
-        self.minlevel = self.getSetting('settings', 'minlevel', b4.LEVEL, self.minlevel, lambda x: int(max(x, 0)))
+        self.minlevel = self.getSetting('settings', 'minlevel', b4.LEVEL, self.minlevel,
+                                        lambda x: int(max(x, 0)))
         self.defaultskill = self.getSetting('settings', 'defaultskill', b4.INT, self.defaultskill)
         self.Kfactor_high = self.getSetting('settings', 'Kfactor_high', b4.INT, self.Kfactor_high)
         self.Kfactor_low = self.getSetting('settings', 'Kfactor_low', b4.INT, self.Kfactor_low)
@@ -318,11 +325,14 @@ class XlrstatsPlugin(b4.b4_plugin.Plugin):
         self.steepness = self.getSetting('settings', 'steepness', b4.INT, self.steepness)
         self.suicide_penalty_percent = self.getSetting('settings', 'suicide_penalty_percent', b4.FLOAT,
                                                        self.suicide_penalty_percent)
-        self.tk_penalty_percent = self.getSetting('settings', 'tk_penalty_percent', b4.FLOAT, self.tk_penalty_percent)
-        self.assist_timespan = self.getSetting('settings', 'assist_timespan', b4.INT, self.assist_timespan)
+        self.tk_penalty_percent = self.getSetting('settings', 'tk_penalty_percent',
+                                                  b4.FLOAT, self.tk_penalty_percent)
+        self.assist_timespan = self.getSetting('settings', 'assist_timespan',
+                                               b4.INT, self.assist_timespan)
         self.damage_assist_release = self.getSetting('settings', 'damage_assist_release', b4.INT,
                                                      self.damage_assist_release)
-        self.prematch_maxtime = self.getSetting('settings', 'prematch_maxtime', b4.INT, self.prematch_maxtime)
+        self.prematch_maxtime = self.getSetting('settings', 'prematch_maxtime',
+                                                b4.INT, self.prematch_maxtime)
         self.announce = self.getSetting('settings', 'announce', b4.BOOL, self.announce)
         self.keep_time = self.getSetting('settings', 'keep_time', b4.BOOL, self.keep_time)
 
@@ -334,7 +344,7 @@ class XlrstatsPlugin(b4.b4_plugin.Plugin):
         Build the database schema checking if all the needed tables have been properly created.
         If not, it will attempt to create them automatically
         """
-        sql_main = os.path.join(b4.getAbsolutePath('@b3/plugins/xlrstats/sql'), self.console.storage.protocol)
+        sql_main = os.path.join(b4.getAbsolutePath('@b4/plugins/xlrstats/sql'), self.console.storage.protocol)
         xlr_tables = {x: getattr(self, x) for x in dir(self) if x.endswith('_table')}
         current_tables = self.console.storage.getTables()
 
@@ -352,7 +362,8 @@ class XlrstatsPlugin(b4.b4_plugin.Plugin):
                     else:
                         self.info('created database table: %s', v)
                 else:
-                    self.error("could not create schema for database table '%s': missing SQL script '%s'", v, sql_path)
+                    self.error("xlrstats build_database_schema could not create schema for database "
+                               "table '%s': missing SQL script '%s'", v, sql_path)
 
         # EXECUTE SCHEMA UPDATE
         update_schema = {
@@ -392,14 +403,14 @@ class XlrstatsPlugin(b4.b4_plugin.Plugin):
             try:
                 table_name = self.config.get('tables', setting_option)
                 if not table_name:
-                    raise ValueError("invalid table name for %s: %r" % (setting_option, table_name))
+                    raise ValueError("xlrstats load_conf invalid table name for %s: %r" % (setting_option, table_name))
                 setattr(self, property_to_set, table_name)
                 self._defaultTableNames = False
             except NoOptionError as err:
                 self.debug(err)
             except Exception as err:
                 self.error(err)
-            self.info('using value "%s" for tables::%s' % (property_to_set, setting_option))
+            self.info('xlrstats load_conf using value "%s" for tables::%s' % (property_to_set, setting_option))
 
         load_conf('playerstats_table', 'playerstats')
         load_conf('actionstats_table', 'actionstats')
@@ -497,7 +508,7 @@ class XlrstatsPlugin(b4.b4_plugin.Plugin):
                 self._minKills = int(res[0])
                 self._minRounds = int(res[1])
                 self._maxDays = int(res[2])
-                self.debug('successfuly retrieved webfront variables: minkills: %i, minrounds: %i, maxdays: %i' % (
+                self.debug('successfully retrieved webfront variables: minkills: %i, minrounds: %i, maxdays: %i' % (
                     self._minKills, self._minRounds, self._maxDays))
         except Exception:
             self.debug('couldn\'t retrieve webfront variables: using defaults')
@@ -638,7 +649,7 @@ class XlrstatsPlugin(b4.b4_plugin.Plugin):
     def get_WeaponUsage(self, weaponid, playerid):
         s = WeaponUsage()
         q = """SELECT * from %s WHERE weapon_id = %s AND player_id = %s LIMIT 1""" % (
-        self.weaponusage_table, weaponid, playerid)
+            self.weaponusage_table, weaponid, playerid)
         cursor = self.query(q)
         if cursor and not cursor.EOF:
             r = cursor.getRow()
@@ -660,7 +671,7 @@ class XlrstatsPlugin(b4.b4_plugin.Plugin):
     def get_Opponent(self, killerid, targetid):
         s = Opponents()
         q = """SELECT * from %s WHERE killer_id = %s AND target_id = %s LIMIT 1""" % (
-        self.opponents_table, killerid, targetid)
+            self.opponents_table, killerid, targetid)
         cursor = self.query(q)
         if cursor and not cursor.EOF:
             r = cursor.getRow()
@@ -679,7 +690,7 @@ class XlrstatsPlugin(b4.b4_plugin.Plugin):
     def get_PlayerBody(self, playerid, bodypartid):
         s = PlayerBody()
         q = """SELECT * from %s WHERE bodypart_id = %s AND player_id = %s LIMIT 1""" % (
-        self.playerbody_table, bodypartid, playerid)
+            self.playerbody_table, bodypartid, playerid)
         cursor = self.query(q)
         if cursor and not cursor.EOF:
             r = cursor.getRow()
@@ -713,7 +724,7 @@ class XlrstatsPlugin(b4.b4_plugin.Plugin):
 
         s = PlayerMaps()
         q = """SELECT * from %s WHERE map_id = %s AND player_id = %s LIMIT 1""" % (
-        self.playermaps_table, mapid, playerid)
+            self.playermaps_table, mapid, playerid)
         cursor = self.query(q)
         if cursor and not cursor.EOF:
             r = cursor.getRow()
@@ -751,7 +762,7 @@ class XlrstatsPlugin(b4.b4_plugin.Plugin):
     def get_PlayerActions(self, playerid, actionid):
         s = PlayerActions()
         q = """SELECT * from %s WHERE action_id = %s AND player_id = %s LIMIT 1""" % (
-        self.playeractions_table, actionid, playerid)
+            self.playeractions_table, actionid, playerid)
         cursor = self.query(q)
         if cursor and not cursor.EOF:
             r = cursor.getRow()
@@ -797,7 +808,7 @@ class XlrstatsPlugin(b4.b4_plugin.Plugin):
 
         try:
             ainfo = target._attackers
-        except:
+        except Exception:
             target._attackers = {}
             ainfo = target._attackers
 
@@ -846,13 +857,13 @@ class XlrstatsPlugin(b4.b4_plugin.Plugin):
                 for r in data:
                     try:
                         actualweapon = self.config.get('replacements', r)
-                    except:
+                    except Exception:
                         pass
 
                 # get applicable weapon multiplier
                 try:
                     weapon_factor = self.config.getfloat('weapons', actualweapon)
-                except:
+                except Exception:
                     weapon_factor = 1.0
 
                 # calculate new skill for the assister
@@ -959,13 +970,13 @@ class XlrstatsPlugin(b4.b4_plugin.Plugin):
         for r in data:
             try:
                 actualweapon = self.config.get('replacements', r)
-            except:
+            except Exception:
                 pass
 
         # get applicable weapon multiplier
         try:
             weapon_factor = self.config.getfloat('weapons', actualweapon)
-        except:
+        except Exception:
             weapon_factor = 1.0
 
         # calculate new stats for the killer
@@ -1157,7 +1168,7 @@ class XlrstatsPlugin(b4.b4_plugin.Plugin):
 
         try:
             target._attackers[client.cid] = time.time()
-        except:
+        except Exception:
             target._attackers = {client.cid: time.time()}
 
         self.verbose('----> XLRstats: onDamage: attacker added: %s (%s) damaged %s (%s)',
@@ -1203,7 +1214,7 @@ class XlrstatsPlugin(b4.b4_plugin.Plugin):
         for r in data:
             try:
                 actualweapon = self.config.get('replacements', r)
-            except:
+            except Exception:
                 pass
 
         # update weapon stats
@@ -1300,7 +1311,7 @@ class XlrstatsPlugin(b4.b4_plugin.Plugin):
         for r in data:
             try:
                 actualweapon = self.config.get('replacements', r)
-            except:
+            except Exception:
                 pass
 
         # adjust weapon statistics
@@ -1437,7 +1448,7 @@ class XlrstatsPlugin(b4.b4_plugin.Plugin):
         try:
             _action_bonus = self.config.getfloat('actions', action.name)
             # self.verbose('----> XLRstats: Found a bonus for %s: %s' %(action.name, action_bonus))
-        except:
+        except Exception:
             _action_bonus = self.action_bonus
 
         if _action_bonus:
@@ -1476,8 +1487,9 @@ class XlrstatsPlugin(b4.b4_plugin.Plugin):
             self.query("""ALTER TABLE %s
                           CHANGE id  id SMALLINT(5) UNSIGNED NOT NULL AUTO_INCREMENT;""" % WeaponStats._table)
             self.query("""ALTER TABLE %s
-                          CHANGE weapon_id weapon_id SMALLINT(5) UNSIGNED NOT NULL DEFAULT  "0";""" % WeaponUsage._table)
-        except:
+                          CHANGE weapon_id weapon_id SMALLINT(5) UNSIGNED NOT NULL DEFAULT  "0";""" %
+                       WeaponUsage._table)
+        except Exception:
             pass
 
     def showTables(self, xlrstats=False):
@@ -1706,7 +1718,8 @@ class XlrstatsPlugin(b4.b4_plugin.Plugin):
                 if limit > 10:
                     limit = 10
 
-        q = 'SELECT %s.name, %s.time_edit, %s.id, kills, deaths, ratio, skill, winstreak, losestreak, rounds, fixed_name, ip \
+        q = ('SELECT %s.name, %s.time_edit, %s.id, kills, deaths, ratio, skill, winstreak, \
+             losestreak, rounds, fixed_name, ip \
              FROM %s, %s \
                  WHERE (%s.id = %s.client_id) \
                  AND ((%s.kills > %s) \
@@ -1721,15 +1734,17 @@ class XlrstatsPlugin(b4.b4_plugin.Plugin):
                      AND penalties.client_id = target.id \
                      AND ( penalties.time_expire = -1 \
                      OR penalties.time_expire > %s ) ) \
-             ORDER BY %s.skill DESC LIMIT %s' \
+             ORDER BY %s.skill DESC LIMIT %s') \
             % (
-            self.clients_table, self.clients_table, self.playerstats_table, self.clients_table, self.playerstats_table,
-            self.clients_table, self.playerstats_table, self.playerstats_table, self._minKills, self.playerstats_table,
-            self._minRounds, self.playerstats_table, int(time.time()), self.clients_table, self._maxDays,
-            self.clients_table,
-            self.penalties_table, self.clients_table,
-            int(time.time()),
-            self.playerstats_table, limit)
+                self.clients_table, self.clients_table, self.playerstats_table, self.clients_table,
+                self.playerstats_table,
+                self.clients_table, self.playerstats_table, self.playerstats_table, self._minKills,
+                self.playerstats_table,
+                self._minRounds, self.playerstats_table, int(time.time()), self.clients_table, self._maxDays,
+                self.clients_table,
+                self.penalties_table, self.clients_table,
+                int(time.time()),
+                self.playerstats_table, limit)
 
         cursor = self.query(q)
         if cursor and not cursor.EOF:
@@ -1804,7 +1819,8 @@ class XlrstatsPlugin(b4.b4_plugin.Plugin):
 
     def cmd_xlrid(self, data, client, cmd=None):
         """
-        <player ID Token> - identify yourself to the XLRstats website, get your token in your profile on the xlrstats website (v3)
+        <player ID Token> - identify yourself to the XLRstats website, get your token in your
+        profile on the xlrstats website (v3)
         """
         handle = self._adminPlugin.parseUserCmd(data)
         if handle:
@@ -1901,7 +1917,8 @@ class XlrstatsPlugin(b4.b4_plugin.Plugin):
 #         and if not it disables stats counting on next roundstart"""
 #         self._current_nr_players = len(self.console.clients.getList())
 #         self.debug(
-#             'Checking number of players online. Minimum = %s, Current = %s' % (self.min_players, self._current_nr_players))
+#             'Checking number of players online. Minimum = %s, Current = %s' %
+#             '(self.min_players, self._current_nr_players))
 #         if self._current_nr_players < self.min_players and self._xlrstatsPlugin.isEnabled() and _roundstart:
 #             self.info('Disabling XLRstats: Not enough players online')
 #             if not self.silent:
@@ -1962,7 +1979,7 @@ class XlrstatshistoryPlugin(b4.b4_plugin.Plugin):
         # define a shortcut to the storage.query function
         self.query = self.console.storage.query
         # purge crontab
-        tzName = self.console.config.get('b3', 'time_zone').upper()
+        tzName = self.console.config.get('b4', 'time_zone').upper()
         tzOffest = b4.b4_timezones.timezones[tzName]
         hoursGMT = (self._hours - tzOffest) % 24
         self.debug(u'%02d:%02d %s => %02d:%02d UTC' % (self._hours, self._minutes, tzName, hoursGMT, self._minutes))
@@ -1975,23 +1992,24 @@ class XlrstatshistoryPlugin(b4.b4_plugin.Plugin):
         """
         Initialize plugin.
         """
-        self.debug('starting subplugin...')
+        self.debug('starting sub-plugin...')
         self.verbose('installing history crontabs')
 
         # remove existing crontabs
         try:
             self.console.cron - self._cronTabMonth
-        except:
+        except Exception:
             pass
         try:
             self.console.cron - self._cronTabWeek
-        except:
+        except Exception:
             pass
         try:
             # install crontabs
             self._cronTabMonth = b4.b4_cron.PluginCronTab(self, self.snapshot_month, 0, 0, 0, 1, '*', '*')
             self.console.cron + self._cronTabMonth
-            self._cronTabWeek = b4.b4_cron.PluginCronTab(self, self.snapshot_week, 0, 0, 0, '*', '*', 1)  # day 1 is monday
+            self._cronTabWeek = b4.b4_cron.PluginCronTab(self, self.snapshot_week, 0, 0, 0, '*', '*',
+                                                         1)  # day 1 is monday
             self.console.cron + self._cronTabWeek
         except Exception as msg:
             self.error('unable to install history crontabs: %s', msg)
@@ -2053,7 +2071,7 @@ class XlrstatshistoryPlugin(b4.b4_plugin.Plugin):
         else:
             _yearPrev = int(_year)
         q = """DELETE FROM %s WHERE (month < %s AND year <= %s) OR year < %s""" % (
-        self.history_monthly_table, _month, _year, _yearPrev)
+            self.history_monthly_table, _month, _year, _yearPrev)
         self.debug(u'QUERY: %s ' % q)
         self.console.storage.query(q)
         # purge the weeks table
@@ -2070,7 +2088,7 @@ class XlrstatshistoryPlugin(b4.b4_plugin.Plugin):
         else:
             _yearPrev = int(_year)
         q = """DELETE FROM %s WHERE (week < %s AND year <= %s) OR year < %s""" % (
-        self.history_weekly_table, _week, _year, _yearPrev)
+            self.history_weekly_table, _week, _year, _yearPrev)
         self.debug(u'QUERY: %s ' % q)
         self.console.storage.query(q)
 
@@ -2115,15 +2133,17 @@ class CtimePlugin(b4.b4_plugin.Plugin):
         self.ctime_table = cTimeTable
         # define a shortcut to the storage.query function
         self.query = self.console.storage.query
-        tzName = self.console.config.get('b3', 'time_zone').upper()
+        tzName = self.console.config.get('b4', 'time_zone').upper()
         tzOffest = b4.b4_timezones.timezones[tzName]
         hoursGMT = (self._hours - tzOffest) % 24
         self.debug(u'%02d:%02d %s => %02d:%02d UTC' % (self._hours, self._minutes, tzName, hoursGMT, self._minutes))
-        self.info(u'everyday at %2d:%2d %s, connection info older than %s days will be deleted' % (self._hours,
-                                                                                                   self._minutes,
-                                                                                                   tzName,
-                                                                                                   self._max_age_in_days))
-        self._cronTab = b4.b4_cron.PluginCronTab(self, self.purge, 0, self._minutes, hoursGMT, '*', '*', '*')
+        self.info(u'everyday at %2d:%2d %s, connection info older than %s days will be deleted' %
+                  (self._hours,
+                   self._minutes,
+                   tzName,
+                   self._max_age_in_days))
+        self._cronTab = b4.b4_cron.PluginCronTab(self, self.purge, 0, self._minutes, hoursGMT,
+                                                 '*', '*', '*')
         self.console.cron + self._cronTab
 
     def onStartup(self):
@@ -2171,7 +2191,7 @@ class CtimePlugin(b4.b4_plugin.Plugin):
 
         self.info(u'purge of connection info older than %s days ...', self._max_age_in_days)
         q = """DELETE FROM %s WHERE came < %i""" % (
-        self.ctime_table, (self.console.time() - (self._max_age_in_days * 24 * 60 * 60)))
+            self.ctime_table, (self.console.time() - (self._max_age_in_days * 24 * 60 * 60)))
         self.debug(u'CTIME QUERY: %s ' % q)
         self.console.storage.query(q)
 
@@ -2180,7 +2200,8 @@ class CtimePlugin(b4.b4_plugin.Plugin):
             self.debug(u'CTIME CONNECTED: client exist! : %s', client.cid)
             tmpts = self._clients[client.cid]
             if tmpts.client.guid == client.guid:
-                self.debug(u'CTIME RECONNECTED: player %s connected again, but playing since: %s', client.exactName,
+                self.debug(u'CTIME RECONNECTED: player %s connected again, but playing since: %s',
+                           client.exactName,
                            tmpts.came)
                 return
             else:
@@ -2204,7 +2225,7 @@ class CtimePlugin(b4.b4_plugin.Plugin):
         if clientid in self._clients:
             ts = self._clients[clientid]
             # Fail: Sometimes PB in cod4 returns 31 character guids, we need to dump them.
-            # Lets look ahead and do this for the whole codseries.
+            # Let's look ahead and do this for the whole COD series.
             # if(self.console.gameName[:3] == 'cod' and self.console.PunkBuster and len(ts.client.guid) != 32):
             #    pass
             # else:
@@ -2212,12 +2233,14 @@ class CtimePlugin(b4.b4_plugin.Plugin):
             diff = (int(time.mktime(ts.left.timetuple())) - int(time.mktime(ts.came.timetuple())))
 
             self.debug(u'CTIME LEFT: player: %s played this time: %s sec', ts.client.exactName, diff)
-            self.debug(u'CTIME LEFT: player: %s played this time: %s', ts.client.exactName, self.formatTD(diff))
-            # INSERT INTO `ctime` (`guid`, `came`, `left`) VALUES ("6fcc4f6d9d8eb8d8457fd72d38bb1ed2", 1198187868, 1226081506)
+            self.debug(u'CTIME LEFT: player: %s played this time: %s',
+                       ts.client.exactName, self.formatTD(diff))
+            # INSERT INTO `ctime` (`guid`, `came`, `left`) VALUES ("6fcc4f6d9d8eb8d8457fd72d38bb1ed2",
+            # 1198187868, 1226081506)
             q = """INSERT INTO %s (guid, came, gone, nick) VALUES (\"%s\", \"%s\", \"%s\", \"%s\")""" % (
-            self.ctime_table,
-            ts.client.guid, int(time.mktime(ts.came.timetuple())), int(time.mktime(ts.left.timetuple())),
-            ts.client.name)
+                self.ctime_table,
+                ts.client.guid, int(time.mktime(ts.came.timetuple())), int(time.mktime(ts.left.timetuple())),
+                ts.client.name)
             self.query(q)
 
             self._clients[clientid].left = None
@@ -2265,7 +2288,7 @@ class BattlestatsPlugin(b4.b4_plugin.Plugin):
         """
         Initialize plugin.
         """
-        self.console.debug('starting subplugin...')
+        self.console.debug('starting sub-plugin...')
         self.registerEvent('EVT_CLIENT_AUTH', self.onAuth)
         self.registerEvent('EVT_CLIENT_DISCONNECT', self.onDisconnect)
         self.registerEvent('EVT_GAME_ROUND_START', self.onRoundStart)
@@ -2361,10 +2384,10 @@ class PlayerStats(StatObject):
         q = """INSERT INTO %s (client_id, kills, deaths, teamkills, teamdeaths, suicides, ratio, skill, assists,
                assistskill, curstreak, winstreak, losestreak, rounds, hide, fixed_name, id_token) VALUES (%s, %s, %s,
                %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, '%s', '%s')""" % (
-        self._table, self.client_id, self.kills,
-        self.deaths, self.teamkills, self.teamdeaths, self.suicides, self.ratio, self.skill, self.assists,
-        self.assistskill, self.curstreak, self.winstreak, self.losestreak, self.rounds, self.hide,
-        escape(self.fixed_name, "'"), self.id_token)
+            self._table, self.client_id, self.kills,
+            self.deaths, self.teamkills, self.teamdeaths, self.suicides, self.ratio, self.skill, self.assists,
+            self.assistskill, self.curstreak, self.winstreak, self.losestreak, self.rounds, self.hide,
+            escape(self.fixed_name, "'"), self.id_token)
         return q
 
     def _updatequery(self):
@@ -2496,8 +2519,8 @@ class PlayerBody(StatObject):
     def _updatequery(self):
         q = """UPDATE %s SET player_id=%s, bodypart_id=%s, kills=%s, deaths=%s, suicides=%s, teamkills=%s, teamdeaths=%s
             WHERE id=%s""" % (
-        self._table, self.player_id, self.bodypart_id, self.kills, self.deaths, self.suicides, self.teamkills,
-        self.teamdeaths, self.id)
+            self._table, self.player_id, self.bodypart_id, self.kills, self.deaths, self.suicides, self.teamkills,
+            self.teamdeaths, self.id)
         return q
 
 
@@ -2568,7 +2591,7 @@ class ActionStats(StatObject):
 
     def _updatequery(self):
         q = """UPDATE %s SET name='%s', count=%s WHERE id=%s""" % (
-        self._table, escape(self.name, "'"), self.count, self.id)
+            self._table, escape(self.name, "'"), self.count, self.id)
         return q
 
 
