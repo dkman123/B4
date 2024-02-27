@@ -276,16 +276,18 @@ class BadweaponforyouPlugin(b4.b4_plugin.Plugin):
 
                 #self.debug("not in current client gear")
                 if sid in self._listplayersgear:
+                    #self.info("bwfy bwfy sid in playergear")
 
                     if rgear in self._listplayersgear[sid]:
-                        client.message('^3For %s ^7-%s-^3 is already %s' % (sclient.exactName, ngear , sayonoff))
+                        client.message('^3For %s ^7-%s-^3 is already %s' % (sclient.exactName, ngear, sayonoff))
                 
                     else:
                         self.console.say('^3For %s ^7-%s-^3 : %s' % (sclient.exactName, ngear, sayonoff))
                         self._listplayersgear[sid].append("%s" % rgear)
 
                 else:
-                    self._listplayersgear.update({sid:[rgear]})                
+                    #self.info("bwfy bwfy update")
+                    self._listplayersgear.update({sid: [rgear]})
                                 
             if onoff == "on":
 
@@ -325,6 +327,7 @@ class BadweaponforyouPlugin(b4.b4_plugin.Plugin):
             return False
                
         if (sclient):
+            #self.info("bwfy listgear sclient was found")
         
             a = 0
             b = 1
@@ -333,7 +336,8 @@ class BadweaponforyouPlugin(b4.b4_plugin.Plugin):
             
             for i in range(7):
                 if self._saysgear[sclient.gear[a:b]] != '':
-                    client.message('%s^3 weapon / gear : ^7-%s-' % (sclient.exactName, self._saysgear[sclient.gear[a:b]]))            
+                    client.message('%s^3 weapon / gear : ^7-%s-'
+                                   % (sclient.exactName, self._saysgear[sclient.gear[a:b]]))
                 a = a + 1
                 b = b + 1
                 
@@ -423,7 +427,7 @@ class BadweaponforyouPlugin(b4.b4_plugin.Plugin):
         
         sgear = input[0]
         
-        if not sgear in self._gears:
+        if sgear not in self._gears:
      
             client.message('!whogear <gear>')
             client.message('%s' % self.gmessage)
@@ -470,6 +474,11 @@ class BadweaponforyouPlugin(b4.b4_plugin.Plugin):
 
     def clientgearexists(self, client):
         # if no gear variable on client, create it
-        if not hasattr(client, 'gear'):
+        #self.info("bwfy clientgearexists")
+        try:
+            if not hasattr(client, 'gear'):
+                self.debug("client did not have gear")
+                setattr(client, 'gear', {})
+        except AttributeError:
             self.debug("client did not have gear")
             setattr(client, 'gear', {})
