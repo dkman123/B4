@@ -212,7 +212,11 @@ class Poweradminurt41Plugin(b4.b4_plugin.Plugin):
 
         try:
             # save original vote settings
-            self._origvote = self.console.getCvar('g_allowvote').getInt()
+            self._origvote = self.console.getCvar('g_allowvote')
+            if self._origvote is None:
+                self._origvote = 0
+            if type(self._origvote) is str:
+                self._origvote = int(self._origvote)
         except ValueError as e:
             self.warning("could not retrieve g_allowvote CVAR value: %s", e)
             self._origvote = 0  # no votes

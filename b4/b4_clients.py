@@ -213,7 +213,7 @@ class Client(object):
 
     def delvar(self, plugin, key):
         """
-        Delelte a variable stored by a plugin.
+        Delete a variable stored by a plugin.
         :param plugin: The plugin that stored the variable.
         :param key: The key of the variable.
         """
@@ -1595,7 +1595,7 @@ class Clients(dict):
 
     def getClientsByState(self, state):
         """
-        Return a list ofclients matching the given state.
+        Return a list of clients matching the given state.
         :param state: The clients state
         """
         #sys.stdout.write("b4_clients.Clients.getClientsByState")
@@ -1845,10 +1845,14 @@ class Clients(dict):
         """
         #sys.stdout.write("b4_clients.Clients.clear")
         self.resetIndex()
-        for cid, c in self.items():
-            # DK (hide is hiding CI connections)
-            # if not c.hide:
-            del self[cid]
+        try:
+            for cid, c in self.items():
+                # DK (hide is hiding CI connections)
+                # if not c.hide:
+                del self[cid]
+        except RuntimeError as ex:
+            # happens if list changes size during iteration
+            self.console.verbose2("b4_clients clear hit RuntimeError %r" % ex)
 
     def sync(self):
         """

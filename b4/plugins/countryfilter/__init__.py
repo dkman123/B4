@@ -32,7 +32,7 @@ __author__ = 'guwashi / xlr8or'
 
 class CountryfilterPlugin(b4.b4_plugin.Plugin):
 
-    requiresPlugins = ['geolocationX']
+    requiresPlugins = ['geolocation']
 
     cf_announce_accept = True
     cf_announce_reject = True
@@ -80,7 +80,7 @@ class CountryfilterPlugin(b4.b4_plugin.Plugin):
 
         # ignore section
         try:
-            # seperate entries on the ,
+            # separate entries on the ,
             _l = self.config.get('ignore', 'names').split(',')
             # strip leading and trailing whitespaces from each list entry
             self.ignore_names = [x.strip() for x in _l]
