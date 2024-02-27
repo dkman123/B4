@@ -320,7 +320,7 @@ def start(mainconfig, options):
         pass
 
     try:
-        sys.stdout.write("init: starting console/parser\n")
+        #sys.stdout.write("init: starting console/parser\n")
         console.start()
     except KeyboardInterrupt:
         console.shutdown()

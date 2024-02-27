@@ -63,6 +63,8 @@ class Hitlocations:
 # -------------------------------------------------------------------------------------
 
 class AimbotdetectorPlugin(b4.b4_plugin.Plugin):
+    requiresPlugins = ['follow']
+
     _adminPlugin = None
     _clientvar_name = 'hitloc_killstreak'
     _hitlocs = []
@@ -181,8 +183,10 @@ class AimbotdetectorPlugin(b4.b4_plugin.Plugin):
         """
         Handle intercepted events
         """
+        #self.console.info("aimbotdetector handle")
 
         if event.type == self.console.getEventID('EVT_CLIENT_KILL'):
+            #self.console.info("aimbotdetector handle kill detected")
             damage_location = event.data[2]
             self.checkHitlocKills(event.client, event.target, damage_location)
 
@@ -201,7 +205,7 @@ class AimbotdetectorPlugin(b4.b4_plugin.Plugin):
 
     def checkHitlocKills(self, client=None, victim=None, damage_location=None):
         """
-        Checks hitlocation of kill
+        Checks hit location of kill
         """
 
         # client (attacker)
@@ -221,18 +225,20 @@ class AimbotdetectorPlugin(b4.b4_plugin.Plugin):
                 self.checkHitlocKillStreak(HitlocStats.hitloc_kills, client)
             else:
                 HitlocStats.hitloc_kills = 0
-                # self.debug('Hitloc killstreak was reset for %s' % client.name)
+                #self.debug('Hitloc kill streak was reset for %s' % client.name)
 
     def checkHitlocKillStreak(self, hitloc_kills, client=None):
         """
-        checks if the clients current hitloc killstreak reaches to threshold set
+        checks if the clients current hit location kill streak reaches to threshold set
         and acts accordingly
         """
+        #self.console.info("aimbotdetector checkHitlocKillStreak")
 
         if client.maxLevel < self.ignorelevel:
             if hitloc_kills >= self.treshold:  # Set it to greater or equal to just in case rcon send fails
                 self.console.debug(
-                    '%s has got %s hitloc kills in a row and reached treshold level' % (client.name, self.treshold))
+                    '%s has got %d hitloc kills in a row and reached threshold level; action %d'
+                    % (client.name, self.treshold, self.action))
                 if self.action == 0:
                     self.console.debug('Kicking Player')
                     self.addFollow(client)
@@ -258,7 +264,7 @@ class AimbotdetectorPlugin(b4.b4_plugin.Plugin):
         """
         Send a PM message to connected admins
         """
-
+        #self.console.info("pmAdmins msg %s; suspect %s" % (self.warnmessage, suspect))
         clients = self.console.clients.getList()
         for player in clients:
             if player.maxLevel >= self.adminlevel:
@@ -269,13 +275,16 @@ class AimbotdetectorPlugin(b4.b4_plugin.Plugin):
         """
         Add the suspect to the follow plugin database if installed
         """
+        #self.console.info("aimbotdetector addFollow")
 
         if not self._followPlugin:
             return None
 
         # if we have a hook to the follow plugin, let's tag the suspect to be followed
+        #self.info("aimbotdetector addFollow select query")
         cursor = self.console.storage.query(self._followPlugin._SELECT_QUERY % sclient.id)
         if cursor.rowcount == 0:
+            #self.info("aimbotdetector addFollow add query")
             cursor2 = self.console.storage.query(
                 self._followPlugin._ADD_QUERY % (sclient.id, 0, self.console.time(), 'Tagged by Aimbotdetector!'))
             cursor2.close()

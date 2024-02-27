@@ -1004,11 +1004,11 @@ class Parser(object):
         for plugin_name in self._plugins:
 
             try:
-                self.bot('Starting plugin #%s : %s' % (plugin_num, plugin_name))
+                self.bot('b4_parser Starting plugin #%s : %s' % (plugin_num, plugin_name))
                 start_plugin(self, plugin_name)
-                self.bot('Started plugin #%s : %s' % (plugin_num, plugin_name))
+                self.bot('b4_parser Started plugin #%s : %s' % (plugin_num, plugin_name))
             except Exception as err:
-                self.error("Could not start plugin %s" % plugin_name, exc_info=err)
+                self.error("b4_parser Could not start plugin %s" % plugin_name, exc_info=err)
                 self.screen.write('x')
             else:
                 self.screen.write('.')
@@ -1026,7 +1026,7 @@ class Parser(object):
         for k in self._plugins:
             if k not in ('admin', 'publist', 'ftpytail', 'sftpytail', 'httpytail', 'cod7http'):
                 p = self._plugins[k]
-                self.bot('Disabling plugin: %s', k)
+                self.bot('b4_parser Disabling plugin: %s', k)
                 p.disable()
 
     def enablePlugins(self):

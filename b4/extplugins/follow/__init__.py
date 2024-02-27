@@ -80,10 +80,10 @@ class FollowPlugin(b4.b4_plugin.Plugin):
         self.registerEvent(self.console.getEvent('EVT_CLIENT_BAN_TEMP'))
         self.registerEvent(self.console.getEvent('EVT_GAME_ROUND_START'))
 
-        try:
-            self.registerEvent(self.console.getEvent('EVT_BAN_BREAK'))
-        except:
-            self.warning("Unable to register event EVT_BAN_BREAK")
+        # try:
+        #     self.registerEvent(self.console.getEvent('EVT_BAN_BREAK'))
+        # except:
+        #     self.warning("Unable to register event EVT_BAN_BREAK")
 
         self.createEvent('EVT_FOLLOW_CONNECTED', 'Suspicious User Connected.')
 
@@ -300,7 +300,7 @@ class FollowPlugin(b4.b4_plugin.Plugin):
                     admin_name = admin.name
                     admin_id = admin.id
                 else:
-                    admin_name = 'B3'
+                    admin_name = 'B4'
                     admin_id = '0'
                 client.setvar(self, 'follow_reason', reason)
                 self.verbose('follow_reason: %s' % reason)

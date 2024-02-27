@@ -103,9 +103,10 @@ class PublistPlugin(b4.b4_plugin.Plugin):
         if _im >= 60:
             _im -= 60
 
-        self.info('initial heartbeat will be sent to B4 master server at %s minutes' % (str(_im).zfill(2)))
-        self._cronTab = b4.b4_cron.OneTimeCronTab(self.update, 0, _im, '*', '*', '*', '*')
-        self.console.cron + self._cronTab
+        # NOTE: master server doesn't exist any more
+        #self.info('initial heartbeat will be sent to B4 master server at %s minutes' % (str(_im).zfill(2)))
+        #self._cronTab = b4.b4_cron.OneTimeCronTab(self.update, 0, _im, '*', '*', '*', '*')
+        #self.console.cron + self._cronTab
 
     ####################################################################################################################
     #                                                                                                                  #
@@ -220,28 +221,30 @@ class PublistPlugin(b4.b4_plugin.Plugin):
         """
         Send data to the B4 master server.
         """
-        if info is None:
-            info = {}
-        try:
-            request = urllib.request.Request('%s?%s' % (url, urllib.parse.urlencode(info)))
-            request.add_header('User-Agent', "B4 Publist plugin/%s" % __version__)
-            response = urllib.request.urlopen(request)
-            if len(response) > 0:
-                self.debug("master replied: %s" % response)
-        except IOError as e:
-            if hasattr(e, 'reason'):
-                self.error('unable to reach B4 masterserver: maybe the service is down or internet was unavailable')
-                self.debug(e.reason)
-            elif hasattr(e, 'code'):
-                if e.code == 400:
-                    self.info('B4 masterserver refused the heartbeat: %s: disabling publist', e)
-                    self.removeCrontab()
-                elif e.code == 403:
-                    self.info('B4 masterserver definitely refused our ping: disabling publist')
-                    self.removeCrontab()
-                else:
-                    self.info('unable to reach B4 masterserver: maybe the service is down or internet was unavailable')
-                    self.debug(e)
-        except Exception:
-            self.warning('unable to reach B4 masterserver: unknown error')
-            print(sys.exc_info())
+        # NOTE: master server doesn't exist any more
+        # if info is None:
+        #     info = {}
+        # try:
+        #     request = urllib.request.Request('%s?%s' % (url, urllib.parse.urlencode(info)))
+        #     request.add_header('User-Agent', "B4 Publist plugin/%s" % __version__)
+        #     response = urllib.request.urlopen(request)
+        #     if len(response) > 0:
+        #         self.debug("master replied: %s" % response)
+        # except IOError as e:
+        #     if hasattr(e, 'reason'):
+        #         self.error('unable to reach B4 masterserver: maybe the service is down or internet was unavailable')
+        #         self.debug(e.reason)
+        #     elif hasattr(e, 'code'):
+        #         if e.code == 400:
+        #             self.info('B4 masterserver refused the heartbeat: %s: disabling publist', e)
+        #             self.removeCrontab()
+        #         elif e.code == 403:
+        #             self.info('B4 masterserver definitely refused our ping: disabling publist')
+        #             self.removeCrontab()
+        #         else:
+        #             self.info('unable to reach B4 masterserver: maybe the service is '
+        #                       'down or internet was unavailable')
+        #             self.debug(e)
+        # except Exception:
+        #     self.warning('unable to reach B4 masterserver: unknown error')
+        #     print(sys.exc_info())

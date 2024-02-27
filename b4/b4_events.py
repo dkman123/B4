@@ -132,7 +132,7 @@ class Events:
         Get the key of a given event ID.
         :param event_id: The event ID
         """
-        sys.stdout.write("b4_events.Events.getKey\n")
+        #sys.stdout.write("b4_events.Events.getKey\n")
         matching_keys = [k for k, v in self._events.items() if v == event_id]
         if not len(matching_keys):
             raise KeyError('could not find any B3 event with ID %s' % event_id)
