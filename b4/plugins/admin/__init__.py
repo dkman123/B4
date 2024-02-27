@@ -388,7 +388,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         """
         Plugin startup.
         """
-        sys.stdout.write("AdminPlugin onStartup\n")
+        #sys.stdout.write("AdminPlugin onStartup\n")
         self.registerEvent('EVT_CLIENT_SAY', self.OnSay)
         self.registerEvent('EVT_CLIENT_TEAM_SAY', self.OnSay)
         self.registerEvent('EVT_CLIENT_SQUAD_SAY', self.OnSay)

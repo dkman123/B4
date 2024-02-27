@@ -169,7 +169,7 @@ class Rcon(object):
         :param maxRetries: How many times we have to retry the sending upon failure
         :param socketTimeout: The socket timeout value
         """
-        self.console.info("rcon sendRcon %s" % data)
+        self.console.verbose("rcon sendRcon %s" % data)
         if socketTimeout is None:
             socketTimeout = self.socket_timeout
         if maxRetries is None:
@@ -185,8 +185,7 @@ class Rcon(object):
         if "b'" in data:
             # if it's a "binary string" then clean it up
             data = re.sub(r'b\'|\'[\r\n]$', '', data)
-        # verbose
-        self.console.info('RCON sending (%s:%s) %r', self.host[0], self.host[1], data)
+        self.console.verbose('RCON sending (%s:%s) %r', self.host[0], self.host[1], data)
         start_time = time.time()
 
         retries = 0
@@ -200,16 +199,15 @@ class Rcon(object):
                     # convert the string to bytes before sending
                     tosend = self.rconsendstring % (self.password, data)
                     tohex = " ".join("{:02x}".format(ord(c)) for c in tosend)
-                    self.console.info("rcon sending hex %s" % tohex)
-                    # convert to bytes or no?
+                    self.console.verbose2("rcon sending hex %s" % tohex)
+                    # convert to bytearray
                     writeables[0].send(bytearray.fromhex(tohex))
                 except Exception as msg:
                     self.console.warning('RCON: error sending: %r', msg)
                 else:
                     try:
                         data = self.readSocket(self.socket, socketTimeout=socketTimeout)
-                        # verbose
-                        self.console.info('RCON: received %r' % data)
+                        self.console.verbose('RCON: received %r' % data)
                         return data
                     except Exception as msg:
                         self.console.warning('RCON: error reading: %r', msg)
@@ -357,7 +355,7 @@ class Rcon(object):
             d = sock.recv(size)
 
             if d:
-                self.console.info("readSocket got %d readables; %r" % (len(readables), d))
+                self.console.verbose2("readSocket got %d readables; %r" % (len(readables), d))
                 # remove rcon header
                 #data += d.replace(self.rconreplystring, '')
 

@@ -89,7 +89,8 @@ class IpApiGeolocator(Geolocator):
         :return: A Location object initialized with location data
         """
         ip = self._getIp(data)
-        resp = urllib.request.urlopen(self._url % ip, timeout=self._timeout).json()
+        resp = urllib.request.urlopen(self._url % ip, timeout=self._timeout)
+        resp = resp.json()
 
         if resp['status'] == 'fail':
             raise GeolocalizationError('invalid data returned by the api: %r' % resp)

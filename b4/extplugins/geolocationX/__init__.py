@@ -27,7 +27,7 @@ __version__ = '1.5'
 
 #import b4
 #import b4_clients
-import b4_plugin
+import b4.b4_plugin
 #import b4_events
 import threading
 
@@ -38,7 +38,7 @@ from .geolocators import MaxMindGeolocator
 from .geolocators import TelizeGeolocator
 
 
-class GeolocationPlugin(b4_plugin.Plugin):
+class GeolocationPlugin(b4.b4_plugin.Plugin):
 
     requiresConfigFile = False
 
@@ -46,7 +46,7 @@ class GeolocationPlugin(b4_plugin.Plugin):
         """
         Build the plugin object.
         """
-        b4_plugin.Plugin.__init__(self, console, config)
+        b4.b4_plugin.Plugin.__init__(self, console, config)
         # create geolocators instances
         self.info('creating geolocators object instances...')
         self._geolocators = [IpApiGeolocator(), TelizeGeolocator(), FreeGeoIpGeolocator()]

@@ -320,11 +320,11 @@ class Cron(object):
         """
         Start the cron scheduler in a separate thread.
         """
-        sys.stdout.write("b4_cron start")
+        #sys.stdout.write("b4_cron start")
         if self.cronThread is None:
             self.cronThread = (threading.Thread(target=self.run, name="cron"))
             self.cronThread.start()
-        sys.stdout.write("b4_cron start complete")
+        #sys.stdout.write("b4_cron start complete")
 
     @staticmethod
     def time():
