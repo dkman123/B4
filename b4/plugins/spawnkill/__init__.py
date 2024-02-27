@@ -45,7 +45,7 @@ class SpawnkillPlugin(b4.b4_plugin.Plugin):
             'delay': 2,
             'penalty': 'warn',
             'duration': 3,
-            'reason': 'do not shoot to spawning players!'
+            'reason': 'do not shoot spawning players!'
         },
         'kill': {
             'maxlevel': 40,

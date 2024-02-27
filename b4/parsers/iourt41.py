@@ -710,6 +710,7 @@ class Iourt41Parser(AbstractParser):
             else:
                 event = self.getEventID('EVT_CLIENT_SUICIDE')
         elif attacker.team != b4.b4_clients.TEAM_UNKNOWN and attacker.team == victim.team:
+            self.info("iourt41 team kill detected")
             event = self.getEventID('EVT_CLIENT_KILL_TEAM')
 
         # if not logging damage we need a general hitloc (for xlrstats)

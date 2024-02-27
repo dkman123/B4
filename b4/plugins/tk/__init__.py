@@ -318,6 +318,7 @@ class TkPlugin(b4.b4_plugin.Plugin):
         """
         Plugin startup
         """
+        self.info("tk onStartup")
         # register events needed
         self.registerEvent('EVT_CLIENT_DAMAGE_TEAM')
         self.registerEvent('EVT_CLIENT_KILL_TEAM')
@@ -352,14 +353,17 @@ class TkPlugin(b4.b4_plugin.Plugin):
         """
         Handle intercepted events
         """
+        self.info("tk onEvent %r", event)
         if self.console.game.gameType in self._ffa:
             # game type is deathmatch, ignore
             return
         elif event.type == self.console.getEventID('EVT_CLIENT_DAMAGE_TEAM'):
+            self.info("tk onEvent team damage %s hit %s" % (event.client.name, event.target))
             if event.client.maxLevel <= self._maxLevel:
                 self.clientDamage(event.client, event.target, int(event.data[0]))
 
         elif event.type == self.console.getEventID('EVT_CLIENT_KILL_TEAM'):
+            self.info("tk onEvent team damage %s killed %s" % (event.client.name, event.target))
             if event.client.maxLevel <= self._maxLevel:
                 self.clientDamage(event.client, event.target, int(event.data[0]), True)
 
@@ -432,6 +436,7 @@ class TkPlugin(b4.b4_plugin.Plugin):
         Check if we have to tempban a client for teamkilling.
         :param client: The client on who perform the check
         """
+        self.info("tk checkTKBan")
         client.setvar(self, 'checkBan', False)
         tkinfo = self.getClientTkInfo(client)
         if tkinfo.points >= self._maxPoints:
@@ -542,6 +547,7 @@ class TkPlugin(b4.b4_plugin.Plugin):
         """
         Return client teamkill info.
         """
+        self.info("tk getClientTkInfo")
         if not client.isvar(self, 'tkinfo'):
             client.setvar(self, 'tkinfo', TkInfo(self, client.cid))
         if not client.isvar(self, 'checkBan'):
@@ -586,7 +592,7 @@ class TkPlugin(b4.b4_plugin.Plugin):
         Grudge a client.
         :param acid: The slot number of the client to grudge
         :param victim: The victim client object instance
-        :param silent: Whether or not to announce this grudge
+        :param silent: Whether to announce this grudge
         """
         attacker = self.console.clients.getByCID(acid)
         if attacker:
@@ -761,7 +767,7 @@ class TkPlugin(b4.b4_plugin.Plugin):
         """
         <name> - display a user's tk points
         """
-        m = re.match('^([a-z0-9]+)$', data)
+        m = re.match(r'^([a-z0-9]+)$', data)
         if not m:
             client.message('^7Invalid parameters')
             return
@@ -806,7 +812,7 @@ class TkPlugin(b4.b4_plugin.Plugin):
         """
         <name> - clear a user's tk points
         """
-        m = re.match('^([a-z0-9]+)$', data)
+        m = re.match(r'^([a-z0-9]+)$', data)
         if not m:
             client.message('^7Invalid parameters')
             return False
