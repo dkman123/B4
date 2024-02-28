@@ -96,7 +96,7 @@ class Rcon(object):
         :param data: The string to be encoded
         :param source: Who requested the encoding
         """
-        #self.console.info("rcon encode_data %s; source %s" % (data, source))
+        self.console.verbose3("rcon encode_data %s; source %s" % (data, source))
         try:
             if isinstance(data, bytes):
                 data = str(data, 'utf_8', errors='ignore')
@@ -116,7 +116,7 @@ class Rcon(object):
         :param maxRetries: How many times we have to retry the sending upon failure
         :param socketTimeout: The socket timeout value
         """
-        #self.console.info("rcon send")
+        self.console.verbose3("rcon send")
         if socketTimeout is None:
             socketTimeout = self.socket_timeout
         if maxRetries is None:
@@ -241,14 +241,14 @@ class Rcon(object):
         """
         Stop the rcon writelines queue.
         """
-        #self.console.info("rcon stop")
+        self.console.verbose3("rcon stop")
         self._stopEvent.set()
 
     def _writelines(self):
         """
         Write multiple RCON commands on the socket.
         """
-        #self.console.info("rcon _writelines")
+        self.console.verbose3("rcon _writelines")
         while not self._stopEvent.is_set():
             lines = self.queue.get(True)
             for cmd in lines:
@@ -263,9 +263,9 @@ class Rcon(object):
         Enqueue multiple RCON commands for later processing.
         :param lines: A list of RCON commands.
         """
-        #self.console.info("rcon writelines")
+        #self.console.verbose3("rcon writelines")
         self.queue.put(lines)
-        #self.console.info(lines)
+        #self.console.verbose3(lines)
 
     def write(self, cmd, maxRetries=None, socketTimeout=None):
         """
@@ -274,7 +274,7 @@ class Rcon(object):
         :param maxRetries: How many times we have to retry the sending upon failure
         :param socketTimeout: The socket timeout value
         """
-        #self.console.info("rcon write")
+        self.console.verbose3("rcon write")
         # intercept status request for caching construct
         if (cmd == 'status' or cmd == 'PB_SV_PList') and self.status_cache:
             if time.time() < self.status_cache_expired:
@@ -298,7 +298,7 @@ class Rcon(object):
         return data if data else ''
 
     def flush(self):
-        #self.console.info("rcon flush")
+        #self.console.verbose3("rcon flush")
         pass
 
     def readNonBlocking(self, sock):
@@ -306,7 +306,7 @@ class Rcon(object):
         Read data from the socket (non blocking).
         :param sock: The socket from where to read data
         """
-        #self.console.info("rcon readNonBlocking")
+        self.console.verbose3("rcon readNonBlocking")
         sock.settimeout(2)
         start_time = time.time()
         data = ''
@@ -346,7 +346,7 @@ class Rcon(object):
         :param size: The read size
         :param socketTimeout: The socket timeout value
         """
-        #self.console.info("rcon readSocket")
+        self.console.verbose3("rcon readSocket")
         if socketTimeout is None:
             socketTimeout = self.socket_timeout
 
@@ -386,11 +386,11 @@ class Rcon(object):
         return data
 
     def close(self):
-        #self.console.info("rcon close")
+        #self.console.verbose3("rcon close")
         pass
 
     def getRules(self):
-        #self.console.info("rcon getRules")
+        #self.console.verbose3("rcon getRules")
         self.lock.acquire()
         try:
             data = self.send('getstatus')
@@ -399,7 +399,7 @@ class Rcon(object):
         return data if data else ''
 
     def getInfo(self):
-        #self.console.info("rcon getInfo")
+        #self.console.verbose3("rcon getInfo")
         self.lock.acquire()
         try:
             data = self.send('getinfo')

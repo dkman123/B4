@@ -538,7 +538,7 @@ class TkPlugin(b4.b4_plugin.Plugin):
                 attacker.maxLevel < self._warn_level and \
                 a.lastwarntime + 180 < self.console.time():
             a.lastwarntime = self.console.time()
-            self.info("tk clientDamage 1*")
+            #self.info("tk clientDamage 1*")
             msg = self.getMessage('tk_warning_reason', {'vname': victim.exactName, 'points': points})
             self.info("tk clientDamage 2*")
             warning = self._adminPlugin.warnClient(attacker, msg, None, False, newDuration=self._tk_warn_duration)
@@ -717,7 +717,8 @@ class TkPlugin(b4.b4_plugin.Plugin):
         v = self.getClientTkInfo(client)
         if len(v.attackers) > 0:
             forgave = []
-            for cid, points in v.attackers.items():
+            listcopy = v.attackers.items().copy()
+            for cid, points in listcopy:
                 if v.isGrudged(cid):
                     continue
 

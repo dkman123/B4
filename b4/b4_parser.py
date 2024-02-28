@@ -1193,7 +1193,7 @@ class Parser(object):
         """
         Main worker thread for B4
         """
-        #sys.stdout.write("b4_parser.Parser.run\n")
+        #self.verbose3("b4_parser.Parser.run")
         self.screen.write('Startup complete : B4 is running! Let\'s get to work!\n\n')
         self.screen.write('If you run into problems check your B4 log file for more information\n')
         self.screen.flush()
@@ -1257,7 +1257,7 @@ class Parser(object):
         """
         Parse a single line from the log file
         """
-        #sys.stdout.write("b4_parser.Parser.parseLine\n")
+        #self.verbose3("b4_parser.Parser.parseLine")
         m = re.match(self._lineFormat, line)
         if m:
             self.queueEvent(b4.b4_events.Event(self.getEventID('EVT_UNKNOWN'), m.group(2)[:1]))
@@ -1266,7 +1266,7 @@ class Parser(object):
         """
         Register an event handler.
         """
-        #sys.stdout.write("b4_parser.Parser.registerHandler\n")
+        #self.verbose3("b4_parser.Parser.registerHandler")
         self.log.debug('b4_parser %s: register event <%s>', event_handler.__class__.__name__, self.getEventName(event_name))
         if not event_name in self._handlers:
             self._handlers[event_name] = []
@@ -1277,7 +1277,7 @@ class Parser(object):
         """
         Unregister an event handler.
         """
-        #sys.stdout.write("b4_parser.Parser.unregisterHandler\n")
+        #self.verbose3("b4_parser.Parser.unregisterHandler")
         for event_name in self._handlers:
             if event_handler in self._handlers[event_name]:
                 self.log.debug('b4_parser %s: unregister event <%s>', event_handler.__class__.__name__, self.getEventName(event_name))
@@ -1288,7 +1288,7 @@ class Parser(object):
         """
         QueEvents.gevent for processing.
         """
-        #sys.stdout.write("b4_parser.Parser.queueEvent\n")
+        #self.verbose3("b4_parser.Parser.queueEvent")
         if not hasattr(event, 'type'):
             return False
         elif event.type in self._handlers:  # queue only if there are handlers to listen for this event
@@ -1307,7 +1307,7 @@ class Parser(object):
         """
         Event handler thread.
         """
-        #sys.stdout.write("b4_parser.Parser.handleEvents\n")
+        #self.verbose3("b4_parser.Parser.handleEvents")
         while self.working:
             added, expire, event = self.queue.get(True)
             if event.type == self.getEventID('EVT_EXIT') or event.type == self.getEventID('EVT_STOP'):
@@ -1353,7 +1353,7 @@ class Parser(object):
         """
         Write a message to Rcon/Console
         """
-        #sys.stdout.write("b4_parser.Parser.write\n")
+        #self.verbose3("b4_parser.Parser.write")
         if self.output:
             res = self.output.write(str(msg))
             self.output.flush()
@@ -1364,7 +1364,7 @@ class Parser(object):
         Write a sequence of messages to Rcon/Console. Optimized for speed.
         :param msg: The message to be sent to Rcon/Console.
         """
-        #sys.stdout.write("b4_parser.Parser.writelines\n")
+        #self.verbose3("b4_parser.Parser.writelines")
         if self.output and msg:
             res = self.output.writelines(msg)
             self.output.flush()
@@ -1375,7 +1375,7 @@ class Parser(object):
         Read lines from the log file
         :param game_log: The game log file pointer
         """
-        #sys.stdout.write("b4_parser.Parser.__read_input\n")
+        #self.verbose3("b4_parser.Parser.__read_input")
         return game_log.readlines()
 
     def ___read_input_darwin(self, game_log):
@@ -1383,14 +1383,14 @@ class Parser(object):
         Read lines from the log file (darwin version)
         :param game_log: The game log file pointer
         """
-        #sys.stdout.write("b4_parser.Parser.___read_input_darwin\n")
+        #self.verbose3("b4_parser.Parser.___read_input_darwin")
         return [game_log.readline()]
 
     def read(self):
         """
         Read from game server log file
         """
-        #sys.stdout.write("b4_parser.Parser.read\n")
+        #self.verbose3("b4_parser.Parser.read")
         if not hasattr(self, 'input'):
             self.critical("Cannot read game log file: check that you have a correct "
                           "value for the 'game_log' setting in your main config file")
@@ -1412,7 +1412,7 @@ class Parser(object):
         """
         Shutdown B4.
         """
-        #sys.stdout.write("b4_parser.Parser.shutdown\n")
+        self.verbose3("b4_parser.Parser.shutdown")
         try:
             if self.working and self.exiting.acquire():
                 self.bot('b4_parser Shutting down...')
@@ -1433,7 +1433,7 @@ class Parser(object):
         Commons operation to be done on B4 shutdown.
         Called internally by b4_parser.die()
         """
-        #sys.stdout.write("b4_parser.Parser.finalize\n")
+        self.verbose3("b4_parser.Parser.finalize")
         if b4.getPlatform() in ('linux', 'darwin'):
             # check for PID file if B4 has been started using the provided BASH initialization scripts.
             b4_name = os.path.basename(self.config.fileName)
@@ -1456,7 +1456,7 @@ class Parser(object):
         And wrap if \n character encountered.
         :param text: The text that needs to be split.
         """
-        #sys.stdout.write("b4_parser.Parser.getWrap\n")
+        self.verbose3("b4_parser.Parser.getWrap")
         if not text:
             return []
 
@@ -1507,70 +1507,66 @@ class Parser(object):
         """
         Log an ERROR message.
         """
-        #sys.stdout.write("b4_parser.Parser.error\n")
         self.log.error(msg, *args, **kwargs)
 
     def debug(self, msg, *args, **kwargs):
         """
         Log a DEBUG message.
         """
-        #sys.stdout.write("b4_parser.Parser.debug\n")
         self.log.debug(msg, *args, **kwargs)
 
     def bot(self, msg, *args, **kwargs):
         """
         Log a BOT message.
         """
-        #sys.stdout.write("b4_parser.Parser.bot\n")
         self.log.bot(msg, *args, **kwargs)
 
     def verbose(self, msg, *args, **kwargs):
         """
         Log a VERBOSE message.
         """
-        #sys.stdout.write("b4_parser.Parser.verbose\n")
         self.log.verbose(msg, *args, **kwargs)
 
     def verbose2(self, msg, *args, **kwargs):
         """
         Log an EXTRA VERBOSE message.
         """
-        #sys.stdout.write("b4_parser.Parser.verbose2\n")
         self.log.verbose2(msg, *args, **kwargs)
+
+    def verbose3(self, msg, *args, **kwargs):
+        """
+        Log an EXTRA VERBOSE message.
+        """
+        self.log.verbose3(msg, *args, **kwargs)
 
     def console(self, msg, *args, **kwargs):
         """
         Log a CONSOLE message.
         """
-        #sys.stdout.write("b4_parser.Parser.console\n")
         self.log.console(msg, *args, **kwargs)
 
     def warning(self, msg, *args, **kwargs):
         """
         Log a WARNING message.
         """
-        #sys.stdout.write("b4_parser.Parser.warning\n")
         self.log.warning(msg, *args, **kwargs)
 
     def info(self, msg, *args, **kwargs):
         """
         Log an INFO message.
         """
-        #sys.stdout.write("b4_parser.Parser.info\n")
         self.log.info(msg, *args, **kwargs)
 
     def exception(self, msg, *args, **kwargs):
         """
         Log an EXCEPTION message.
         """
-        #sys.stdout.write("b4_parser.Parser.exception\n")
         self.log.exception(msg, *args, **kwargs)
 
     def critical(self, msg, *args, **kwargs):
         """
         Log a CRITICAL message and shutdown B4.
         """
-        #sys.stdout.write("b4_parser.Parser.critical\n")
         self.log.critical(msg, *args, **kwargs)
         self.shutdown()
         self.finalize()

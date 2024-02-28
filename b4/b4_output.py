@@ -37,6 +37,7 @@ CONSOLE = 22
 BOT = 21
 VERBOSE = 9
 VERBOSE2 = 8
+VERBOSE3 = 7
 
 # from logging:
 # CRITICAL = 50
@@ -50,6 +51,7 @@ VERBOSE2 = 8
 # DEBUG = 10
 # VERBOSE = 9
 # VERBOSE2 = 8
+# VERBOSE3 = 7
 # NOTSET = 0
 
 logging.addLevelName(CRITICAL, 'CRITICAL')
@@ -61,6 +63,7 @@ logging.addLevelName(CONSOLE,  'CONSOLE ')
 logging.addLevelName(BOT,      'BOT     ')
 logging.addLevelName(VERBOSE,  'VERBOSE ')
 logging.addLevelName(VERBOSE2, 'VERBOS2 ')
+logging.addLevelName(VERBOSE3, 'VERBOS3 ')
 
 # this has to be done to prevent callstack checking in the logging
 # has been causing problems with threaded applications logging
@@ -111,6 +114,12 @@ class OutputHandler(logging.Logger):
         Log 'msg % args' with severity 'VERBOSE2'.
         """
         self.log(VERBOSE2, msg, *args, **kwargs) 
+
+    def verbose3(self, msg, *args, **kwargs):
+        """
+        Log 'msg % args' with severity 'VERBOSE3'.
+        """
+        self.log(VERBOSE3, msg, *args, **kwargs)
 
     def raiseError(self, raiseError, msg, *args, **kwargs):
         """

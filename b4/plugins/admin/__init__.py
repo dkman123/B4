@@ -1079,7 +1079,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         :param data: Extra data
         :param newDuration: A custom duration for this warning
         """
-        #sys.stdout.write("AdminPlugin warnClient\n")
+        sys.stdout.write("AdminPlugin warnClient\n")
         try:
             duration, warning = self.getWarning(keyword)
         except Exception:
@@ -1089,6 +1089,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         if newDuration:
             duration = newDuration
 
+        self.info("admin warnclient 1*")
         warnrecord = sclient.warn(duration, warning, keyword, admin, data)
         warning = sclient.exactName + '^7, ' + warning
 
@@ -1105,7 +1106,9 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         if pmglobal:
             # self.debug("warnClient: pmglobal. client %s" % sclient.exactName)
             msg = self.config.getTextTemplate('warn', 'message', warnings=warnings, reason=warning)
+            self.info("admin warnclient 2*")
             sclient.message(msg)
+            self.info("admin warnclient 3*")
             if admin:
                 admin.message(msg)
         else:
@@ -1128,6 +1131,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
                 self.console.say(self.config.getTextTemplate('warn', 'alert', name=sclient.exactName, warnings=warnings,
                                                              duration=duration, reason='Too many warnings'))
 
+            self.info("admin warnclient 4*")
             sclient.setvar(self, 'checkWarn', True)
             t = threading.Timer(25, self.checkWarnKick, (sclient, admin, data))
             t.start()
