@@ -263,10 +263,10 @@ class Parser(object):
         except socket.gaierror:
             pass
 
-        self.bot('%s', b4.getB4versionString())
-        self.bot('Python: %s', sys.version.replace('\n', ''))
-        self.bot('Default encoding: %s', sys.getdefaultencoding())
-        self.bot('Starting %s v%s for server %s:%s (autorestart = %s)', self.__class__.__name__,
+        self.bot('b4_parser %s', b4.getB4versionString())
+        self.bot('b4_parser Python: %s', sys.version.replace('\n', ''))
+        self.bot('b4_parser Default encoding: %s', sys.getdefaultencoding())
+        self.bot('b4_parser Starting %s v%s for server %s:%s (autorestart = %s)', self.__class__.__name__,
                  getattr(b4.b4_functions.getModule(self.__module__), '__version__', ' Unknown'),
                  self._rconIp, self._port, 'ON' if self.autorestart else 'OFF')
 
@@ -309,7 +309,7 @@ class Parser(object):
         except (AttributeError, ImportError) as e:
             # exit if we don't manage to set up the storage module: B4 will stop working upon Admin
             # Plugin loading, so it makes no sense to keep going with the console initialization
-            self.critical('Could not setup storage module: %s', e)
+            self.critical('b4_parser Could not setup storage module: %s', e)
 
         #sys.stdout.write("Parser about to connect storage")
         # establish a connection with the database
@@ -322,7 +322,7 @@ class Parser(object):
             #sys.stdout.write("Parser found setting for game_log %s" % game_log)
             if game_log[0:6] == 'ftp://' or game_log[0:7] == 'sftp://' or game_log[0:7] == 'http://':
                 self.remoteLog = True
-                self.bot('Working in remote-log mode: %s', game_log)
+                self.bot('b4_parser Working in remote-log mode: %s', game_log)
 
                 if self.config.has_option('server', 'local_game_log'):
                     f = self.config.getpath('server', 'local_game_log')
@@ -352,7 +352,7 @@ class Parser(object):
                 #sys.stdout.write("Parser opened game_log")
 
             self.bot('Parser Starting bot reading file: %s', os.path.abspath(f))
-            self.screen.write('Using gamelog    : %s\n' % b4.getShortPath(os.path.abspath(f)))
+            self.screen.write('b4_parser Using gamelog    : %s\n' % b4.getShortPath(os.path.abspath(f)))
 
             if os.path.isfile(f):
                 self.input = open(f, 'r')
@@ -365,7 +365,7 @@ class Parser(object):
             else:
                 self.screen.write(">>> Cannot read file: %s\n" % os.path.abspath(f))
                 self.screen.flush()
-                self.critical("Cannot read file: %s", os.path.abspath(f))
+                self.critical("b4_parser Cannot read file: %s", os.path.abspath(f))
 
         try:
             # setup rcon
@@ -373,32 +373,32 @@ class Parser(object):
         except Exception as err:
             self.screen.write(">>> Cannot setup RCON: %s\n" % err)
             self.screen.flush()
-            self.critical("Cannot setup RCON: %s" % err, exc_info=err)
+            self.critical("b4_parser Cannot setup RCON: %s" % err, exc_info=err)
 
         if self.config.has_option('server', 'rcon_timeout'):
             custom_socket_timeout = self.config.getfloat('server', 'rcon_timeout')
             self.output.socket_timeout = custom_socket_timeout
-            self.bot('Setting rcon socket timeout to: %0.3f sec', custom_socket_timeout)
+            self.bot('b4_parser Setting rcon socket timeout to: %0.3f sec', custom_socket_timeout)
 
         # allow configurable max line length
         if self.config.has_option('server', 'max_line_length'):
             self._line_length = self.config.getint('server', 'max_line_length')
-            self.bot('Setting line_length to: %s', self._line_length)
+            self.bot('b4_parser Setting line_length to: %s', self._line_length)
 
         # allow configurable line color prefix
         if self.config.has_option('server', 'line_color_prefix'):
             self._line_color_prefix = self.config.get('server', 'line_color_prefix')
-            self.bot('Setting line_color_prefix to: "%s"', self._line_color_prefix)
+            self.bot('b4_parser Setting line_color_prefix to: "%s"', self._line_color_prefix)
 
         # allow configurable multiline (manual line breaks)
         if self.config.has_option('server', 'multiline'):
             self._multiline = self.config.getboolean('server', 'multiline')
-            self.bot('Setting multiline to: %s', self._multiline)
+            self.bot('b4_parser Setting multiline to: %s', self._multiline)
 
         # allow configurable multiline (manual line breaks)
         if self.config.has_option('server', 'multiline_noprefix'):
             self._multiline_noprefix = self.config.getboolean('server', 'multiline_noprefix')
-            self.bot('Setting multiline_noprefix to: %s', self._multiline_noprefix)
+            self.bot('b4_parser Setting multiline_noprefix to: %s', self._multiline_noprefix)
 
         # testing rcon
         self.bot('b4_parser testing rcon')
@@ -491,7 +491,7 @@ class Parser(object):
         """
         Stop B4 with the die exit status (222)
         """
-        sys.stdout.write("b4_parser.Parser.die\n")
+        #sys.stdout.write("b4_parser.Parser.die\n")
         self.shutdown()
         self.finalize()
         time.sleep(5)
@@ -501,7 +501,7 @@ class Parser(object):
         """
         Stop B4 with the restart exit status (221)
         """
-        sys.stdout.write("b4_parser.Parser.restart\n")
+        #sys.stdout.write("b4_parser.Parser.restart\n")
         self.shutdown()
         time.sleep(5)
         self.bot('Restarting...')
@@ -511,7 +511,7 @@ class Parser(object):
         """
         Amount of time B4 has been running
         """
-        sys.stdout.write("b4_parser.Parser.upTime\n")
+        #sys.stdout.write("b4_parser.Parser.upTime\n")
         return self.time() - self._timeStart
 
     def loadConfig(self, conf):
@@ -541,7 +541,7 @@ class Parser(object):
         Called after the parser is created before run(). Overwrite this
         for anything you need to initialize you parser with.
         """
-        sys.stdout.write("b4_parser.Parser.startup\n")
+        #sys.stdout.write("b4_parser.Parser.startup\n")
         pass
 
     def pluginsStarted(self):
@@ -556,7 +556,7 @@ class Parser(object):
         """
         Pause B4 log parsing
         """
-        sys.stdout.write("b4_parser.Parser.pause\n")
+        #sys.stdout.write("b4_parser.Parser.pause\n")
         self.bot('PAUSING')
         self._paused = True
 
@@ -564,7 +564,7 @@ class Parser(object):
         """
         Unpause B4 log parsing
         """
-        sys.stdout.write("b4_parser.Parser.unpause\n")
+        #sys.stdout.write("b4_parser.Parser.unpause\n")
         self._paused = False
         self._pauseNotice = False
         self.input.seek(0, os.SEEK_END)
@@ -663,14 +663,14 @@ class Parser(object):
                 #sys.stdout.write("b4_parser.Parser._search_config_file\n")
                 # first look in the built-in plugins directory
                 search = '%s%s*%s*' % (b4.getAbsolutePath('@conf\\', decode=True), os.path.sep, match)
-                self.log.debug('Searching for configuration file(s) matching: %s' % search)
+                self.log.debug('b4_parser Searching for configuration file(s) matching: %s' % search)
                 collection = glob.glob(search)
                 if len(collection) > 0:
                     return collection
                 # if none is found, then search in the extplugins directory
                 search = '%s%s*%s*' % (
                     os.path.join(b4.getAbsolutePath(extplugins_dir, decode=True), match, 'conf'), os.path.sep, match)
-                self.log.debug('Searching for configuration file(s) matching: %s' % search)
+                self.log.debug('b4_parser Searching for configuration file(s) matching: %s' % search)
                 collection = glob.glob(search)
                 return collection
 
@@ -678,12 +678,12 @@ class Parser(object):
                 # no plugin configuration file path specified: we can still load the plugin
                 # if there is non need for a configuration file, otherwise we will look up one
                 if not p_clazz.requiresConfigFile:
-                    self.log.debug('No configuration file specified for plugin %s: is not required either' % p_name)
+                    self.log.debug('b4_parser No configuration file specified for plugin %s: is not required either' % p_name)
                     return None
 
                 # lookup a configuration file for this plugin
                 self.warning(
-                    'No configuration file specified for plugin %s: searching a valid configuration file...' % p_name)
+                    'b4_parser No configuration file specified for plugin %s: searching a valid configuration file...' % p_name)
 
                 search_path = _search_config_file(p_name)
                 if len(search_path) == 0:
@@ -692,11 +692,11 @@ class Parser(object):
                         'could not find any configuration file for plugin %s' % p_name)
                 if len(search_path) > 1:
                     # log all the configuration files found so users can decide to remove some of them on the next B4 startup
-                    self.warning('Multiple configuration files found for plugin %s: %s', p_name, ', '.join(search_path))
+                    self.warning('b4_parser Multiple configuration files found for plugin %s: %s', p_name, ', '.join(search_path))
 
                 # if the load fails, an exception is raised and the plugin won't be loaded
                 self.warning('Using %s as configuration file for plugin %s', search_path[0], p_name)
-                self.bot('Loading configuration file %s for plugin %s', search_path[0], p_name)
+                self.bot('b4_parser Loading configuration file %s for plugin %s', search_path[0], p_name)
                 return b4.b4_config.load(search_path[0])
             else:
                 # configuration file specified: load it if it's found. If we are not able to find the configuration
@@ -704,11 +704,11 @@ class Parser(object):
                 # otherwise stop loading the plugin and loag an error message.
                 p_config_absolute_path = b4.getAbsolutePath(p_config_path, decode=True)
                 if os.path.exists(p_config_absolute_path):
-                    self.bot('Loading configuration file %s for plugin %s', p_config_absolute_path, p_name)
+                    self.bot('b4_parser Loading configuration file %s for plugin %s', p_config_absolute_path, p_name)
                     return b4.b4_config.load(p_config_absolute_path)
 
                 # notice missing configuration file
-                self.warning('Could not find specified configuration file %s for plugin %s', p_config_absolute_path,
+                self.warning('b4_parser Could not find specified configuration file %s for plugin %s', p_config_absolute_path,
                              p_name)
 
                 if p_clazz.requiresConfigFile:
@@ -1145,14 +1145,14 @@ class Parser(object):
         if tz_name:
             if not tz_name in b4.b4_timezones.timezones:
                 self.warning(
-                    "b4_parser Unknown timezone name [%s]: falling back to auto-detection mode. Valid timezone codes can "
-                    "be found on http://wiki.bigbrotherbot.net/doku.php/usage:available_timezones" % tz_name)
+                    "b4_parser Unknown timezone name [%s]: falling back to auto-detection mode. Valid timezone codes "
+                    "can be found on http://wiki.bigbrotherbot.net/doku.php/usage:available_timezones" % tz_name)
             else:
                 self.info("Using timezone: %s : %s" % (tz_name, b4.b4_timezones.timezones[tz_name]))
                 return b4.b4_timezones.timezones[tz_name], tz_name
 
         # AUTO-DETECT TZ NAME/OFFSET
-        self.log.debug("Auto detecting timezone information...")
+        self.log.debug("b4_parser Auto detecting timezone information...")
 
         # this will compute the timezone offset from UTC
         tz_info = datetime.timedelta(hours=time.timezone / -3600)
@@ -1204,7 +1204,7 @@ class Parser(object):
         while self.working:
             if self._paused:
                 if not self._pauseNotice:
-                    self.bot('PAUSED - not parsing any lines: B4 will be out of sync')
+                    self.bot('b4_parser PAUSED - not parsing any lines: B4 will be out of sync')
                     self._pauseNotice = True
             else:
                 lines = self.read()
@@ -1222,7 +1222,7 @@ class Parser(object):
                                     # Time in log has reset
                                     log_time_start = log_time_current
                                     log_time_last = 0
-                                    self.log.debug('log time reset %d' % log_time_current)
+                                    self.log.debug('b4_parser log time reset %d' % log_time_current)
                                 elif not log_time_start:
                                     log_time_start = log_time_current
 
@@ -1238,13 +1238,13 @@ class Parser(object):
                             except SystemExit:
                                 raise
                             except Exception as msg:
-                                self.error('Could not parse line %s: %s', msg, extract_tb(sys.exc_info()[2]))
+                                self.error('b4_parser Could not parse line %s: %s', msg, extract_tb(sys.exc_info()[2]))
 
                             time.sleep(self.delay2)
 
             time.sleep(self.delay)
 
-        self.bot('Stop reading')
+        self.bot('b4_parser Stop reading')
 
         with self.exiting:
             self.input.close()
@@ -1267,7 +1267,7 @@ class Parser(object):
         Register an event handler.
         """
         #sys.stdout.write("b4_parser.Parser.registerHandler\n")
-        self.log.debug('%s: register event <%s>', event_handler.__class__.__name__, self.getEventName(event_name))
+        self.log.debug('b4_parser %s: register event <%s>', event_handler.__class__.__name__, self.getEventName(event_name))
         if not event_name in self._handlers:
             self._handlers[event_name] = []
         if event_handler not in self._handlers[event_name]:
@@ -1280,7 +1280,7 @@ class Parser(object):
         #sys.stdout.write("b4_parser.Parser.unregisterHandler\n")
         for event_name in self._handlers:
             if event_handler in self._handlers[event_name]:
-                self.log.debug('%s: unregister event <%s>', event_handler.__class__.__name__, self.getEventName(event_name))
+                self.log.debug('b4_parser %s: unregister event <%s>', event_handler.__class__.__name__, self.getEventName(event_name))
                 self._handlers[event_name].remove(event_handler)
 
     def queueEvent(self, event, expire=30):
@@ -1292,13 +1292,13 @@ class Parser(object):
         if not hasattr(event, 'type'):
             return False
         elif event.type in self._handlers:  # queue only if there are handlers to listen for this event
-            self.verbose('Queueing event %s : %s', self.getEventName(event.type), event.data)
+            self.verbose('b4_parser Queueing event %s : %s', self.getEventName(event.type), event.data)
             try:
                 time.sleep(0.001)  # wait a bit so event doesn't get jumbled
                 self.queue.put((self.time(), self.time() + expire, event), True, 2)
                 return True
             except queue.Full:
-                self.error('**** Event queue was full (%s)', self.queue.qsize())
+                self.error('b4_parser **** Event queue was full (%s)', self.queue.qsize())
                 return False
 
         return False
@@ -1415,15 +1415,15 @@ class Parser(object):
         #sys.stdout.write("b4_parser.Parser.shutdown\n")
         try:
             if self.working and self.exiting.acquire():
-                self.bot('Shutting down...')
+                self.bot('b4_parser Shutting down...')
                 self.working = False
                 for k, plugin in self._plugins.items():
                     plugin.parseEvent(b4.b4_events.Event(self.getEventID('EVT_STOP'), ''))
                 if self._cron:
-                    self.bot('Stopping cron')
+                    self.bot('b4_parser Stopping cron')
                     self._cron.stop()
                 if self.storage:
-                    self.bot('Shutting down database connection')
+                    self.bot('b4_parser Shutting down database connection')
                     self.storage.shutdown()
         except Exception as e:
             self.error(e)
@@ -1442,13 +1442,13 @@ class Parser(object):
 
             pidpath = os.path.join(b4.getAbsolutePath('@b4/', decode=True), '..', 'scripts', 'pid', '%s.pid' % b4_name)
             if os.path.isfile(pidpath):
-                self.bot('Found PID file : %s : attempt to remove it' % pidpath)
+                self.bot('b4_parser Found PID file : %s : attempt to remove it' % pidpath)
                 try:
                     os.unlink(pidpath)
                 except Exception as e:
-                    self.error('Could not remove PID file (%s) : %s' % (pidpath, e))
+                    self.error('b4_parser Could not remove PID file (%s) : %s' % (pidpath, e))
                 else:
-                    self.bot('PID file removed (%s)' % pidpath)
+                    self.bot('b4_parser PID file removed (%s)' % pidpath)
 
     def getWrap(self, text):
         """
@@ -1629,10 +1629,10 @@ class Parser(object):
                 docbuilder = DocBuilder(self)
                 docbuilder.save()
             except Exception as err:
-                self.error("Failed to generate user documentation")
+                self.error("b4_parser Failed to generate user documentation")
                 self.exception(err)
         else:
-            self.info('No user documentation generated: to enable update your configuration file')
+            self.info('b4_parser No user documentation generated: to enable update your configuration file')
 
     ####################################################################################################################
     #                                                                                                                  #
@@ -1652,7 +1652,7 @@ class Parser(object):
     def authorizeClients(self):
         """
         For all connected players, fill the client object with properties allowing to find 
-        the user in the database (usualy guid, or punkbuster id, ip) and call the 
+        the user in the database (usually guid, or punkbuster id, ip) and call the
         Client.auth() method 
         """
         #sys.stdout.write("b4_parser.Parser.authorizeClients\n")

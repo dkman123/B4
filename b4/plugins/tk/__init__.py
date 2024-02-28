@@ -525,8 +525,8 @@ class TkPlugin(b4.b4_plugin.Plugin):
 
         a.damage(v.cid, points)
         v.damaged(a.cid, points)
-        
-        self.debug('attacker: %s, TK points: %s, attacker.maxLevel: %s, last warn time: %s, console time: %s' % (
+
+        self.debug('tk clientDamage attacker: %s, TK points: %s, attacker.maxLevel: %s, last warn time: %s, console time: %s' % (
                    attacker.exactName, points, attacker.maxLevel, a.lastwarntime, self.console.time()))
 
         if self._round_grace and self._issue_warning and \
@@ -538,9 +538,13 @@ class TkPlugin(b4.b4_plugin.Plugin):
                 attacker.maxLevel < self._warn_level and \
                 a.lastwarntime + 180 < self.console.time():
             a.lastwarntime = self.console.time()
+            self.info("tk clientDamage 1*")
             msg = self.getMessage('tk_warning_reason', {'vname': victim.exactName, 'points': points})
+            self.info("tk clientDamage 2*")
             warning = self._adminPlugin.warnClient(attacker, msg, None, False, newDuration=self._tk_warn_duration)
+            self.info("tk clientDamage 3*")
             a.warn(v.cid, warning)
+            self.info("tk clientDamage 4*")
             victim.message(self.getMessage('tk_request_action', attacker.exactName))
 
     def getClientTkInfo(self, client):

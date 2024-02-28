@@ -176,7 +176,6 @@ class Iourt41Parser(AbstractParser):
                                 r'(?P<team>RED|BLUE|SPECTATOR|FREE) '
                                 r'k:(?P<kill>[0-9]+) d:(?P<death>[0-9]+) ping:(?P<ping>[0-9]+|CNCT|ZMBI)( '
                                 r'(?P<ip>[0-9.]+):(?P<port>[0-9-]+))?$', re.IGNORECASE)
-
     ## kill modes
     MOD_WATER = '1'
     MOD_LAVA = '3'
@@ -422,8 +421,8 @@ class Iourt41Parser(AbstractParser):
 
     def parseUserInfo(self, info):
         """
-        Parse an infostring.
-        :param info: The infostring to be parsed.
+        Parse an info string.
+        :param info: The info string to be parsed.
         """
         # 2 \ip\145.99.135.227:27960\challenge\-232198920\qport\2781\protocol\68\battleye\1\name\[SNT]^1XLR^78or...
         # 7 n\[SNT]^1XLR^78or\t\3\r\2\tl\0\f0\\f1\\f2\\a0\0\a1\0\a2\0
@@ -433,7 +432,7 @@ class Iourt41Parser(AbstractParser):
         if info[:1] != '\\':
             info = '\\' + info
 
-        self.verbose2('Parsing userinfo: %s', info)
+        self.verbose2('iourt41 Parsing userinfo: %s', info)
         options = re.findall(r'\\([^\\]+)\\([^\\]+)', info)
 
         data = dict()
@@ -518,13 +517,13 @@ class Iourt41Parser(AbstractParser):
                         guid = 'unknown'
 
                 # v1.0.17 - mindriot - 02-Nov-2008
-                if not 'name' in bclient:
+                if 'name' not in bclient:
                     bclient['name'] = self._empty_name_default
 
-                if not 'ip' in bclient:
+                if 'ip' not in bclient:
                     if guid == 'unknown':
                         # happens when a client is (temp)banned and got kicked so client
-                        # was destroyed, but infoline was still waiting to be parsed.
+                        # was destroyed, but info line was still waiting to be parsed.
                         self.debug('Client disconnected: ignoring...')
                         return None
                     else:
@@ -699,19 +698,24 @@ class Iourt41Parser(AbstractParser):
             return None
 
         event = self.getEventID('EVT_CLIENT_KILL')
-        self.info("iourt41 kill detected")
+        self.verbose2("iourt41 kill detected %s (%d) kill %s (%d)" %
+                  (attacker.name, attacker.team, victim.name, victim.team))
+        # rebuild the team info for clients
+        #if attacker.team == b4.b4_clients.TEAM_UNKNOWN and victim.team == b4.b4_clients.TEAM_UNKNOWN:
+        #    self.info("iourt41 OnKill updating teams")
+        #    self.updateTeams()
 
         # fix event for team change and suicides and tk
         if attacker.cid == victim.cid:
             if weapon == self.MOD_CHANGE_TEAM:
-                # do not pass a teamchange event here
+                # do not pass a team change event here
                 # that event is passed shortly after the kill
                 self.verbose('Team change event caught: exiting...')
                 return None
             else:
                 event = self.getEventID('EVT_CLIENT_SUICIDE')
         elif attacker.team != b4.b4_clients.TEAM_UNKNOWN and attacker.team == victim.team:
-            self.info("iourt41 TEAM kill detected %s killed %s" % (attacker.name, victim.name))
+            self.verbose2("iourt41 TEAM kill detected %s killed %s" % (attacker.name, victim.name))
             event = self.getEventID('EVT_CLIENT_KILL_TEAM')
 
         # if not logging damage we need a general hitloc (for xlrstats)
@@ -1290,12 +1294,12 @@ class Iourt41Parser(AbstractParser):
 
         cleaned_supported_maps = {}
         for map_name in supported_maps:
-            cleaned_supported_maps[re.sub("^ut4?_", '', map_name, count=1)] = map_name
+            cleaned_supported_maps[re.sub(r"^ut4?_", '', map_name, count=1)] = map_name
 
         if wanted_map in cleaned_supported_maps:
             return cleaned_supported_maps[wanted_map]
 
-        cleaned_wanted_map = re.sub("^ut4?_", '', wanted_map, count=1)
+        cleaned_wanted_map = re.sub(r"^ut4?_", '', wanted_map, count=1)
 
         matches = [cleaned_supported_maps[match]
                    for match in b4.b4_functions.getStuffSoundingLike(cleaned_wanted_map,
@@ -1443,7 +1447,7 @@ class Iourt41Parser(AbstractParser):
         player_teams = dict()
         letters2slots = dict(A='0', C='2', B='1', E='4', D='3', G='6', F='5', I='8', H='7', K='10', J='9', M='12',
                              L='11', O='14', N='13', Q='16', P='15', S='18', R='17', U='20', T='19', W='22',
-                             V='21', Y='24', X='23', Z='25')
+                             V='21', Y='24', X='23', Z='25', a='26', b='27', c='28', d='29', e='30', f='31')
 
         players_data = self.write('players')
         for line in players_data.split('\n')[3:]:
@@ -1519,7 +1523,7 @@ class Iourt41Parser(AbstractParser):
 # Flag: 0 1: team_CTF_blueflag -> Flag Returned
 # Flag: 0 2: team_CTF_blueflag -> Flag Captured
 #
-# Bombholder is 5 -> Spawn with the bomb
+# Bomb holder is 5 -> Spawn with the bomb
 # Bomb was planted by 5
 # Bomb was defused by 6!
 # Bomb was tossed by 4 -> either manually or by being killed

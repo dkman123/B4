@@ -2216,7 +2216,7 @@ class Poweradminurt41Plugin(b4.b4_plugin.Plugin):
 
     def teamcheck(self):
         """
-        Teambalancer cronjob.
+        Team balancer cronjob.
         """
         gametype = self._getGameType()
         # run teambalance only if current gametype is in autobalance_gametypes list

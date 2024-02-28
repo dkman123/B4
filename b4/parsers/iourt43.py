@@ -404,13 +404,13 @@ class Iourt43Parser(Iourt41Parser):
                                r'R:(?P<RedScore>.+)\s+'
                                r'B:(?P<BlueScore>.+)$', re.IGNORECASE)
 
-    _rePlayerScore = re.compile(r'^(?P<slot>[0-9]+):(?P<name>.*)\s+'
+    _rePlayerScore = re.compile(r'^(?P<slot>[0-9]+):\s*(?P<name>.*)\s+'
                                 r'TEAM:(?P<team>RED|BLUE|SPECTATOR|FREE)\s+'
-                                r'KILLS:(?P<kill>[0-9]+)\s+'
+                                r'KILLS:(?P<kill>[\-0-9]+)\s+'
                                 r'DEATHS:(?P<death>[0-9]+)\s+'
                                 r'ASSISTS:(?P<assist>[0-9]+)\s+'
                                 r'PING:(?P<ping>[0-9]+|CNCT|ZMBI)\s+'
-                                r'AUTH:(?P<auth>.*)\s+IP:(?P<ip>.*)$', re.IGNORECASE)
+                                r'AUTH:(?P<auth>.*)\s+IP:(?P<ip>[0-9.]+)(?P<port>:[0-9-]+)?$', re.IGNORECASE)
 
     # /rcon auth-whois replies patterns
     # 'auth: id: 0 - name: ^7Courgette - login: courgette - notoriety: serious - level: -1  \n'
@@ -603,7 +603,7 @@ class Iourt43Parser(Iourt41Parser):
         """
         Called when all plugins are started.
         """
-        self.debug("b4.parsers.Iourt43Parser.pluginsStarted\n")
+        #self.debug("b4.parsers.Iourt43Parser.pluginsStarted\n")
         self.spamcontrolPlugin = self.getPlugin("spamcontrol")
         if self.spamcontrolPlugin:
             self.patch_spamcontrolPlugin()
@@ -618,13 +618,13 @@ class Iourt43Parser(Iourt41Parser):
         """
         Load ban settings according to auth system cvars.
         """
-        self.debug("b4.parsers.Iourt43Parser.load_conf_frozensand_ban_settings\n")
+        #self.debug("b4.parsers.Iourt43Parser.load_conf_frozensand_ban_settings\n")
         try:
             frozensand_auth_available = self.is_frozensand_auth_available()
         except Exception as e:
-            self.warning("Could not query server for cvar auth", exc_info=e)
+            self.warning("iourt43 Could not query server for cvar auth", exc_info=e)
             frozensand_auth_available = False
-        self.info("Frozen Sand auth system enabled : %s" % ('yes' if frozensand_auth_available else 'no'))
+        self.info("iourt43 Frozen Sand auth system enabled : %s" % ('yes' if frozensand_auth_available else 'no'))
 
         try:
             cvar = self.getCvar('auth_owners')
@@ -633,11 +633,11 @@ class Iourt43Parser(Iourt41Parser):
             else:
                 frozensand_auth_owners = None
         except Exception as e:
-            self.warning("Could not query server for cvar auth_owners", exc_info=e)
+            self.warning("iourt43 Could not query server for cvar auth_owners", exc_info=e)
             frozensand_auth_owners = ""
 
         yn = ('yes - %s' % frozensand_auth_available) if frozensand_auth_owners else 'no'
-        self.info("Frozen Sand auth_owners set : %s" % yn)
+        self.info("iourt43 Frozen Sand auth_owners set : %s" % yn)
 
         if frozensand_auth_available and frozensand_auth_owners:
             self.load_conf_permban_with_frozensand()
@@ -763,7 +763,8 @@ class Iourt43Parser(Iourt41Parser):
                 for k, v in bclient.items():
                     if hasattr(client, 'gear') and k == 'gear' and client.gear != v:
                         self.queueEvent(b4.b4_events.Event(self.getEventID('EVT_CLIENT_GEAR_CHANGE'), v, client))
-                    if not k.startswith('_') and k not in ('login', 'password', 'groupBits', 'maskLevel', 'autoLogin', 'greeting', 'app'):
+                    if not k.startswith('_') and k not in ('login', 'password', 'groupBits', 'maskLevel',
+                                                           'autoLogin', 'greeting', 'app'):
                         setattr(client, k, v)
                         #self.debug("NOISY iourt43 setting client field %s to %s" % (k, v))
                     if k == 'app' and client.app == "":
@@ -794,11 +795,14 @@ class Iourt43Parser(Iourt41Parser):
                                "nickname (%s characters)", bclient['name'], guid, fsa, len(bclient['name']))
                     if self._allow_userinfo_overflow:
                         x = bclient['name'][0:32]
-                        self.debug('Truncating %s (%s) nickname => %s (%s)', bclient['name'], len(bclient['name']), x, len(x))
+                        self.debug('Truncating %s (%s) nickname => %s (%s)', bclient['name'],
+                                   len(bclient['name']), x, len(x))
                         bclient['name'] = x
                     else:
-                        self.debug("Connection denied to  %s [GUID: '%s'] [FSA: '%s']", bclient['name'], guid, fsa)
-                        self.write(self.getCommand('kick', cid=bclient['cid'], reason='userinfo string overflow protection'))
+                        self.debug("Connection denied to  %s [GUID: '%s'] [FSA: '%s']", bclient['name'],
+                                   guid, fsa)
+                        self.write(self.getCommand('kick', cid=bclient['cid'],
+                                                   reason='userinfo string overflow protection'))
                         return
 
                 if 'ip' not in bclient:
@@ -845,7 +849,9 @@ class Iourt43Parser(Iourt41Parser):
                 if nguid != '':
                     guid = nguid
 
-                self.clients.newClient(bclient['cid'], name=bclient['name'], ip=bclient['ip'], bot=bot, guid=guid, pbid=fsa, app=bclient['app'], isocode=bclient['isocode'], permmute=bclient['permmute'])
+                self.clients.newClient(bclient['cid'], name=bclient['name'], ip=bclient['ip'], bot=bot,
+                                       guid=guid, pbid=fsa, app=bclient['app'], isocode=bclient['isocode'],
+                                       permmute=bclient['permmute'])
 
         return None
 
@@ -1333,6 +1339,120 @@ class Iourt43Parser(Iourt41Parser):
 
     ####################################################################################################################
     #                                                                                                                  #
+    #   EVENT HANDLERS                                                                                                 #
+    #                                                                                                                  #
+    ####################################################################################################################
+
+    def OnKill(self, action, data, match=None):
+        """
+        1:      MOD_WATER === exclusive attackers : , 1022(<world>), 0(<non-client>)
+        3:      MOD_LAVA === exclusive attackers : , 1022(<world>), 0(<non-client>)
+        5:      MOD_TELEFRAG --- normal kill line
+        6:      MOD_FALLING === exclusive attackers : , 1022(<world>), 0(<non-client>)
+        7:      MOD_SUICIDE ===> attacker is always the victim
+        9:      MOD_TRIGGER_HURT === exclusive attackers : , 1022(<world>)
+        10:     MOD_CHANGE_TEAM ===> attacker is always the victim
+        12:     UT_MOD_KNIFE --- normal kill line
+        13:     UT_MOD_KNIFE_THROWN --- normal kill line
+        14:     UT_MOD_BERETTA --- normal kill line
+        15:     UT_MOD_DEAGLE --- normal kill line
+        16:     UT_MOD_SPAS --- normal kill line
+        17:     UT_MOD_UMP45 --- normal kill line
+        18:     UT_MOD_MP5K --- normal kill line
+        19:     UT_MOD_LR300 --- normal kill line
+        20:     UT_MOD_G36 --- normal kill line
+        21:     UT_MOD_PSG1 --- normal kill line
+        22:     UT_MOD_HK69 --- normal kill line
+        23:     UT_MOD_BLED --- normal kill line
+        24:     UT_MOD_KICKED --- normal kill line
+        25:     UT_MOD_HEGRENADE --- normal kill line
+        28:     UT_MOD_SR8 --- normal kill line
+        30:     UT_MOD_AK103 --- normal kill line
+        31:     UT_MOD_SPLODED ===> attacker is always the victim
+        32:     UT_MOD_SLAPPED ===> attacker is always the victim
+        33:     UT_MOD_BOMBED --- normal kill line
+        34:     UT_MOD_NUKED --- normal kill line
+        35:     UT_MOD_NEGEV --- normal kill line
+        37:     UT_MOD_HK69_HIT --- normal kill line
+        38:     UT_MOD_M4 --- normal kill line
+        39:     UT_MOD_FLAG === exclusive attackers : , 0(<non-client>)
+        40:     UT_MOD_GOOMBA --- normal kill line
+        """
+        # self.warning('OnKill: %s (%s)' % (match.group('aweap'), match.group('text')))
+        self.debug('OnKill: %s (%s)' % (match.group('aweap'), match.group('text')))
+        victim = self.getByCidOrJoinPlayer(match.group('cid'))
+        if not victim:
+            self.debug('No victim')
+            # self.OnClientuserinfo(action, data, match)
+            return None
+
+        weapon = match.group('aweap')
+        if not weapon:
+            self.debug('No weapon')
+            return None
+
+        ## Fix attacker
+        if match.group('aweap') in (self.UT_MOD_SLAPPED, self.UT_MOD_NUKED, self.MOD_TELEFRAG):
+            self.debug('OnKill: slap/nuke => attacker should be None')
+            attacker = self.clients.getByCID('-1')  # make the attacker 'World'
+        elif match.group('aweap') in (self.MOD_WATER, self.MOD_LAVA, self.MOD_FALLING,
+                                      self.MOD_TRIGGER_HURT, self.UT_MOD_BOMBED, self.UT_MOD_FLAG):
+            # those kills should be considered suicides
+            self.debug('OnKill: water/lava/falling/trigger_hurt/bombed/flag should be suicides')
+            attacker = victim
+        else:
+            attacker = self.getByCidOrJoinPlayer(match.group('acid'))
+        ## End fix attacker
+
+        if not attacker:
+            # handle the case where Mr.Sentry killed a player
+            if match.group('aweap') == self.UT_MOD_BERETTA and match.group('acid') == self.WORLD:
+                return self.getEvent('EVT_SENTRY_KILL', target=victim)
+            else:
+                self.debug('No attacker')
+                return None
+
+        damagetype = match.group('text').split()[-1:][0]
+        if not damagetype:
+            self.debug('No damage type, weapon: %s' % weapon)
+            return None
+
+        event = self.getEventID('EVT_CLIENT_KILL')
+        self.verbose2("iourt43 kill detected %s (%d) kill %s (%d)" %
+                  (attacker.name, attacker.team, victim.name, victim.team))
+        # rebuild the team info for clients
+        if attacker.team == b4.b4_clients.TEAM_UNKNOWN or victim.team == b4.b4_clients.TEAM_UNKNOWN:
+            self.info("iourt43 OnKill updating teams")
+            self.updateTeams()
+
+        # fix event for team change and suicides and tk
+        if attacker.cid == victim.cid:
+            if weapon == self.MOD_CHANGE_TEAM:
+                # do not pass a team change event here
+                # that event is passed shortly after the kill
+                self.verbose('Team change event caught: exiting...')
+                return None
+            else:
+                event = self.getEventID('EVT_CLIENT_SUICIDE')
+        elif attacker.team != b4.b4_clients.TEAM_UNKNOWN and attacker.team == victim.team:
+            self.info("iourt41 TEAM kill detected %s killed %s" % (attacker.name, victim.name))
+            event = self.getEventID('EVT_CLIENT_KILL_TEAM')
+
+        # if not logging damage we need a general hitloc (for xlrstats)
+        if 'lastDamageTaken' in victim.data:
+            last_damage_data = victim.data['lastDamageTaken']
+            del victim.data['lastDamageTaken']
+        else:
+            last_damage_data = (100, weapon, 'body')
+
+        victim.state = b4.b4_clients.STATE_DEAD
+        # self.verbose('OnKill Victim: %s, Attacker: %s, Weapon: %s, Hitloc: %s, dType: %s' %
+        #              (victim.name, attacker.name, weapon, victim.hitloc, dType))
+        # need to pass some amount of damage for the teamkill plugin - 100 is a kill
+        return self.getEvent(event, (last_damage_data[0], weapon, last_damage_data[2], damagetype), attacker, victim)
+
+    ####################################################################################################################
+    #                                                                                                                  #
     #   OTHER METHODS                                                                                                  #
     #                                                                                                                  #
     ####################################################################################################################
@@ -1519,3 +1639,45 @@ class Iourt43Parser(Iourt41Parser):
 
         b4.b4_clients.Client.newClient = newClient
         b4.b4_clients.Client.getByMagic = newGetByMagic
+
+    def updateTeams(self):
+        """
+        Update the client team attribute.
+
+        /rcon players
+        Map: ut4_heroic_beta1
+        Players: 3
+        GameType: CTF
+        Scores: R:51 B:92
+        MatchMode: OFF
+        WarmupPhase: NO
+        GameTime: 00:00:00
+        0: |RFA|isopropanol TEAM:BLUE KILLS:24 DEATHS:11 ASSISTS:0 PING:69 AUTH:--- IP:30.37.30.34:27960
+        1: |RFA|isoSlim TEAM:RED KILLS:3 DEATHS:4 ASSISTS:0 PING:3 AUTH:--- IP:130.30.230.34:27962
+        2: |RFA|isom9 TEAM:RED KILLS:-4 DEATHS:1 ASSISTS:0 PING:106 AUTH:johnson IP:192.168.30.34:27961
+
+        NOTE: this may not work fully if the server has private slots.
+        see http://forums.urbanterror.net/index.php/topic,9356.0.html
+        """
+        #self.info("iourt43 updateTeams")
+        players_data = self.write('players')
+        #self.info("iourt43 updateTeams %s" % players_data)
+        for line in players_data.split('\n')[7:]:
+            self.verbose2("iourt43 updateTeams %s" % line.strip())
+            m = re.match(self._rePlayerScore, line.strip())
+            if m:
+                cid = m.group('slot')
+                team = self.getTeam(m.group('team'))
+                #self.info("iourt43 updateTeams Slot %s is on team %s (#%d)" %
+                #              (m.group('slot'), m.group('team'), team))
+                client = self.clients.getByCID(cid)
+                #self.verbose2("iourt43 updateTeams Has %d clients" % len(self.clients.getList()))
+                if client is not None:
+                    setattr(client, 'team', team)
+                    self.verbose2(
+                        "iourt43 updateTeams Updating client %s on slot %s to team %s" % (client.name, cid, team))
+                else:
+                    self.verbose2("iourt43 updateTeams Client not found on slot %s" % cid)
+                    self.clients.newClient(cid, name=m.group('name'), ip=m.group('ip'))
+            else:
+                self.verbose2("iourt43 updateTeams No match")

@@ -380,9 +380,9 @@ class AdminPlugin(b4.b4_plugin.Plugin):
                     self.warn_reasons[k] = rv
 
         for k, (duration, reason) in self.warn_reasons.items():
-            self.info("""{0:<10s} {1:<10s}\t"{2}" """.format(k, b4.b4_functions.minutesStr(duration), reason))
+            self.debug("""{0:<10s} {1:<10s}\t"{2}" """.format(k, b4.b4_functions.minutesStr(duration), reason))
 
-        self.info("-------------- warn_reasons loaded ----------------")
+        self.debug("-------------- warn_reasons loaded ----------------")
 
     def onStartup(self):
         """
