@@ -297,11 +297,12 @@ class FakeClient(b4.b4_clients.Client):
     
     def message(self, msg, *args):
         msg = msg % args
-        cleanmsg = re.sub(re.compile('\^[0-9]'), '', msg).strip()
+        cleanmsg = re.sub(re.compile(r'\^[0-9]'), '', msg).strip()
         self.message_history.append(cleanmsg)
         print("sending msg to %s: %s" % (self.name, cleanmsg))
 
     def warn(self, duration, warning, keyword=None, admin=None, data=''):
+        self.console.verbose3("b4_fake warn")
         w = b4.b4_clients.Client.warn(self, duration, warning, keyword=None, admin=None, data='')
         print(">>>>%s gets a warning : %s" % (self, w))
 
@@ -314,7 +315,7 @@ class FakeClient(b4.b4_clients.Client):
         clients[self.cid] = self
         clients.resetIndex()
 
-        self.console.debug('client connected: [%s] %s - %s (%s)', clients[self.cid].cid,
+        self.console.debug('b4_fake client connected: [%s] %s - %s (%s)', clients[self.cid].cid,
                            clients[self.cid].name, clients[self.cid].guid, clients[self.cid].data)
 
         self.console.queueEvent(self.console.getEvent('EVT_CLIENT_CONNECT', data=self, client=self))

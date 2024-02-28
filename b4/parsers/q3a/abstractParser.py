@@ -419,6 +419,7 @@ class AbstractParser(b4.b4_parser.Parser):
         :param client: The client to who send the message.
         :param text: The message to be sent.
         """
+        self.verbose3("abstractParser message")
         if client is None:
             # do a normal say
             self.say(text)

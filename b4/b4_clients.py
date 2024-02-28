@@ -856,7 +856,7 @@ class Client(object):
         :param msg: the message to send
         :param args: substitution arguments (if any).
         """
-        #self.console.verbose3("b4_clients.Client.message")
+        self.console.verbose3("b4_clients.Client.message")
         self.console.message(self, msg, *args)
 
     def warn(self, duration, warning, keyword=None, admin=None, data=''):
@@ -868,7 +868,7 @@ class Client(object):
         :param admin: The admin who performed the ban
         :param data: Extra data to add to the penalty
         """
-        #self.console.verbose3("b4_clients.Client.warn")
+        self.console.verbose3("b4_clients.Client.warn")
         if self.id:
             duration = b4.b4_functions.time2minutes(duration)
             warn = ClientWarning()

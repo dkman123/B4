@@ -717,7 +717,7 @@ class TkPlugin(b4.b4_plugin.Plugin):
         v = self.getClientTkInfo(client)
         if len(v.attackers) > 0:
             forgave = []
-            listcopy = v.attackers.items().copy()
+            listcopy = v.attackers.iteritems()
             for cid, points in listcopy:
                 if v.isGrudged(cid):
                     continue
