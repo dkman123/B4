@@ -346,7 +346,8 @@ class DatabaseStorage(Storage):
             self.query(b4.b4_querybuilder.QueryBuilder(self.db).UpdateQuery(data, 'clients', {'id': client.id}))
         else:
             cursor = self.query(b4.b4_querybuilder.QueryBuilder(self.db).InsertQuery(data, 'clients'))
-            client.id = cursor.lastrowid
+            if cursor is not None:
+                client.id = cursor.lastrowid
             cursor.close()
 
         return client.id

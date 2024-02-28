@@ -784,9 +784,10 @@ class XlrstatsPlugin(b4.b4_plugin.Plugin):
             q = stat._insertquery()
             # self.debug('Inserting using: %r', q)
             cursor = self.query(q)
-            if cursor.rowcount > 0:
-                stat.id = cursor.lastrowid
-                delattr(stat, '_new')
+            if cursor is not None:
+                if cursor.rowcount > 0:
+                    stat.id = cursor.lastrowid
+                    delattr(stat, '_new')
         else:
             q = stat._updatequery()
             # self.debug('Updating using: %r', q)
