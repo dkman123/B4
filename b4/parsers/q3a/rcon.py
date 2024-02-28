@@ -181,7 +181,11 @@ class Rcon(object):
         #    data = self.encode_data(data, 'RCON')
 
         if type(data) is not str:
-            data = data.decode('utf-8')
+            try:
+                data = data.decode('utf-8')
+            except Exception as ex:
+                self.console.info("rcon sendRcon caught decode %r" % ex)
+
         if "b'" in data:
             # if it's a "binary string" then clean it up
             data = re.sub(r'b\'|\'[\r\n]$', '', data)
@@ -324,7 +328,10 @@ class Rcon(object):
 
                     if type(d) is not str:
                         #self.console.verbose2("rcon attempting decode of received data %r\n" % d)
-                        d = d.decode('utf-8')
+                        try:
+                            d = d.decode('utf-8')
+                        except Exception as ex:
+                            self.console.info("rcon readNonBlocking caught decode %r" % ex)
 
                     data = d
                 elif len(data) > 0 and ord(data[-1:]) == 10:
@@ -365,7 +372,10 @@ class Rcon(object):
 
                 if type(d) is not str:
                     # self.console.verbose2("rcon attempting decode of received data %r\n" % d)
-                    d = d.decode('utf-8')
+                    try:
+                        d = d.decode('utf-8')
+                    except Exception as ex:
+                        self.console.info("rcon readSocket caught decode %r" % ex)
 
                 data = d
 
