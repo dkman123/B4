@@ -1307,7 +1307,7 @@ class Parser(object):
         """
         Event handler thread.
         """
-        #self.verbose3("b4_parser.Parser.handleEvents")
+        self.verbose3("b4_parser.Parser.handleEvents")
         while self.working:
             added, expire, event = self.queue.get(True)
             if event.type == self.getEventID('EVT_EXIT') or event.type == self.getEventID('EVT_STOP'):
@@ -1469,6 +1469,7 @@ class Parser(object):
             self.wrapper = TextWrapper(width=self._line_length, drop_whitespace=True,
                                        break_long_words=True, break_on_hyphens=False)
 
+        self.verbose3("b4_parser getWrap 1*")
         # Apply wrap + manual linebreak
         if self._multiline:
             wrapped_text = []
@@ -1479,9 +1480,11 @@ class Parser(object):
         else:
             wrapped_text = self.wrapper.wrap(text)
 
+        self.verbose3("b4_parser getWrap 2*")
         if self._use_color_codes:
             lines = []
             color = self._line_color_prefix
+            self.verbose3("b4_parser getWrap 3*")
             for line in wrapped_text:
                 if not lines or self._multiline_noprefix:
                     lines.append('%s%s' % (color, line))
@@ -1490,6 +1493,7 @@ class Parser(object):
                 match = re.findall(self._reColor, line)
                 if match:
                     color = match[-1]
+            self.verbose3("b4_parser getWrap 4*")
             return lines
         else:
             if self._multiline_noprefix:
@@ -1499,8 +1503,10 @@ class Parser(object):
                 # to all the lines except the first one
                 lines = [wrapped_text[0]]
                 if len(wrapped_text) > 1:
+                    self.verbose3("b4_parser getWrap 5*")
                     for line in wrapped_text[1:]:
                         lines.append('>%s' % line)
+            self.verbose3("b4_parser getWrap 6*")
             return lines
 
     def error(self, msg, *args, **kwargs):

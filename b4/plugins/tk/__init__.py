@@ -551,7 +551,7 @@ class TkPlugin(b4.b4_plugin.Plugin):
         """
         Return client teamkill info.
         """
-        #self.info("tk getClientTkInfo")
+        self.console.verbose3("tk getClientTkInfo")
         if not client.isvar(self, 'tkinfo'):
             client.setvar(self, 'tkinfo', TkInfo(self, client.cid))
         if not client.isvar(self, 'checkBan'):
@@ -565,6 +565,7 @@ class TkPlugin(b4.b4_plugin.Plugin):
         :param victim: The victim client object instance
         :param silent: Whether to announce the forgiveness
         """
+        self.console.verbose3("tk forgive")
         v = self.getClientTkInfo(victim)
         points = v.forgive(acid)
         attacker = self.console.clients.getByCID(acid)
@@ -620,6 +621,7 @@ class TkPlugin(b4.b4_plugin.Plugin):
         """
         Forgive all the clients
         """
+        self.console.verbose3("tk forgiveAll")
         attacker = self.console.clients.getByCID(acid)
         if not attacker:
             return
@@ -714,21 +716,26 @@ class TkPlugin(b4.b4_plugin.Plugin):
         """
         - forgive all attackers' tk points
         """
+        self.console.verbose3("tk cmd_forgiveall")
         v = self.getClientTkInfo(client)
         if len(v.attackers) > 0:
             forgave = []
-            listcopy = v.attackers.items()
-            for cid, points in listcopy:
-                if v.isGrudged(cid):
-                    continue
+            try:
+                for cid, points in v.attackers.items():
+                    if v.isGrudged(cid):
+                        continue
 
-                attacker = self.console.clients.getByCID(cid)
-                points = self.forgive(cid, client, True)
-                if attacker and points:
-                    forgave.append('%s^7 [^3%s^7]' % (attacker.name, points))
-                    if self._private_messages:
-                        attacker.message(self.getMessage('forgive_many', {'vname': client.exactName,
-                                                                          'attackers': attacker.exactName}))
+                    attacker = self.console.clients.getByCID(cid)
+                    points = self.forgive(cid, client, True)
+                    if attacker and points:
+                        forgave.append('%s^7 [^3%s^7]' % (attacker.name, points))
+                        if self._private_messages:
+                            attacker.message(self.getMessage('forgive_many', {'vname': client.exactName,
+                                                                              'attackers': attacker.exactName}))
+            except RuntimeError as ex:
+                self.console.debug("tk cmd_forgiveall caught RunetimeError %r" % ex)
+            except Exception as ex:
+                self.console.debug("tk cmd_forgiveall caught exception %r" % ex)
 
             if len(forgave):
                 if self._private_messages:

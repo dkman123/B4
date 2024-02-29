@@ -582,8 +582,8 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         """
         Handle EVT_CLIENT_SAY
         """
-        #sys.stdout.write("AdminPlugin OnSay\n")
-        self.debug('OnSay handle %s:"%s"', event.type, event.data)
+        #self.console.verbose3("AdminPlugin OnSay\n")
+        self.console.debug('OnSay handle %s:"%s"', event.type, event.data)
 
         if len(event.data) >= 3 and event.data[:1] == '#':
             if self.console.debug:
@@ -682,7 +682,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
                     cmd = cmd[0]
                     data = ''
 
-            self.console.verbose3("Admin OnSay 1*")
+            #self.console.verbose3("Admin OnSay 1*")
             try:
                 command = self._commands[cmd.lower()]
             except KeyError:
@@ -700,7 +700,13 @@ class AdminPlugin(b4.b4_plugin.Plugin):
 
             cmd = cmd.lower()
 
-            self.console.verbose3("Admin OnSay 2*")
+            #self.console.verbose3("Admin OnSay 2* %r %r" % (type(command), command))
+            #self.console.verbose3("Admin OnSay 2b* %r" % {command.level})
+            if type(command.level) is tuple:
+                cmdlvl = command.level[0]
+            else:
+                cmdlvl = command.level
+            #self.console.verbose3("Admin OnSay 2c* %r" % cmdlvl)
             if not command.plugin.isEnabled():
                 try:
                     event.client.message(self.getMessage('cmd_plugin_disabled'))
@@ -708,7 +714,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
                     event.client.message("plugin disabled: cannot execute command %s" % cmd)
                 return
 
-            elif not event.client.authed and command.level > 0:
+            elif not event.client.authed and cmdlvl > 0:
                 event.client.message('^7Please try your command after you have been authenticated')
                 self.console.clients.authorizeClients()
                 return
@@ -718,7 +724,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
                     event.client.message('^7You do not have sufficient access to do silent commands')
                     return False
 
-            self.console.verbose3("Admin OnSay 3*")
+            #self.console.verbose3("Admin OnSay 3*")
             if command.canUse(event.client):
 
                 try:
@@ -740,7 +746,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
                                                                   (command, data, results), event.client))
             else:
 
-                self.console.verbose3("Admin OnSay 4*")
+                #self.console.verbose3("Admin OnSay 4*")
                 if self._warn_command_abusers and event.client.maxLevel < self._admins_level:
                     event.client.var(self, 'noCommand', 0).value += 1
                     if event.client.var(self, 'noCommand').toInt() >= 3:
@@ -748,7 +754,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
                         self.warnClient(event.client, 'nocmd', None, False)
                         return
 
-                self.console.verbose3("Admin OnSay 5*")
+                #self.console.verbose3("Admin OnSay 5*")
                 if command.level is None:
                     event.client.message('^7%s%s command is disabled' % (self.cmdPrefix, cmd))
                 else:

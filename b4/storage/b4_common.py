@@ -559,7 +559,7 @@ class DatabaseStorage(Storage):
             # decode the reason data, as the name may need it
             if hasattr(self.console, "encoding") and self.console.encoding:
                 try:
-                    penalty.reason = penalty.reason.encode('UTF-8', 'replace')
+                    penalty.reason = re.sub("^b'|'$", "", str(penalty.reason)).encode('UTF-8', 'replace')
                 except Exception as msg:
                     self.console.debug('b4_common: handled exception decoding: %r', msg)
             # make sure it can't be too long
