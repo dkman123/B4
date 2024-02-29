@@ -296,6 +296,7 @@ class FakeClient(b4.b4_clients.Client):
         return result
     
     def message(self, msg, *args):
+        self.console.verbose3("b4_fake message")
         msg = msg % args
         cleanmsg = re.sub(re.compile(r'\^[0-9]'), '', msg).strip()
         self.message_history.append(cleanmsg)

@@ -348,7 +348,7 @@ class DatabaseStorage(Storage):
             cursor = self.query(b4.b4_querybuilder.QueryBuilder(self.db).InsertQuery(data, 'clients'))
             if cursor is not None:
                 client.id = cursor.lastrowid
-            cursor.close()
+                cursor.close()
 
         return client.id
 
@@ -546,7 +546,7 @@ class DatabaseStorage(Storage):
         :param penalty: The penalty to be saved.
         :return: The ID of the penalty saved in the storage.
         """
-        #self.console.verbose3("b4_common DatabaseStorage setClientPenalty\n")
+        self.console.verbose3("b4_common DatabaseStorage setClientPenalty")
         fields = ('type', 'duration', 'inactive', 'admin_id',
                   'time_add', 'time_edit', 'time_expire', 'reason',
                   'keyword', 'client_id', 'data')
@@ -559,13 +559,9 @@ class DatabaseStorage(Storage):
             # decode the reason data, as the name may need it
             if hasattr(self.console, "encoding") and self.console.encoding:
                 try:
-                    penalty.reason = penalty.reason.decode(self.console.encoding)
-                except Exception as msg:
-                    self.console.warning('ERROR: decoding reason: %r', msg)
-                try:
                     penalty.reason = penalty.reason.encode('UTF-8', 'replace')
                 except Exception as msg:
-                    self.console.warning('ERROR: encoding reason: %r', msg)
+                    self.console.debug('b4_common: handled exception decoding: %r', msg)
             # make sure it can't be too long
             if len(penalty.reason) > 254:
                 penalty.reason = penalty.reason[0:254]

@@ -1159,7 +1159,7 @@ class Penalty(Struct):
         Save the penalty in the storage.
         :param console: The console instance
         """
-        #self.console.verbose3("b4_clients.Penalty.save")
+        console.verbose3("b4_clients.Penalty.save")
         self.timeEdit = console.time()
         if not self.id:
             self.timeAdd = console.time()

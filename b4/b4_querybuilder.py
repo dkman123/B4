@@ -25,6 +25,7 @@
 __author__  = 'ThorN'
 __version__ = '1.3.0'
 
+import re
 import sys
 
 
@@ -42,12 +43,14 @@ class QueryBuilder(object):
         Escape quotes from a given string.
         :param word: The string on which to perform the escape
         """
+        sys.stdout.write("b4_QueryBuilder escape %r" % word)
         if isinstance(word, int) or isinstance(word, complex) or isinstance(word, float):
             return str(word)
         elif word is None:
             return '"None"'
         else:
-            return '"%s"' % word.replace('"', '\\"')
+            # remove binary string b'{string}', replace " with \", then quote wrap the string
+            return r'"%s"' % re.sub("^b'|'$", "", str(word)).replace("\"", "\\\"")
 
     def quoteArgs(self, args):
         """
@@ -244,7 +247,7 @@ class QueryBuilder(object):
         :param table: The table from where to fetch data.
         :param delayed: Whether to add the DELAYED clause to the query.
         """
-        sys.stdout.write("b4_QueryBuilder InsertQuery")
+        #sys.stdout.write("b4_QueryBuilder InsertQuery")
         sql = "INSERT "
 
         if delayed:
@@ -254,10 +257,13 @@ class QueryBuilder(object):
 
         keys = []
         values = []
+        #sys.stdout.write("b4_QueryBuilder InsertQuery 2*")
         for k, v in data.items():
+            sys.stdout.write("b4_QueryBuilder InsertQuery building %r,%r" % (k, v))
             keys.append(k)
             values.append(self.escape(v))
 
+        sys.stdout.write("b4_QueryBuilder InsertQuery 3*")
         sql += "(" + self.fieldStr(keys) + ") VALUES (" + ", ".join(values) + ")"
 
         return sql

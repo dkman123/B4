@@ -1661,6 +1661,10 @@ class Iourt43Parser(Iourt41Parser):
         """
         #self.info("iourt43 updateTeams")
         players_data = self.write('players')
+        if players_data == "":
+            # if it failed, give it another shot
+            time.sleep(2)
+            players_data = self.write('players')
         #self.info("iourt43 updateTeams %s" % players_data)
         for line in players_data.split('\n')[7:]:
             self.verbose2("iourt43 updateTeams %s" % line.strip())

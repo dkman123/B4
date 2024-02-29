@@ -682,6 +682,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
                     cmd = cmd[0]
                     data = ''
 
+            self.console.verbose3("Admin OnSay 1*")
             try:
                 command = self._commands[cmd.lower()]
             except KeyError:
@@ -699,6 +700,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
 
             cmd = cmd.lower()
 
+            self.console.verbose3("Admin OnSay 2*")
             if not command.plugin.isEnabled():
                 try:
                     event.client.message(self.getMessage('cmd_plugin_disabled'))
@@ -716,6 +718,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
                     event.client.message('^7You do not have sufficient access to do silent commands')
                     return False
 
+            self.console.verbose3("Admin OnSay 3*")
             if command.canUse(event.client):
 
                 try:
@@ -737,6 +740,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
                                                                   (command, data, results), event.client))
             else:
 
+                self.console.verbose3("Admin OnSay 4*")
                 if self._warn_command_abusers and event.client.maxLevel < self._admins_level:
                     event.client.var(self, 'noCommand', 0).value += 1
                     if event.client.var(self, 'noCommand').toInt() >= 3:
@@ -744,11 +748,12 @@ class AdminPlugin(b4.b4_plugin.Plugin):
                         self.warnClient(event.client, 'nocmd', None, False)
                         return
 
+                self.console.verbose3("Admin OnSay 5*")
                 if command.level is None:
                     event.client.message('^7%s%s command is disabled' % (self.cmdPrefix, cmd))
                 else:
 
-                    self.info("%s does not have sufficient rights to use %s%s. "
+                    self.info("Admin: %s does not have sufficient rights to use %s%s. "
                               "Required level: %s" % (event.client.name, self.cmdPrefix, cmd, command.level[0]))
                     try:
                         # show the preconfigured message
