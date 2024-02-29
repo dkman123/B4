@@ -410,7 +410,7 @@ class XlrstatsPlugin(b4.b4_plugin.Plugin):
                 self.debug(err)
             except Exception as err:
                 self.error(err)
-            self.info('xlrstats load_conf using value "%s" for tables::%s' % (property_to_set, setting_option))
+            self.debug('xlrstats load_conf using value "%s" for tables::%s' % (property_to_set, setting_option))
 
         load_conf('playerstats_table', 'playerstats')
         load_conf('actionstats_table', 'actionstats')

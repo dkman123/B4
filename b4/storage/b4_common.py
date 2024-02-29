@@ -722,21 +722,24 @@ class DatabaseStorage(Storage):
         Return a list of available client groups.
         """
         #self.console.verbose3("b4_common DatabaseStorage getGroups")
-        if not self._groups:
-            cursor = self.query(b4.b4_querybuilder.QueryBuilder(self.db).SelectQuery('*', 'usergroups', None, 'level'))
-            self._groups = []
-            while not cursor.EOF:
-                row = cursor.getRow()
-                group = b4.b4_clients.Group()
-                group.id = int(row['id'])
-                group.name = row['name']
-                group.keyword = row['keyword']
-                group.level = int(row['level'])
-                group.timeAdd = int(row['time_add'])
-                group.timeEdit = int(row['time_edit'])
-                self._groups.append(group)
-                cursor.moveNext()
-            cursor.close()
+        try:
+            if not self._groups:
+                cursor = self.query(b4.b4_querybuilder.QueryBuilder(self.db).SelectQuery('*', 'usergroups', None, 'level'))
+                self._groups = []
+                while not cursor.EOF:
+                    row = cursor.getRow()
+                    group = b4.b4_clients.Group()
+                    group.id = int(row['id'])
+                    group.name = row['name']
+                    group.keyword = row['keyword']
+                    group.level = int(row['level'])
+                    group.timeAdd = int(row['time_add'])
+                    group.timeEdit = int(row['time_edit'])
+                    self._groups.append(group)
+                    cursor.moveNext()
+                cursor.close()
+        except AttributeError as ex:
+            self.console.error("b4_common getGroups caught AttributeError %r" % ex)
 
         return self._groups
 

@@ -1197,6 +1197,7 @@ class Parser(object):
         self.screen.write('Startup complete : B4 is running! Let\'s get to work!\n\n')
         self.screen.write('If you run into problems check your B4 log file for more information\n')
         self.screen.flush()
+        self.say('B4 ^2[Startup Complete]')
         self.updateDocumentation()
 
         log_time_start = None

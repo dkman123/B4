@@ -43,7 +43,7 @@ class QueryBuilder(object):
         Escape quotes from a given string.
         :param word: The string on which to perform the escape
         """
-        sys.stdout.write("b4_QueryBuilder escape %r" % word)
+        #sys.stdout.write("b4_QueryBuilder escape %r" % word)
         if isinstance(word, int) or isinstance(word, complex) or isinstance(word, float):
             return str(word)
         elif word is None:
@@ -195,7 +195,7 @@ class QueryBuilder(object):
         :param having: The HAVING clause for this select statement.
         :param keywords: Unused at the moment.
         """
-        sys.stdout.write("b4_QueryBuilder SelectQuery")
+        #sys.stdout.write("b4_QueryBuilder SelectQuery")
         sql = ['SELECT %s FROM `%s`' % (self.fieldStr(fields), table)]
 
         if where:
@@ -223,7 +223,7 @@ class QueryBuilder(object):
         :param where: A WHERE clause for this select statement.
         :param delayed: Whether to add the DELAYED clause to the query.
         """
-        sys.stdout.write("b4_QueryBuilder UpdateQuery")
+        #sys.stdout.write("b4_QueryBuilder UpdateQuery")
         sql = "UPDATE "
 
         if delayed:
@@ -259,11 +259,11 @@ class QueryBuilder(object):
         values = []
         #sys.stdout.write("b4_QueryBuilder InsertQuery 2*")
         for k, v in data.items():
-            sys.stdout.write("b4_QueryBuilder InsertQuery building %r,%r" % (k, v))
+            #sys.stdout.write("b4_QueryBuilder InsertQuery building %r,%r" % (k, v))
             keys.append(k)
             values.append(self.escape(v))
 
-        sys.stdout.write("b4_QueryBuilder InsertQuery 3*")
+        #sys.stdout.write("b4_QueryBuilder InsertQuery 3*")
         sql += "(" + self.fieldStr(keys) + ") VALUES (" + ", ".join(values) + ")"
 
         return sql
@@ -275,7 +275,7 @@ class QueryBuilder(object):
         :param table: The table from where to fetch data.
         :param delayed: Whether to add the DELAYED clause to the query.
         """
-        sys.stdout.write("b4_QueryBuilder ReplaceQuery")
+        #sys.stdout.write("b4_QueryBuilder ReplaceQuery")
         sql = "REPLACE "
 
         if delayed:
