@@ -1463,7 +1463,7 @@ class XlrstatsPlugin(b4.b4_plugin.Plugin):
     def updateTableColumns(self):
         self.verbose('checking if we need to update tables for version 2.0.0')
         # v2.0.0 additions to the playerstats table:
-        self._addTableColumn('assists', PlayerStats._table, 'MEDIUMINT( 8 ) NOT NULL DEFAULT "0" AFTER `skill`')
+        self._addTableColumn('assists', PlayerStats._table, 'MEDIUMINT NOT NULL DEFAULT "0" AFTER `skill`')
         self._addTableColumn('assistskill', PlayerStats._table, 'FLOAT NOT NULL DEFAULT "0" AFTER `assists`')
         # alterations to columns in existing tables:
         self._updateTableColumns()
@@ -1486,9 +1486,9 @@ class XlrstatsPlugin(b4.b4_plugin.Plugin):
             # need to update the weapon-identifier columns in these tables for cod7.
             # This game knows over 255 weapons/variations
             self.query("""ALTER TABLE %s
-                          CHANGE id  id SMALLINT(5) UNSIGNED NOT NULL AUTO_INCREMENT;""" % WeaponStats._table)
+                          CHANGE id  id SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT;""" % WeaponStats._table)
             self.query("""ALTER TABLE %s
-                          CHANGE weapon_id weapon_id SMALLINT(5) UNSIGNED NOT NULL DEFAULT  "0";""" %
+                          CHANGE weapon_id weapon_id SMALLINT UNSIGNED NOT NULL DEFAULT "0";""" %
                        WeaponUsage._table)
         except Exception:
             pass

@@ -366,8 +366,7 @@ class MysqlStorage(b4.storage.b4_common.DatabaseStorage):
         List the tables of the current database.
         :return: list of strings.
         """
-        #sys.stdout.write("b4_mysql MysqlStorage getTables\n")
-        #self.console.info("b4_mysql.MysqlStorage.getTables")
+        self.console.verbose3("b4_mysql MysqlStorage getTables")
         tables = []
         #self.console.info("about to query")
         try:
@@ -380,9 +379,10 @@ class MysqlStorage(b4.storage.b4_common.DatabaseStorage):
                 #sys.stdout.write("cursor is not empty\n")
             #else:
             #    sys.stdout.write("cursor is empty\n")
-            cursor.close()
+            if cursor is not None:
+                cursor.close()
         except Exception as ex:
-            self.console.error("b4_mysql.MysqlStorage.getTables %s" % ex)
+            self.console.error("b4_mysql MysqlStorage getTables %s" % ex)
             raise ex
         return tables
 

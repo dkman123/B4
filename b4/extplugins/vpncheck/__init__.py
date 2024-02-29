@@ -520,7 +520,7 @@ class VpncheckPlugin(b4.b4_plugin.Plugin):
             request.add_header("X-Key", _key_iphub)
             response = urllib.request.urlopen(request)
         except:
-            self.error("SSLError connecting to %s", url)
+            self.error("vpncheck CheckIPHub SSLError connecting to %s", url)
             return _is_vpn_iphub, isp
 
         # DEBUG: show what came back
@@ -542,8 +542,10 @@ class VpncheckPlugin(b4.b4_plugin.Plugin):
         try:
             data = response.json()
         except ValueError:
-            self.warning("got non-json response from %s", url)
+            self.warning("vpncheck CheckIPHub got non-json response from %s", url)
             return _is_vpn_iphub, isp
+        except AttributeError as ex:
+            self.warning("vpncheck CheckIPHub AttributeError %r" % ex)
 
         # print(data)
 
@@ -589,8 +591,8 @@ class VpncheckPlugin(b4.b4_plugin.Plugin):
             request.add_header("Accept", "application/json")
             request.add_header("Key", _key_abuseipdb)
             response = urllib.request.urlopen(request)
-        except:
-            self.error("SSLError connecting to %s", url)
+        except Exception:
+            self.error("vpncheck CheckAbuseIPDB SSLError connecting to %s", url)
             return _is_vpn_abuseipdb, isp
 
         # show what came back
@@ -636,8 +638,10 @@ class VpncheckPlugin(b4.b4_plugin.Plugin):
         try:
             data = response.json()
         except ValueError:
-            self.warning("got non-json response from %s", url)
+            self.warning("vpncheck CheckAbuseIPDB got non-json response from %s", url)
             return _is_vpn_abuseipdb, isp
+        except AttributeError as ex:
+            self.warning("vpncheck CheckAbuseIPDB AttributeError %r" % ex)
 
         # print(data)
 
@@ -681,8 +685,8 @@ class VpncheckPlugin(b4.b4_plugin.Plugin):
         url = "http://check.getipintel.net/check.php?ip=" + _userip + "&contact=" + _email_getipintel
         try:
             response = urllib.request.urlopen(url)
-        except:
-            self.error("SSLError connecting to %s", url)
+        except Exception:
+            self.error("vpncheck CheckGetIPIntel SSLError connecting to %s", url)
             return _is_vpn_getipintel
 
         # DEBUG: show what came back
@@ -745,8 +749,8 @@ class VpncheckPlugin(b4.b4_plugin.Plugin):
             request = urllib.request.Request(url)
             request.add_header("Accept", "application/json")
             response = urllib.request.urlopen(request)
-        except:
-            self.error("SSLError connecting to %s", url)
+        except Exception:
+            self.error("vpncheck CheckProxyCheck SSLError connecting to %s", url)
             return {'is_vpn': is_vpn, 'asn': asn, 'org': org, 'isocode': isocode
                 , 'country': country, 'region': region, 'connection_type': connection_type}
 
@@ -773,9 +777,11 @@ class VpncheckPlugin(b4.b4_plugin.Plugin):
             data = response.json()
             #self.warning("DEBUG %s", str(data))
         except ValueError:
-            self.warning("got non-json response from %s", url)
-            return {'is_vpn': is_vpn, 'asn': asn, 'org': org, 'isocode': isocode
-                , 'region': region, 'connection_type': connection_type}
+            self.warning("vpncheck CheckProxyCheck got non-json response from %s", url)
+            return {'is_vpn': is_vpn, 'asn': asn, 'org': org, 'isocode': isocode,
+                    'region': region, 'connection_type': connection_type}
+        except AttributeError as ex:
+            self.warning("vpncheck CheckProxyCheck AttributeError %r" % ex)
 
         #if (skip == 1):
         #    str = '{"status": "ok", "93.239.34.47": {"city": "Hamm", "country": "Germany", "organisation": "Deutsche Telekom AG", "longitude": 7.7351, "asn": "AS3320", "regioncode": "NW", "proxy": "no", "provider": "Deutsche Telekom AG", "latitude": 51.6452, "region": "North Rhine-Westphalia", "isocode": "DE", "type": "Residential", "continent": "Europe"}}'

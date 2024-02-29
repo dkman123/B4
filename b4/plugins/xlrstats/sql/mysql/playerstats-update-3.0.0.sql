@@ -3,4 +3,4 @@
 # if you get errors that this field does NOT exist, this command needs to be run once
 #ALTER TABLE `%s` ADD `id_token` VARCHAR(10) NOT NULL DEFAULT '';
 
-ALTER TABLE `%s` CHANGE `id` `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT;
+ALTER TABLE `%s` CHANGE `id` `id` INT UNSIGNED NOT NULL AUTO_INCREMENT;
