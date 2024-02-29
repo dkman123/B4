@@ -25,12 +25,13 @@
 import b4
 import b4.b4_plugin
 #import b4.b4_events
-import time
 import datetime
-import urllib
-import urllib.request
+import json
 import os
 import re
+import time
+#import urllib
+import urllib.request
 
 from b4.b4_functions import getCmd
 from b4.b4_functions import getStuffSoundingLike
@@ -625,7 +626,8 @@ class JumperPlugin(b4.b4_plugin.Plugin):
         try:
             self.debug('contacting http://api.urtjumpers.com to retrieve maps data...')
             req = urllib.request.Request('http://api.urtjumpers.com/?key=b4urtjumpersplugin&liste=maps&format=json')
-            resp = urllib.request.urlopen(req, timeout=self._timeout).json()
+            fullresponse = urllib.request.urlopen(req, timeout=self._timeout)
+            resp = json.loads(fullresponse.decode("utf-8"))
         except Exception as e:
             self.warning('could not connect to http://api.urtjumpers.com: %s' % e)
             return {}

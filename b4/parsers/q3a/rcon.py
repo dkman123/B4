@@ -23,8 +23,8 @@
 # ################################################################### #
 
 import re
-import socket
 import select
+import socket
 import time
 import threading
 import queue
@@ -193,6 +193,7 @@ class Rcon(object):
         start_time = time.time()
 
         retries = 0
+        # if it takes longer than X seconds, time out
         while time.time() - start_time < 5:
             readables, writeables, errors = select.select([], [self.socket], [self.socket], socketTimeout)
 
@@ -310,6 +311,8 @@ class Rcon(object):
         sock.settimeout(2)
         start_time = time.time()
         data = ''
+
+        # while we're still getting more, append the data
         while time.time() - start_time < 1:
             try:
                 d = sock.recv(4096)
@@ -319,9 +322,7 @@ class Rcon(object):
             else:
                 if d:
                     # remove rcon header
-                    #data += d.replace(self.rconreplystring, '')
-
-                    #self.console.verbose2("rcon d part is %r\n" % d[4:9])
+                    #self.console.verbose2("rcon d part is %r\n" % data[4:9])
                     if d[4:9] == b'print':
                         d = d[10:]
                         #self.console.verbose2("rcon d is %r\n" % d)
@@ -333,7 +334,7 @@ class Rcon(object):
                         except Exception as ex:
                             self.console.info("rcon readNonBlocking caught decode %r" % ex)
 
-                    data = d
+                    data += d
                 elif len(data) > 0 and ord(data[-1:]) == 10:
                     break
 
@@ -357,15 +358,17 @@ class Rcon(object):
             self.console.verbose('No readable socket')
             return ''
 
+        # while we're still getting more, append the data
         while len(readables):
             d = sock.recv(size)
 
             if d:
                 self.console.verbose2("readSocket got %d readables; %r" % (len(readables), d))
-                # remove rcon header
-                #data += d.replace(self.rconreplystring, '')
 
-                #self.console.verbose2("rcon d part is %r\n" % d[4:9])
+                # remove rcon header
+                # data += d.replace(self.rconreplystring, '')
+
+                # self.console.verbose2("rcon d part is %r\n" % d[4:9])
                 if d[4:9] == b'print':
                     d = d[10:]
                     self.console.verbose2("rcon d is %r\n" % d)
@@ -377,7 +380,7 @@ class Rcon(object):
                     except Exception as ex:
                         self.console.info("rcon readSocket caught decode %r" % ex)
 
-                data = d
+                data += d
 
             readables, writeables, errors = select.select([sock], [], [sock], socketTimeout)
             if len(readables):

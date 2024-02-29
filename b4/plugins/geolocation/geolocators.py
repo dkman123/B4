@@ -24,6 +24,7 @@
 
 #import b4
 import b4.b4_clients
+import json
 import re
 import os
 import os.path
@@ -89,16 +90,18 @@ class IpApiGeolocator(Geolocator):
         :return: A Location object initialized with location data
         """
         ip = self._getIp(data)
-        resp = urllib.request.urlopen(self._url % ip, timeout=self._timeout)
-        resp = resp.json()
+        fullresp = urllib.request.urlopen(self._url % ip, timeout=self._timeout)
+        body = fullresp.read()
+        resp = json.loads(body.decode("utf-8"))
 
         if resp['status'] == 'fail':
             raise GeolocalizationError('invalid data returned by the api: %r' % resp)
 
-        return Location(country=resp.get('country', None), region=resp.get('regionName', None), city=resp.get('city', None),
-                        cc=resp.get('countryCode', None), rc=resp.get('regionCode', None), isp=resp.get('isp', None),
-                        lat=resp.get('lat', None), lon=resp.get('lon', None), timezone=resp.get('timezone', None),
-                        zipcode=resp.get('zip', None))
+        return Location(country=resp.get('country', None), region=resp.get('regionName', None),
+                        city=resp.get('city', None), cc=resp.get('countryCode', None),
+                        rc=resp.get('regionCode', None), isp=resp.get('isp', None),
+                        lat=resp.get('lat', None), lon=resp.get('lon', None),
+                        timezone=resp.get('timezone', None), zipcode=resp.get('zip', None))
 
 
 class TelizeGeolocator(Geolocator):
@@ -113,7 +116,9 @@ class TelizeGeolocator(Geolocator):
         :return: A Location object initialized with location data
         """
         ip = self._getIp(data)
-        rt = urllib.request.urlopen(self._url % ip, timeout=self._timeout).json()
+        response = urllib.request.urlopen(self._url % ip, timeout=self._timeout)
+        body = response.read()
+        rt = json.loads(body.decode("utf-8"))
         if 'code' in rt and int(rt['code']) == 401:
             raise GeolocalizationError('input string is not a valid ip address: %s' % ip)
         if 'country' not in rt:
@@ -121,8 +126,8 @@ class TelizeGeolocator(Geolocator):
 
         return Location(country=rt.get('country', None), region=rt.get('region', None), city=rt.get('city', None),
                         cc=rt.get('country_code', None), rc=rt.get('region_code', None), isp=rt.get('isp', None),
-                        lat=rt.get('latitude', None), lon=rt.get('longitude', None), timezone=rt.get('timezone', None),
-                        zipcode=rt.get('postal_code', None))
+                        lat=rt.get('latitude', None), lon=rt.get('longitude', None),
+                        timezone=rt.get('timezone', None), zipcode=rt.get('postal_code', None))
 
 
 class FreeGeoIpGeolocator(Geolocator):
@@ -141,7 +146,8 @@ class FreeGeoIpGeolocator(Geolocator):
         if rq.text.strip() == '404 page not found':
             raise GeolocalizationError('input string is not a valid ip address: %s' % ip)
 
-        rt = rq.json()
+        body = rq.read()
+        rt = json.loads(body.decode("utf-8"))
 
         if rt['status'] == 'fail':
             raise GeolocalizationError('invalid data returned by the api: %r' % rt)
@@ -166,7 +172,7 @@ class MaxMindGeolocator(Geolocator):
         # prefer plugin relative path
         self._path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'geolib', 'geoip', 'db', 'GeoIP.dat')
         if not os.path.isfile(self._path):
-            # search system wide (using system path according to installation
+            # search system-wide (using system path according to installation
             # instructions: http://dev.maxmind.com/geoip/legacy/install/country/
             if not os.path.isfile('/usr/local/share/GeoIP/GeoIP.dat'):
                 raise IOError('no MaxMind GeoIP.dat database available: put the database file in %s' % self._path)

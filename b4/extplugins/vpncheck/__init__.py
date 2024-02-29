@@ -27,12 +27,11 @@ import b4
 #import b4.b4_events
 import b4.b4_plugin
 import datetime
-#import json
+import json
 import os
 #import random
 import re
 import urllib.request
-#import string
 from threading import Thread
 import time
 
@@ -519,7 +518,8 @@ class VpncheckPlugin(b4.b4_plugin.Plugin):
             request = urllib.request.Request(url)
             request.add_header("X-Key", _key_iphub)
             response = urllib.request.urlopen(request)
-        except:
+            body = response.read()
+        except Exception:
             self.error("vpncheck CheckIPHub SSLError connecting to %s", url)
             return _is_vpn_iphub, isp
 
@@ -539,8 +539,9 @@ class VpncheckPlugin(b4.b4_plugin.Plugin):
         # print(_data)
 
         # parse the data
+        data = {"x": "y"}
         try:
-            data = response.json()
+            data = json.loads(body.decode("utf-8"))
         except ValueError:
             self.warning("vpncheck CheckIPHub got non-json response from %s", url)
             return _is_vpn_iphub, isp
@@ -591,6 +592,7 @@ class VpncheckPlugin(b4.b4_plugin.Plugin):
             request.add_header("Accept", "application/json")
             request.add_header("Key", _key_abuseipdb)
             response = urllib.request.urlopen(request)
+            body = response.read()
         except Exception:
             self.error("vpncheck CheckAbuseIPDB SSLError connecting to %s", url)
             return _is_vpn_abuseipdb, isp
@@ -635,8 +637,9 @@ class VpncheckPlugin(b4.b4_plugin.Plugin):
         # print(request.content)
 
         # parse the data
+        data = {"x": "y"}
         try:
-            data = response.json()
+            data = json.loads(body.decode("utf-8"))
         except ValueError:
             self.warning("vpncheck CheckAbuseIPDB got non-json response from %s", url)
             return _is_vpn_abuseipdb, isp
@@ -685,6 +688,7 @@ class VpncheckPlugin(b4.b4_plugin.Plugin):
         url = "http://check.getipintel.net/check.php?ip=" + _userip + "&contact=" + _email_getipintel
         try:
             response = urllib.request.urlopen(url)
+            body = response.read()
         except Exception:
             self.error("vpncheck CheckGetIPIntel SSLError connecting to %s", url)
             return _is_vpn_getipintel
@@ -699,21 +703,9 @@ class VpncheckPlugin(b4.b4_plugin.Plugin):
         # print(request.headers)
         # print(request.content)
 
-        # DEBUG test data
-        # _data = {}
-        # data = json.dumps(_data)
-        # print(data)
-
-        # parse the data
-        # try:
-        # 	data = request.json()
-        # except ValueError:
-        # 	self.error("got non-json response from %s", url)
-        # 	return _is_vpn_getipintel
-
         # print(data)
         # getipintel only returns a score value 0.0 - 1.0
-        data = float(response.content)
+        data = float(body)
 
         # sort_keys: True for "pretty display"
         # print(json.dumps(data, sort_keys=True, indent=4, separators=(',', ': ')))
@@ -749,6 +741,7 @@ class VpncheckPlugin(b4.b4_plugin.Plugin):
             request = urllib.request.Request(url)
             request.add_header("Accept", "application/json")
             response = urllib.request.urlopen(request)
+            body = response.read()
         except Exception:
             self.error("vpncheck CheckProxyCheck SSLError connecting to %s", url)
             return {'is_vpn': is_vpn, 'asn': asn, 'org': org, 'isocode': isocode
@@ -773,8 +766,9 @@ class VpncheckPlugin(b4.b4_plugin.Plugin):
         #     type        "Residential"
 
         # parse the data
+        data = {"x": "y"}
         try:
-            data = response.json()
+            data = json.loads(body.decode("utf-8"))
             #self.warning("DEBUG %s", str(data))
         except ValueError:
             self.warning("vpncheck CheckProxyCheck got non-json response from %s", url)
