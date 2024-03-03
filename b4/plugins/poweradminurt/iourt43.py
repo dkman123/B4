@@ -77,7 +77,7 @@ class Poweradminurt43Plugin(Poweradminurt41Plugin):
     _rsp_falloffRate = 2  # spam points will fall off by 1 point every 4 seconds
     _rsp_maxSpamins = 10
 
-    _round_based_gametypes = ['ts', 'bm', 'freeze','gungame']
+    _round_based_gametypes = ['ts', 'bm', 'freeze', 'gungame']
 
     def onStartup(self):
         """

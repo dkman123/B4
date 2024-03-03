@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import sys
 
 # ################################################################### #
 #                                                                     #
@@ -37,6 +36,7 @@ import threading
 import re
 import os
 import random
+#import sys
 
 from . import __version__
 from . import __author__
