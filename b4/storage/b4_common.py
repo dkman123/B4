@@ -163,7 +163,7 @@ class DatabaseStorage(Storage):
         self.dsn = dsn
         self.dsnDict = dsnDict
         self.console = console
-        self.db = []
+        self.db = {}
         self._lock = threading.Lock()
         self._lock.acquire()
 

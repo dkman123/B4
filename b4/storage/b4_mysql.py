@@ -378,7 +378,9 @@ class MysqlStorage(b4.storage.b4_common.DatabaseStorage):
                     self.console.screen.write('Connecting to DB : FAILED!\n')
                     self._consoleNotice = False
 
-        return self.db[threading.current_thread().ident]
+        if threading.current_thread().ident in self.db:
+            return self.db[threading.current_thread().ident]
+        return None
 
     ####################################################################################################################
     #                                                                                                                  #
