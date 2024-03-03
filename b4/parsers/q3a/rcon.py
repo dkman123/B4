@@ -45,7 +45,7 @@ class Rcon(object):
     queue = None
     console = None
     #socket_timeout = 0.80
-    socket_timeout = 4.0
+    socket_timeout = 3.0
     # NOTE: \377 is octal for 0xFF
     rconsendstring = '\377\377\377\377rcon "%s" %s\n'
     rconreplystring = '\377\377\377\377print\n'
