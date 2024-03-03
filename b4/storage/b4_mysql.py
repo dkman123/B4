@@ -371,7 +371,8 @@ class MysqlStorage(b4.storage.b4_common.DatabaseStorage):
             except Exception as e:
                 self.console.error('Database connection failed: working in remote mode: %s - %s',
                                    e, extract_tb(sys.exc_info()[2]))
-                self.db.pop(threading.current_thread().ident, None)
+                if threading.current_thread().ident in self.db:
+                    del self.db[threading.current_thread().ident]
                 self._lastConnectAttempt = time()
                 if self._consoleNotice:
                     self.console.screen.write('Connecting to DB : FAILED!\n')
