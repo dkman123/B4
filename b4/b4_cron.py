@@ -361,13 +361,14 @@ class Cron(object):
 
             t = time.gmtime(nexttime)
             #self.console.info("Cron run nexttime %r; now %r" % (nexttime, now))
+            dellist = []
             try:
                 for k, c in self._tabs.items():
                     #self.console.info("checking tab %s", c.command)
                     if c.match(t):
                         if 0 < c.maxRuns < c.numRuns + 1:
                             # reached max executions, remove tab
-                            del self._tabs[k]
+                            dellist.append(self._tabs[k])
                         else:
                             c.numRuns += 1
                             try:
@@ -378,6 +379,9 @@ class Cron(object):
             except RuntimeError as ex:
                 # most likely "dictionary changed size during iteration"
                 self.console.info("cron cycle %r" % ex)
+
+            for key in dellist:
+                del self._tabs[key]
 
             nexttime += 1
             sleep(1)

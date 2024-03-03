@@ -152,6 +152,7 @@ class DatabaseStorage(Storage):
     db = None
     dsn = None
     dsnDict = None
+    threadId = None
 
     def __init__(self, dsn, dsnDict, console):
         """
@@ -164,6 +165,7 @@ class DatabaseStorage(Storage):
         self.dsnDict = dsnDict
         self.console = console
         self.db = None
+        self.threadId = threading.current_thread().ident
         self._lock = threading.Lock()
         self._lock.acquire()
 
@@ -178,7 +180,7 @@ class DatabaseStorage(Storage):
         Establish and return a connection with the storage layer.
         :return The connection instance if established successfully, otherwise None.
         """
-        sys.stdout.write("b4_common DatabaseStorage connect\n")
+        #sys.stdout.write("b4_common DatabaseStorage connect\n")
         raise NotImplementedError
 
     def getConnection(self):
@@ -186,21 +188,21 @@ class DatabaseStorage(Storage):
         Return the database connection. If the connection has not been established yet, will establish a new one.
         :return The connection instance, or None if no connection can be established.
         """
-        sys.stdout.write("b4_common DatabaseStorage getConnection\n")
+        #sys.stdout.write("b4_common DatabaseStorage getConnection\n")
         raise NotImplementedError
 
     def shutdown(self):
         """
         Close the current active database connection.
         """
-        sys.stdout.write("b4_common DatabaseStorage shutdown\n")
+        #sys.stdout.write("b4_common DatabaseStorage shutdown\n")
         raise NotImplementedError
 
     def closeConnection(self):
         """
         Just an alias for shutdown (backwards compatibility).
         """
-        sys.stdout.write("b4_common DatabaseStorage closeConnection\n")
+        #sys.stdout.write("b4_common DatabaseStorage closeConnection\n")
         self.shutdown()
 
     ####################################################################################################################

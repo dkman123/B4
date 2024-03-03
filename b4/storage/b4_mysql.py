@@ -58,7 +58,7 @@ class PymysqlStorage(b4.storage.b4_common.DatabaseStorage):
         :return The connection instance, or None if no connection can be established.
         """
         sys.stdout.write("b4_mysql PymysqlStorage getConnection %r\n" % threading.current_thread().ident)
-        if self.db and self.db.open:
+        if self.db and self.threadId == threading.current_thread().ident and self.db.open:
             return self.db
         return self.connect()
 
@@ -85,7 +85,7 @@ class PymysqlStorage(b4.storage.b4_common.DatabaseStorage):
         :return True if the connection is active, False otherwise.
         """
         #sys.stdout.write("b4_mysql PymysqlStorage status\n")
-        if self.db and self.db.open:
+        if self.db and self.threadId == threading.current_thread().ident and self.db.open:
             return True
         return False
 
@@ -117,7 +117,7 @@ class MysqlConnectorStorage(b4.storage.b4_common.DatabaseStorage):
         :return The connection instance, or None if no connection can be established.
         """
         sys.stdout.write("b4_mysql MysqlConnectorStorage getConnection %r\n" % threading.current_thread().ident)
-        if self.db and self.db._socket is not None:
+        if self.db and self.threadId == threading.current_thread().ident and self.db._socket is not None:
             return self.db
         return self.connect()
 
@@ -146,7 +146,7 @@ class MysqlConnectorStorage(b4.storage.b4_common.DatabaseStorage):
         """
         #sys.stdout.write("b4_mysql MysqlConnectorStorage status\n")
         self.console.info("b4_mysql.MysqlConnectorStorage.status")
-        if self.db and self.db._socket is not None:
+        if self.db and self.threadId == threading.current_thread().ident and self.db._socket is not None:
             return True
         return False
 
@@ -290,11 +290,12 @@ class MysqlStorage(b4.storage.b4_common.DatabaseStorage):
         :return The connection instance if established successfully, otherwise None.
         """
         #sys.stdout.write("b4_mysql MysqlStorage connect\n")
-        #self.console.info("b4_mysql.MysqlStorage.connect")
+        self.console.info("b4_mysql.MysqlStorage.connect %r" % threading.current_thread().ident)
         # do not retry too soon because the MySQL server could
         # have connection troubles and we do not want to spam it
         if time() - self._lastConnectAttempt < self._reconnectDelay:
             self.db = None
+            self.threadId = None
             self.console.bot('New MySQL database connection requested but last connection attempt '
                              'failed less than %s seconds ago: exiting...' % self._reconnectDelay)
         else:
@@ -317,9 +318,11 @@ class MysqlStorage(b4.storage.b4_common.DatabaseStorage):
                                                 user=self.dsnDict['user'],
                                                 password=self.dsnDict['password'],
                                                 db=self.dsnDict['path'][1:],
-                                                charset="utf8")
+                                                charset="UTF8MB4")
+                self.threadId = threading.current_thread().ident
 
-                self.console.bot('Successfully established a connection with MySQL database')
+                self.console.bot('Successfully established a connection with MySQL database %r'
+                                 % threading.current_thread().ident)
                 self._lastConnectAttempt = 0
 
                 if self._consoleNotice:
