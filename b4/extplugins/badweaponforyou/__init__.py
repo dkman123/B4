@@ -7,9 +7,7 @@ import b4.b4_clients
 #import b4.b4_events
 import b4.b4_plugin
 #import re
-#import threading
-
-from threading import Thread
+import threading
 
 __author__  = 'PtitBigorneau www.ptitbigorneau.fr'
 __version__ = '1.5.3'
@@ -435,13 +433,13 @@ class BadweaponforyouPlugin(b4.b4_plugin.Plugin):
                
         if (sgear):
         
-            Thread(target=self.dowhogear, args=(client, sgear, cmd)).start()
+            threading.Thread(target=self.dowhogear, args=(client, sgear, cmd)).start()
         
         else:
             return False
 
     def dowhogear(self, client, sgear, cmd):
-
+        self.info("bwfy dowhogear; thread %r" % threading.current_thread().ident)
         rlgear = self._lgear[sgear]
         rgear = rlgear[0]
         ngear = rlgear[1]  

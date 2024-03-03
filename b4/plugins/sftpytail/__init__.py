@@ -190,6 +190,8 @@ class SftpytailPlugin(b4.b4_plugin.Plugin):
                 self.buffer = block
             else:
                 self.buffer = self.buffer + block
+
+        self.info("sftpytail update; thread %r" % threading.current_thread().ident)
         transport = sftp = None
         rfile = None
         self.file = open(self.lgame_log, 'ab')

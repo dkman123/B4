@@ -250,7 +250,7 @@ class Rcon(object):
         """
         Write multiple RCON commands on the socket.
         """
-        self.console.verbose3("rcon _writelines")
+        self.console.info("rcon _writelines; thread %r" % threading.current_thread().ident)
         while not self._stopEvent.is_set():
             lines = self.queue.get(True)
             for cmd in lines:

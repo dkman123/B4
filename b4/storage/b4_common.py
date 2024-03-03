@@ -35,7 +35,7 @@ import threading
 from contextlib import contextmanager
 from time import time
 
-#PROTOCOLS = ('mysql', 'sqlite', 'postgresql')
+# PROTOCOLS = ('mysql', 'sqlite', 'postgresql')
 
 
 class mapresult(object):
@@ -149,10 +149,9 @@ class DatabaseStorage(Storage):
     _reName = re.compile(r'([A-Z])')
     _reVar = re.compile(r'_([a-z])')
 
-    db = None
+    db = []
     dsn = None
     dsnDict = None
-    threadId = None
 
     def __init__(self, dsn, dsnDict, console):
         """
@@ -164,8 +163,7 @@ class DatabaseStorage(Storage):
         self.dsn = dsn
         self.dsnDict = dsnDict
         self.console = console
-        self.db = None
-        self.threadId = threading.current_thread().ident
+        self.db = []
         self._lock = threading.Lock()
         self._lock.acquire()
 
@@ -242,7 +240,8 @@ class DatabaseStorage(Storage):
 
         try:
 
-            cursor = self.query(b4.b4_querybuilder.QueryBuilder(self.db).SelectQuery('*', 'clients', where, None, 1))
+            cursor = self.query(b4.b4_querybuilder.QueryBuilder(self.db[threading.current_thread().ident]).SelectQuery(
+                '*', 'clients', where, None, 1))
             if not cursor.rowcount:
                 raise KeyError('no client matching guid %s' % client.guid)
 
@@ -302,8 +301,8 @@ class DatabaseStorage(Storage):
         #self.console.verbose3("b4_common DatabaseStorage getClientsMatching\n")
         self.console.debug('b4_common: getClientsMatching %s' % match)
         cursor = self.query(
-            b4.b4_querybuilder.QueryBuilder(self.db).SelectQuery('*', 'clients'
-                                                                 , match, 'time_edit DESC', 5))
+            b4.b4_querybuilder.QueryBuilder(self.db[threading.current_thread().ident]).SelectQuery(
+                '*', 'clients', match, 'time_edit DESC', 5))
 
         clients = []
         self.console.verbose2("b4_common getClientsMatching got %r rows" % cursor.rowcount)
@@ -345,9 +344,11 @@ class DatabaseStorage(Storage):
 
         # self.console.debug('Storage: setClient data %s' % data)
         if client.id > 0:
-            self.query(b4.b4_querybuilder.QueryBuilder(self.db).UpdateQuery(data, 'clients', {'id': client.id}))
+            self.query(b4.b4_querybuilder.QueryBuilder(self.db[threading.current_thread().ident]).UpdateQuery(
+                data, 'clients', {'id': client.id}))
         else:
-            cursor = self.query(b4.b4_querybuilder.QueryBuilder(self.db).InsertQuery(data, 'clients'))
+            cursor = self.query(b4.b4_querybuilder.QueryBuilder(
+                self.db[threading.current_thread().ident]).InsertQuery(data, 'clients'))
             if cursor is not None:
                 client.id = cursor.lastrowid
                 cursor.close()
@@ -371,9 +372,11 @@ class DatabaseStorage(Storage):
 
         self.console.debug('Storage: setClientAlias data %s' % data)
         if alias.id:
-            self.query(b4.b4_querybuilder.QueryBuilder(self.db).UpdateQuery(data, 'aliases', {'id': alias.id}))
+            self.query(b4.b4_querybuilder.QueryBuilder(self.db[threading.current_thread().ident]).UpdateQuery(
+                data, 'aliases', {'id': alias.id}))
         else:
-            cursor = self.query(b4.b4_querybuilder.QueryBuilder(self.db).InsertQuery(data, 'aliases'))
+            cursor = self.query(b4.b4_querybuilder.QueryBuilder(self.db[threading.current_thread().ident]).InsertQuery(
+                data, 'aliases'))
             alias.id = cursor.lastrowid
             cursor.close()
 
@@ -388,11 +391,12 @@ class DatabaseStorage(Storage):
         #self.console.verbose3("b4_common DatabaseStorage getClientAlias\n")
         self.console.debug('Storage: getClientAlias %s' % alias)
         if hasattr(alias, 'id') and alias.id > 0:
-            query = b4.b4_querybuilder.QueryBuilder(self.db).SelectQuery('*', 'aliases', {'id': alias.id}, None, 1)
+            query = b4.b4_querybuilder.QueryBuilder(self.db[threading.current_thread().ident]).SelectQuery(
+                '*', 'aliases', {'id': alias.id}, None, 1)
         elif hasattr(alias, 'alias') and hasattr(alias, 'clientId'):
-            query = b4.b4_querybuilder.QueryBuilder(self.db).SelectQuery('*', 'aliases', {'alias': alias.alias,
-                                                                                          'client_id': alias.clientId},
-                                                                         None, 1)
+            query = b4.b4_querybuilder.QueryBuilder(self.db[threading.current_thread().ident]).SelectQuery(
+                '*', 'aliases', {'alias': alias.alias, 'client_id': alias.clientId},
+                None, 1)
         else:
             raise KeyError('no alias found matching %s' % alias)
 
@@ -419,7 +423,7 @@ class DatabaseStorage(Storage):
         """
         #self.console.verbose3("b4_common DatabaseStorage getClientAliases\n")
         self.console.debug('Storage: getClientAliases %s' % client)
-        cursor = self.query(b4.b4_querybuilder.QueryBuilder(self.db)
+        cursor = self.query(b4.b4_querybuilder.QueryBuilder(self.db[threading.current_thread().ident])
                             .SelectQuery('*', 'aliases', {'client_id': client.id}, 'id'))
 
         aliases = []
@@ -454,9 +458,11 @@ class DatabaseStorage(Storage):
 
         self.console.debug('Storage: setClientIpAddress data %s' % data)
         if ipalias.id:
-            self.query(b4.b4_querybuilder.QueryBuilder(self.db).UpdateQuery(data, 'ipaliases', {'id': ipalias.id}))
+            self.query(b4.b4_querybuilder.QueryBuilder(self.db[threading.current_thread().ident]).UpdateQuery(
+                data, 'ipaliases', {'id': ipalias.id}))
         else:
-            cursor = self.query(b4.b4_querybuilder.QueryBuilder(self.db).InsertQuery(data, 'ipaliases'))
+            cursor = self.query(b4.b4_querybuilder.QueryBuilder(self.db[threading.current_thread().ident]).InsertQuery(
+                data, 'ipaliases'))
             ipalias.id = cursor.lastrowid
             cursor.close()
 
@@ -471,10 +477,10 @@ class DatabaseStorage(Storage):
         #self.console.verbose3("b4_common DatabaseStorage getClientIpAddress\n")
         self.console.debug('Storage: getClientIpAddress %s' % ipalias)
         if hasattr(ipalias, 'id') and ipalias.id > 0:
-            query = (b4.b4_querybuilder.QueryBuilder(self.db)
+            query = (b4.b4_querybuilder.QueryBuilder(self.db[threading.current_thread().ident])
                      .SelectQuery('*', 'ipaliases', {'id': ipalias.id}, None, 1))
         elif hasattr(ipalias, 'ip') and hasattr(ipalias, 'clientId'):
-            query = (b4.b4_querybuilder.QueryBuilder(self.db)
+            query = (b4.b4_querybuilder.QueryBuilder(self.db[threading.current_thread().ident])
                      .SelectQuery('*', 'ipaliases', {'ip': ipalias.ip,
                                                      'client_id': ipalias.clientId}, None, 1))
         else:
@@ -503,7 +509,7 @@ class DatabaseStorage(Storage):
         """
         #self.console.verbose3("b4_common DatabaseStorage getClientIpAddresses\n")
         self.console.debug('Storage: getClientIpAddresses %s' % client)
-        cursor = self.query(b4.b4_querybuilder.QueryBuilder(self.db)
+        cursor = self.query(b4.b4_querybuilder.QueryBuilder(self.db[threading.current_thread().ident])
                             .SelectQuery('*', 'ipaliases', {'client_id': client.id}, 'id'))
 
         aliases = []
@@ -530,9 +536,10 @@ class DatabaseStorage(Storage):
         """
         #self.console.verbose3("b4_common DatabaseStorage getLastPenalties\n")
         penalties = []
-        where = b4.b4_querybuilder.QueryBuilder(self.db).WhereClause({'type': types, 'inactive': 0})
+        where = b4.b4_querybuilder.QueryBuilder(self.db[threading.current_thread().ident]).WhereClause(
+            {'type': types, 'inactive': 0})
         where += ' AND (time_expire = -1 OR time_expire > %s)' % int(time())
-        cursor = self.query(b4.b4_querybuilder.QueryBuilder(self.db)
+        cursor = self.query(b4.b4_querybuilder.QueryBuilder(self.db[threading.current_thread().ident])
                             .SelectQuery(fields='*', table='penalties', where=where,
                                          orderby='time_add DESC, id DESC', limit=num))
         while not cursor.EOF and len(penalties) < num:
@@ -575,9 +582,11 @@ class DatabaseStorage(Storage):
         self.console.debug('b4_common setClientPenalty data %s' % data)
 
         if penalty.id:
-            self.query(b4.b4_querybuilder.QueryBuilder(self.db).UpdateQuery(data, 'penalties', {'id': penalty.id}))
+            self.query(b4.b4_querybuilder.QueryBuilder(self.db[threading.current_thread().ident]).UpdateQuery(
+                data, 'penalties', {'id': penalty.id}))
         else:
-            cursor = self.query(b4.b4_querybuilder.QueryBuilder(self.db).InsertQuery(data, 'penalties'))
+            cursor = self.query(b4.b4_querybuilder.QueryBuilder(self.db[threading.current_thread().ident]).InsertQuery(
+                data, 'penalties'))
             penalty.id = cursor.lastrowid
             cursor.close()
 
@@ -591,7 +600,7 @@ class DatabaseStorage(Storage):
         """
         #self.console.verbose3("b4_common DatabaseStorage getClientPenalty\n")
         self.console.debug('Storage: getClientPenalty %s' % penalty)
-        cursor = self.query(b4.b4_querybuilder.QueryBuilder(self.db)
+        cursor = self.query(b4.b4_querybuilder.QueryBuilder(self.db[threading.current_thread().ident])
                             .SelectQuery('*', 'penalties', {'id': penalty.id}, None, 1))
         if cursor.EOF:
             cursor.close()
@@ -607,20 +616,21 @@ class DatabaseStorage(Storage):
         :return: List of penalties
         """
         # self.console.verbose('b4_common: getClientPenalties %s' % client)
-        # where = b4.b4_querybuilder.QueryBuilder(self.db)
+        # where = b4.b4_querybuilder.QueryBuilder(self.db[threading.current_thread().ident])
         # .WhereClause({'type': type, 'client_id': client.id, 'inactive': 0})
         # where += ' AND (time_expire = -1 OR time_expire > %s)' % int(time())
-        # cursor = self.query(b4.b4_querybuilder.QueryBuilder(self.db)
+        # cursor = self.query(b4.b4_querybuilder.QueryBuilder(self.db[threading.current_thread().ident])
         # .SelectQuery('*', 'penalties', where, 'time_add DESC'))
 
         # DK: testing get client penalties by IP
         #self.console.verbose3("b4_common DatabaseStorage getClientPenalties")
         self.console.debug('b4_common: getClientPenalties %s' % client)
-        where = b4.b4_querybuilder.QueryBuilder(self.db).WhereClause({'type': penType, 'inactive': 0})
+        where = b4.b4_querybuilder.QueryBuilder(self.db[threading.current_thread().ident]).WhereClause(
+            {'type': penType, 'inactive': 0})
         where += ' AND (time_expire = -1 OR time_expire > %s)' % int(time())
         where += ' AND client_id IN (SELECT id FROM clients WHERE ip = "%s")' % client.ip
         cursor = self.query(
-            b4.b4_querybuilder.QueryBuilder(self.db)
+            b4.b4_querybuilder.QueryBuilder(self.db[threading.current_thread().ident])
             .SelectQuery('*', 'penalties', where, 'time_add DESC'))
 
         penalties = []
@@ -639,20 +649,21 @@ class DatabaseStorage(Storage):
         :param penType: The type of the penalty we want to retrieve.
         :return: The last penalty added for the given client
         """
-        # where = b4.b4_querybuilder.QueryBuilder(self.db)
+        # where = b4.b4_querybuilder.QueryBuilder(self.db[threading.current_thread().ident])
         # .WhereClause({'type': penType, 'client_id': client.id, 'inactive': 0})
         # where += ' AND (time_expire = -1 OR time_expire > %s)' % int(time())
-        # cursor = self.query(b4.b4_querybuilder.QueryBuilder(self.db)
+        # cursor = self.query(b4.b4_querybuilder.QueryBuilder(self.db[threading.current_thread().ident])
         # .SelectQuery('*', 'penalties', where, 'time_add DESC', 1))
 
         # DK: testing get client penalties by IP
         #self.console.verbose3("b4_common DatabaseStorage getClientLastPenalty")
         self.console.debug('Storage: getClientPenalties %s' % client)
-        where = b4.b4_querybuilder.QueryBuilder(self.db).WhereClause({'type': penType, 'inactive': 0})
+        where = b4.b4_querybuilder.QueryBuilder(self.db[threading.current_thread().ident]).WhereClause(
+            {'type': penType, 'inactive': 0})
         where += ' AND (time_expire = -1 OR time_expire > %s)' % int(time())
         where += ' AND client_id IN (SELECT id FROM clients WHERE ip = "%s")' % client.ip
         cursor = self.query(
-            b4.b4_querybuilder.QueryBuilder(self.db)
+            b4.b4_querybuilder.QueryBuilder(self.db[threading.current_thread().ident])
             .SelectQuery('*', 'penalties', where, 'time_add DESC', 1))
 
         row = cursor.getOneRow()
@@ -669,10 +680,10 @@ class DatabaseStorage(Storage):
         :return: The first penalty added for the given client.
         """
         #self.console.verbose3("b4_common DatabaseStorage getClientFirstPenalty")
-        where = b4.b4_querybuilder.QueryBuilder(self.db).WhereClause(
+        where = b4.b4_querybuilder.QueryBuilder(self.db[threading.current_thread().ident]).WhereClause(
             {'type': penType, 'client_id': client.id, 'inactive': 0})
         where += ' AND (time_expire = -1 OR time_expire > %s)' % int(time())
-        cursor = self.query(b4.b4_querybuilder.QueryBuilder(self.db)
+        cursor = self.query(b4.b4_querybuilder.QueryBuilder(self.db[threading.current_thread().ident])
                             .SelectQuery('*', 'penalties', where,
                                          'time_expire DESC, time_add ASC', 1))
         row = cursor.getOneRow()
@@ -688,9 +699,8 @@ class DatabaseStorage(Storage):
         :param penType: The type of the penalties we want to disable.
         """
         #self.console.verbose3("b4_common DatabaseStorage disableClientPenalties")
-        self.query(b4.b4_querybuilder.QueryBuilder(self.db).UpdateQuery({'inactive': 1}, 'penalties',
-                                                                        {'type': penType, 'client_id': client.id,
-                                                                         'inactive': 0}))
+        self.query(b4.b4_querybuilder.QueryBuilder(self.db[threading.current_thread().ident]).UpdateQuery(
+            {'inactive': 1}, 'penalties', {'type': penType, 'client_id': client.id,'inactive': 0}))
 
     def numPenalties(self, client, penType='Ban'):
         """
@@ -707,7 +717,8 @@ class DatabaseStorage(Storage):
         # DK: testing get client penalties by IP
         #self.console.verbose3("b4_common DatabaseStorage numPenalties")
         self.console.debug('Storage: getClientPenalties %s' % client)
-        where = b4.b4_querybuilder.QueryBuilder(self.db).WhereClause({'type': penType, 'inactive': 0})
+        where = b4.b4_querybuilder.QueryBuilder(self.db[threading.current_thread().ident]).WhereClause(
+            {'type': penType, 'inactive': 0})
         where += ' AND (time_expire = -1 OR time_expire > %s)' % int(time())
         where += ' AND client_id IN (SELECT id FROM clients WHERE ip = "%s")' % client.ip
         cursor = self.query("""SELECT COUNT(id) total FROM penalties WHERE %s""" % where)
@@ -726,7 +737,9 @@ class DatabaseStorage(Storage):
         #self.console.verbose3("b4_common DatabaseStorage getGroups")
         try:
             if not self._groups:
-                cursor = self.query(b4.b4_querybuilder.QueryBuilder(self.db).SelectQuery('*', 'usergroups', None, 'level'))
+                cursor = self.query(b4.b4_querybuilder.QueryBuilder(
+                    self.db[threading.current_thread().ident]).SelectQuery(
+                    '*', 'usergroups', None, 'level'))
                 self._groups = []
                 while not cursor.EOF:
                     row = cursor.getRow()
@@ -753,8 +766,8 @@ class DatabaseStorage(Storage):
         """
         #self.console.verbose3("b4_common DatabaseStorage getGroup")
         if hasattr(group, 'keyword') and group.keyword:
-            query = b4.b4_querybuilder.QueryBuilder(self.db).SelectQuery('*', 'usergroups', dict(keyword=group.keyword),
-                                                                         None, 1)
+            query = b4.b4_querybuilder.QueryBuilder(self.db[threading.current_thread().ident]).SelectQuery(
+                '*', 'usergroups', dict(keyword=group.keyword), None, 1)
             self.console.verbose2(query)
             cursor = self.query(query)
             row = cursor.getOneRow()
@@ -762,8 +775,8 @@ class DatabaseStorage(Storage):
                 raise KeyError('no group matching keyword: %s' % group.keyword)
 
         elif hasattr(group, 'level') and group.level >= 0:
-            query = b4.b4_querybuilder.QueryBuilder(self.db).SelectQuery('*', 'usergroups', dict(level=group.level),
-                                                                         None, 1)
+            query = b4.b4_querybuilder.QueryBuilder(self.db[threading.current_thread().ident]).SelectQuery(
+                '*', 'usergroups', dict(level=group.level), None, 1)
             self.console.verbose2(query)
             cursor = self.query(query)
             row = cursor.getOneRow()
@@ -817,9 +830,11 @@ class DatabaseStorage(Storage):
 
         self.console.debug('Storage: setMapResult data %s' % data)
         if mapresult.id > 0:
-            self.query(b4.b4_querybuilder.QueryBuilder(self.db).UpdateQuery(data, 'mapresult', {'id': mapresult.id}))
+            self.query(b4.b4_querybuilder.QueryBuilder(self.db[threading.current_thread().ident]).UpdateQuery(
+                data, 'mapresult', {'id': mapresult.id}))
         else:
-            cursor = self.query(b4.b4_querybuilder.QueryBuilder(self.db).InsertQuery(data, 'mapresult'))
+            cursor = self.query(b4.b4_querybuilder.QueryBuilder(self.db[threading.current_thread().ident]).InsertQuery(
+                data, 'mapresult'))
             mapresult.id = cursor.lastrowid
             cursor.close()
 
@@ -842,7 +857,7 @@ class DatabaseStorage(Storage):
         #self.console.info("b4_common DatabaseStorage _query")
         #self._lock.acquire()
         try:
-            cursor = self.db.cursor()
+            cursor = self.db[threading.current_thread().ident].cursor()
             if bindata is None:
                 #self.console.info("b4_common _query executing cursor")
                 cursor.execute(query)
@@ -850,7 +865,7 @@ class DatabaseStorage(Storage):
                 #self.console.info("b4_common _query executing cursor with bindata")
                 cursor.execute(query, bindata)
             #self.console.info("b4_common _query setting dbcursor")
-            dbcursor = b4.storage.b4_cursor.Cursor(cursor, self.db)
+            dbcursor = b4.storage.b4_cursor.Cursor(cursor, self.db[threading.current_thread().ident])
         except Exception as ex:
             self.console.error("b4_common _query exception %s" % ex)
             dbcursor = None

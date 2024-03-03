@@ -178,6 +178,7 @@ class HttpytailPlugin(b4.b4_plugin.Plugin):
         """
         Update the local log file.
         """
+        self.info("httpytail update; thread %r" % threading.current_thread().ident)
         try:
             self.file = open(self.lgame_log, 'ab')
             self.file.write('\r\n'.encode("utf-8"))

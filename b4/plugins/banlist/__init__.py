@@ -25,6 +25,8 @@
 __version__ = '2.8'
 __author__  = 'Courgette'
 
+import sys
+
 import b4
 import b4.b4_cron
 #import b4.b4_events
@@ -35,9 +37,7 @@ import gzip
 import os
 import random
 import re
-#import string
-#from io import StringIO
-from threading import Thread
+import threading
 import time
 import urllib.error
 import urllib.request
@@ -217,7 +217,7 @@ class BanlistPlugin(b4.b4_plugin.Plugin):
         Handle EVT_CLIENT_AUTH.
         """
         if self._banlists:
-            Thread(target=self.checkClient, args=(event.client,)).start()
+            threading.Thread(target=self.checkClient, args=(event.client,)).start()
 
     ####################################################################################################################
     #                                                                                                                  #
@@ -238,10 +238,10 @@ class BanlistPlugin(b4.b4_plugin.Plugin):
         """
         Examine players ip-bans and allow/deny to connect.
         """
-        self.debug('checking slot: %s, %s, %s, %s' % (client.cid, client.name, client.ip, client.guid))
+        self.info('checking slot: %s, %s, %s, %s; thread %r' % (client.cid, client.name, client.ip, client.guid, threading.current_thread().ident))
 
         # start chunk
-        # note: might want to move this up to onAuth so it doesn't spin up a thread
+        # note: might want to move this up to onAuth, so it doesn't spin up a thread
         last_player_scanned = None
         # if the player wasn't in the list, then add them
         try:
@@ -307,6 +307,7 @@ class BanlistPlugin(b4.b4_plugin.Plugin):
         """
         Update a banlist from a URL
         """
+        self.info("banlist _verboseUpdateBanListFromUrl; thread %r" % threading.current_thread().ident)
         try:
             result = banlist.updateFromUrl()
             if result is True:
@@ -374,11 +375,11 @@ class BanlistPlugin(b4.b4_plugin.Plugin):
 
         for banlist in self._banlists:
             if banlist.url is not None:
-                Thread(target=self._verboseUpdateBanListFromUrl, args=(client, banlist)).start()
+                threading.Thread(target=self._verboseUpdateBanListFromUrl, args=(client, banlist)).start()
 
         for banlist in self._whitelists:
             if banlist.url is not None:
-                Thread(target=self._verboseUpdateBanListFromUrl, args=(client, banlist)).start()
+                threading.Thread(target=self._verboseUpdateBanListFromUrl, args=(client, banlist)).start()
 
     def cmd_banlistcheck(self, data=None, client=None, cmd=None):
         """
@@ -508,6 +509,7 @@ class Banlist(object):
             return True
 
     def _updateFromUrlAndCheckAll(self):
+        sys.stdout.write("banlist _updateFromUrlAndCheckAll; thread %r" % threading.current_thread().ident)
         try:
             result = self.updateFromUrl()
             if result is not True:
@@ -569,7 +571,7 @@ class Banlist(object):
             return "%s" % e
 
     def autoUpdateFromUrl(self):
-        Thread(target=self._updateFromUrlAndCheckAll).start()
+        threading.Thread(target=self._updateFromUrlAndCheckAll).start()
 
     def getMessage(self, client):
         """

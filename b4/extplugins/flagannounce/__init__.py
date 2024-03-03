@@ -39,7 +39,7 @@ __author__  = 'isopropanol'
 
 
 def skuffle_thread(self):
-    self.debug("Thread skuffle_thread: starting")
+    self.debug("Thread skuffle_thread: starting; thread %r" % threading.current_thread().ident)
     self.console.say("Shuffle in %s seconds" % self._shuffle_delay)
     time.sleep(self._shuffle_delay)
     # self.console.say("Score Auto Shuffle")
@@ -47,7 +47,7 @@ def skuffle_thread(self):
     self.debug("Thread skuffle_thread: finishing")
 
 def randomshuffle_thread(self):
-    self.debug("Thread randomshuffle_thread: starting")
+    self.debug("Thread randomshuffle_thread: starting; thread %r" % threading.current_thread().ident)
     self.console.say("Shuffle in %s seconds" % self._shuffle_delay)
     time.sleep(self._shuffle_delay)
     # self.console.say("Score Auto Shuffle")

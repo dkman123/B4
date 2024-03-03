@@ -32,7 +32,7 @@ import os
 #import random
 import re
 import urllib.request
-from threading import Thread
+import threading
 import time
 
 from b4.b4_clients import Client
@@ -314,7 +314,7 @@ class VpncheckPlugin(b4.b4_plugin.Plugin):
             #if self._whitelists:
             # self.debug("VPNCheck: running whitelist check")
             # NOTE: 2nd argument must be a tuple, leave the "extra/stray" comma
-            Thread(target=self.checkClient, args=(event.client, )).start()
+            threading.Thread(target=self.checkClient, args=(event.client, )).start()
 
     ####################################################################################################################
     #                                                                                                                  #
@@ -323,6 +323,7 @@ class VpncheckPlugin(b4.b4_plugin.Plugin):
     ####################################################################################################################
 
     def checkClient(self, sclient):
+        self.info("vpncheck checkClient; thread %r" % threading.current_thread().ident)
         # self.debug("VPNCheck: checkClient")
 
         # always check client

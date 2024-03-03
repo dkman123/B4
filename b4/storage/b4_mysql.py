@@ -58,8 +58,10 @@ class PymysqlStorage(b4.storage.b4_common.DatabaseStorage):
         :return The connection instance, or None if no connection can be established.
         """
         sys.stdout.write("b4_mysql PymysqlStorage getConnection %r\n" % threading.current_thread().ident)
-        if self.db and self.threadId == threading.current_thread().ident and self.db.open:
-            return self.db
+        if (threading.current_thread().ident in self.db
+                and self.db[threading.current_thread().ident]
+                and self.db[threading.current_thread().ident].open):
+            return self.db[threading.current_thread().ident]
         return self.connect()
 
     def shutdown(self):
@@ -67,11 +69,13 @@ class PymysqlStorage(b4.storage.b4_common.DatabaseStorage):
         Close the current active database connection.
         """
         #sys.stdout.write("b4_mysql PymysqlStorage shutdown\n")
-        if self.db and self.db.open:
+        if (threading.current_thread().ident in self.db
+                and self.db[threading.current_thread().ident]
+                and self.db[threading.current_thread().ident].open):
             # checking 'open' will prevent exception raising
             self.console.bot('Closing connection with MySQL database...')
-            self.db.close()
-        self.db = None
+            self.db[threading.current_thread().ident].close()
+        self.db.pop(threading.current_thread().ident, None)
 
     ####################################################################################################################
     #                                                                                                                  #
@@ -85,7 +89,9 @@ class PymysqlStorage(b4.storage.b4_common.DatabaseStorage):
         :return True if the connection is active, False otherwise.
         """
         #sys.stdout.write("b4_mysql PymysqlStorage status\n")
-        if self.db and self.threadId == threading.current_thread().ident and self.db.open:
+        if (threading.current_thread().ident in self.db
+                and self.db[threading.current_thread().ident]
+                and self.db[threading.current_thread().ident].open):
             return True
         return False
 
@@ -117,8 +123,10 @@ class MysqlConnectorStorage(b4.storage.b4_common.DatabaseStorage):
         :return The connection instance, or None if no connection can be established.
         """
         sys.stdout.write("b4_mysql MysqlConnectorStorage getConnection %r\n" % threading.current_thread().ident)
-        if self.db and self.threadId == threading.current_thread().ident and self.db._socket is not None:
-            return self.db
+        if (threading.current_thread().ident in self.db
+                and self.db[threading.current_thread().ident]
+                and self.db[threading.current_thread().ident]._socket is not None):
+            return self.db[threading.current_thread().ident]
         return self.connect()
 
     def shutdown(self):
@@ -127,11 +135,13 @@ class MysqlConnectorStorage(b4.storage.b4_common.DatabaseStorage):
         """
         #sys.stdout.write("b4_mysql MysqlConnectorStorage shutdown\n")
         self.console.info("b4_mysql.MysqlConnectorStorage.shutdown")
-        if self.db and self.db._socket is not None:
+        if (threading.current_thread().ident in self.db
+                and self.db[threading.current_thread().ident]
+                and self.db[threading.current_thread().ident]._socket is not None):
             # the shutdown method is already exception safe
             self.console.bot('Closing connection with MySQL database...')
-            self.db.shutdown()
-        self.db = None
+            self.db[threading.current_thread().ident].shutdown()
+        self.db.pop(threading.current_thread().ident, None)
 
     ####################################################################################################################
     #                                                                                                                  #
@@ -146,7 +156,9 @@ class MysqlConnectorStorage(b4.storage.b4_common.DatabaseStorage):
         """
         #sys.stdout.write("b4_mysql MysqlConnectorStorage status\n")
         self.console.info("b4_mysql.MysqlConnectorStorage.status")
-        if self.db and self.threadId == threading.current_thread().ident and self.db._socket is not None:
+        if (threading.current_thread().ident in self.db
+                and self.db[threading.current_thread().ident]
+                and self.db[threading.current_thread().ident]._socket is not None):
             return True
         return False
 
@@ -178,8 +190,10 @@ class MySQLdbStorage(b4.storage.b4_common.DatabaseStorage):
         :return The connection instance, or None if no connection can be established.
         """
         sys.stdout.write("b4_mysql MySQLdbStorage connect %r\n" % threading.current_thread().ident)
-        if self.db and self.db.open:
-            return self.db
+        if (threading.current_thread().ident in self.db
+                and self.db[threading.current_thread().ident]
+                and self.db[threading.current_thread().ident].open):
+            return self.db[threading.current_thread().ident]
         return self.connect()
 
     def shutdown(self):
@@ -187,11 +201,13 @@ class MySQLdbStorage(b4.storage.b4_common.DatabaseStorage):
         Close the current active database connection.
         """
         #sys.stdout.write("b4_mysql MySQLdbStorage shutdown\n")
-        if self.db and self.db.open:
+        if (threading.current_thread().ident in self.db
+                and self.db[threading.current_thread().ident]
+                and self.db[threading.current_thread().ident].open):
             # checking 'open' will prevent exception raising
             self.console.bot('Closing connection with MySQL database...')
-            self.db.close()
-        self.db = None
+            self.db[threading.current_thread().ident].close()
+        self.db.pop(threading.current_thread().ident, None)
 
     ####################################################################################################################
     #                                                                                                                  #
@@ -205,7 +221,9 @@ class MySQLdbStorage(b4.storage.b4_common.DatabaseStorage):
         :return True if the connection is active, False otherwise.
         """
         #sys.stdout.write("b4_mysql MySQLdbStorage status\n")
-        if self.db and self.db.open:
+        if (threading.current_thread().ident in self.db
+                and self.db[threading.current_thread().ident]
+                and self.db[threading.current_thread().ident].open):
             return True
         return False
 
@@ -292,10 +310,10 @@ class MysqlStorage(b4.storage.b4_common.DatabaseStorage):
         #sys.stdout.write("b4_mysql MysqlStorage connect\n")
         self.console.info("b4_mysql.MysqlStorage.connect %r" % threading.current_thread().ident)
         # do not retry too soon because the MySQL server could
-        # have connection troubles and we do not want to spam it
+        # have connection troubles, and we do not want to spam it
         if time() - self._lastConnectAttempt < self._reconnectDelay:
-            self.db = None
-            self.threadId = None
+            # remove the key from the dictionary
+            self.db.pop(threading.current_thread().ident, None)
             self.console.bot('New MySQL database connection requested but last connection attempt '
                              'failed less than %s seconds ago: exiting...' % self._reconnectDelay)
         else:
@@ -313,13 +331,12 @@ class MysqlStorage(b4.storage.b4_common.DatabaseStorage):
                 #                   self.dsnDict['user'], self.dsnDict['password'],
                 #                   self.dsnDict['path'][1:]))
                 # create the connection instance using the specified connector
-                self.db = self.__driver.connect(host=self.dsnDict['host'],
+                self.db[threading.current_thread().ident] = self.__driver.connect(host=self.dsnDict['host'],
                                                 port=self.dsnDict['port'],
                                                 user=self.dsnDict['user'],
                                                 password=self.dsnDict['password'],
                                                 db=self.dsnDict['path'][1:],
                                                 charset="UTF8MB4")
-                self.threadId = threading.current_thread().ident
 
                 self.console.bot('Successfully established a connection with MySQL database %r'
                                  % threading.current_thread().ident)
@@ -350,13 +367,13 @@ class MysqlStorage(b4.storage.b4_common.DatabaseStorage):
             except Exception as e:
                 self.console.error('Database connection failed: working in remote mode: %s - %s',
                                    e, extract_tb(sys.exc_info()[2]))
-                self.db = None
+                self.db.pop(threading.current_thread().ident, None)
                 self._lastConnectAttempt = time()
                 if self._consoleNotice:
                     self.console.screen.write('Connecting to DB : FAILED!\n')
                     self._consoleNotice = False
 
-        return self.db
+        return self.db[threading.current_thread().ident]
 
     ####################################################################################################################
     #                                                                                                                  #
@@ -395,7 +412,7 @@ class MysqlStorage(b4.storage.b4_common.DatabaseStorage):
         :param table: The database table or a collection of tables
         :raise KeyError: If the table is not present in the database
         """
-        sys.stdout.write("b4_mysql MysqlStorage truncateTable\n")
+        #sys.stdout.write("b4_mysql MysqlStorage truncateTable\n")
         self.console.info("b4_mysql.MysqlStorage.truncateTable")
         try:
             self.query("""SET FOREIGN_KEY_CHECKS=0;""")

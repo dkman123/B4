@@ -84,7 +84,7 @@ class GeolocationPlugin(b4.b4_plugin.Plugin):
         Handle EVT_CLIENT_AUTH and EVT_CLIENT_UPDATE.
         """
         def _threaded_geolocate(client):
-
+            self.info("geolocation geolocate; thread %r" % threading.current_thread().ident)
             client.location = None
 
             for geotool in self._geolocators:

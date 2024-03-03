@@ -495,6 +495,7 @@ class XlrstatsPlugin(b4.b4_plugin.Plugin):
         """
         Thread that polls for XLRstats webfront variables
         """
+        self.info("xlrstats getWebsiteVariables; thread %r" % threading.current_thread().ident)
         if self.webfront_version == 2:
             req = str(self.webfront_url.rstrip('/')) + '/?config=' + str(self.webfront_config_nr) + '&func=pluginreq'
         else:

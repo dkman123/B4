@@ -1308,7 +1308,7 @@ class Parser(object):
         """
         Event handler thread.
         """
-        self.verbose3("b4_parser.Parser.handleEvents")
+        self.info("b4_parser.Parser.handleEvents; thread %r" % threading.current_thread().ident)
         while self.working:
             added, expire, event = self.queue.get(True)
             if event.type == self.getEventID('EVT_EXIT') or event.type == self.getEventID('EVT_STOP'):

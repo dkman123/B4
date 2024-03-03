@@ -1855,6 +1855,7 @@ class Clients(dict):
         """
         Synchronize the clients list.
         """
+        self.console.info("clients sync; thread %r" % threading.current_thread().ident)
         #self.console.verbose3("b4_clients.Clients.sync")
         mlist = self.console.sync()
         # remove existing clients

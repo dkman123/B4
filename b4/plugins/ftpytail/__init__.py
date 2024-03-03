@@ -211,7 +211,8 @@ class FtpytailPlugin(b4.b4_plugin.Plugin):
         def force_windows_cache_reload(_):
             # no need to do anything here so
             return
-            
+
+        self.info("ftpytail update; thread %r" % threading.current_thread().ident)
         ftp = None
         self.file = open(self.lgame_log, 'ab')
         self.file.write('\r\n'.encode("utf-8"))

@@ -996,7 +996,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         :param client: The client who launched the !list command
         :param cmd: The command object instance for sayLoudOrPM method invoke
         """
-        #sys.stdout.write("AdminPlugin doList\n")
+        sys.stdout.write("AdminPlugin doList; thread %r" % threading.current_thread().ident)
         names = [self.getMessage('player_id', c.name, c.cid) for c in self.console.clients.getClientsByLevel()]
         cmd.sayLoudOrPM(client, ', '.join(names))
 
@@ -1027,7 +1027,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         :param client: The client who launched the !list command
         :param cmd: The command object instance for sayLoudOrPM method invoke
         """
-        #sys.stdout.write("AdminPlugin doLonglist\n")
+        sys.stdout.write("AdminPlugin doLonglist; thread %r" % threading.current_thread().ident)
         for c in self.console.clients.getClientsByLevel():
             clientinfo = self.getMessage('player_id_reverse', c.cid, c.name)
             cmd.sayLoudOrPM(client, clientinfo)
@@ -1039,7 +1039,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         :param times: How many times the message should be printed
         :param delay: Amount of time between prints
         """
-        #sys.stdout.write("AdminPlugin sayMany\n")
+        sys.stdout.write("AdminPlugin sayMany; thread %r" % threading.current_thread().ident)
         for c in range(1, times + 1):
             self.console.say('^%i%s' % (c, msg))
             time.sleep(delay)
@@ -1234,7 +1234,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
         :param sclient: The client who to notice rules (may be None)
         :param big: Whether to print a BIG message
         """
-        #sys.stdout.write("AdminPlugin _sendRules\n")
+        sys.stdout.write("AdminPlugin _sendRules; thread %r" % threading.current_thread().ident)
         rules = []
 
         for i in range(1, 20):
@@ -1465,7 +1465,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
 
     def dohelp(self, client, data, cmd):
 
-        #sys.stdout.write("AdminPlugin dohelp\n")
+        sys.stdout.write("AdminPlugin dohelp; thread %r" % threading.current_thread().ident)
         commands = []
         if re.match(r'^[0-9]+$', data):
             mlevel = int(data)

@@ -1699,8 +1699,9 @@ class Poweradminurt41Plugin(b4.b4_plugin.Plugin):
             self.console.write('nuke %s' % sclient.cid)
 
     def multipunish(self, x, sclient, client, cmd):
-        self.debug('Entering multipunish...')
-        #self.debug('x: %s, sclient.cid: %s, client.cid: %s, cmd: %s' %(x, sclient.cid, client.cid, cmd))
+        #self.debug("Entering multipunish...; thread %r" % threading.current_thread().ident)
+        self.info('Multipunish x: %s, sclient.cid: %s, client.cid: %s, cmd: %s; thread %r' %
+                  (x, sclient.cid, client.cid, cmd, threading.current_thread().ident))
         c = 0
         while c < x:
             self.console.write('%s %s' % (cmd, sclient.cid))

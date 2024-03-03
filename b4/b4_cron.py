@@ -345,7 +345,7 @@ class Cron(object):
         Main cron loop.
         Will terminate when stop event is set.
         """
-        self.console.info("Cron scheduler started")
+        self.console.info("Cron scheduler started; thread %r" % threading.current_thread().ident)
         nexttime = self.getNextTime()
         while not self._stopEvent.is_set():
             now = self.time()

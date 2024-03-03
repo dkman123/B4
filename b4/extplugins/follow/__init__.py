@@ -247,6 +247,7 @@ class FollowPlugin(b4.b4_plugin.Plugin):
         admin.message(self._NOTIFY_MSG % data)
 
     def process_ban(self, event):
+        self.info("follow process_ban; thread %r" % threading.current_thread().ident)
         client = event.client
         # check if banned client is in follow list
         self.debug('Client ban detected. Checking follow list DB table for %s' % client.name)
@@ -393,6 +394,7 @@ class FollowPlugin(b4.b4_plugin.Plugin):
         self.add_follow_client(sclient, client, reason)
 
     def add_follow_client(self, sclient, client=None, reason=''):
+        self.info("follow add_follow_client; thread % r" % threading.current_thread().ident)
         cursor = self.console.storage.query(self._SELECT_QUERY % sclient.id)
         if cursor.rowcount == 0:
             if client:

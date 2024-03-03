@@ -32,7 +32,7 @@ import b4.b4_functions
 import b4.b4_parser
 import re
 import time
-from threading import Thread
+import threading
 
 from .q3a.abstractParser import AbstractParser
 
@@ -940,7 +940,7 @@ class Iourt41Parser(AbstractParser):
         self.verbose('...self.console.game.gameType: %s' % self.game.gameType)
         self.game.startMap()
         self.game.rounds = 0
-        Thread(target=self.clients.sync, args=()).start()
+        threading.Thread(target=self.clients.sync, args=()).start()
         return self.getEvent('EVT_GAME_ROUND_START', data=self.game)
 
     def OnWarmup(self, action, data=None, match=None):

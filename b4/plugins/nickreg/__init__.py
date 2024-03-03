@@ -31,7 +31,7 @@ import b4.b4_cron
 import b4.b4_functions
 import b4.b4_plugin
 import os
-from threading import Thread
+import threading
 
 from b4.b4_functions import clamp
 
@@ -105,7 +105,7 @@ class NickregPlugin(b4.b4_plugin.Plugin):
         """
         Handle EVT_CLIENT_NAME_CHANGE.
         """
-        Thread(target=self.check_client_for_nick_steal, args=(event.client,))  .start()
+        threading.Thread(target=self.check_client_for_nick_steal, args=(event.client,))  .start()
 
     ####################################################################################################################
     #                                                                                                                  #
@@ -152,26 +152,32 @@ class NickregPlugin(b4.b4_plugin.Plugin):
         Warn a client for nickname stealing.
         :param client: the client to warn.
         """
-        self.adminPlugin.warnClient(client, 'You are using a registered nickname, please change it!', None, False, '', '10m')
+        self.adminPlugin.warnClient(client, 'You are using a registered nickname, please change it!',
+                                    None, False, '', '10m')
 
     def check_client_for_nick_steal(self, client):
         """
         Check if the given client is stealing a nickname.
         :param client: the client whose nickname we want to check.
         """
+        self.info("nickreg check_client_for_nick_steal; thread %r" % threading.current_thread().ident)
         if client and client.id and client.pbid not in ('WORLD', 'Server'):
 
             self.debug('checking if client @%s is using a registered nickname (%s)', client.id, client.name)
-            cursor = self.console.storage.query("""SELECT * FROM nicks WHERE name LIKE '%s'""" % self._process_name(client.name))
+            cursor = self.console.storage.query("""SELECT * FROM nicks WHERE name LIKE '%s'"""
+                                                % self._process_name(client.name))
             if cursor.EOF:
-                self.debug('nickname "%s" does not seem to be registered: client @%s is legit', client.name, client.id)
+                self.debug('nickname "%s" does not seem to be registered: client @%s is legit',
+                           client.name, client.id)
             else:
                 row = cursor.getRow()
                 if int(row['client_id']) != int(client.id):
-                    self.debug('warning client @%s for nickname stealing (%s): owner is client @%s', client.id, client.name, row['client_id'])
+                    self.debug('warning client @%s for nickname stealing (%s): owner is client @%s',
+                               client.id, client.name, row['client_id'])
                     self.warn_client_for_nick_steal(client)
                 else:
-                    self.debug('client @%s is the owner of registered nickname (%s): everything ok', client.id, client.name)
+                    self.debug('client @%s is the owner of registered nickname (%s): everything ok',
+                               client.id, client.name)
 
                 cursor.close()
 
