@@ -44,7 +44,8 @@ class Rcon(object):
     socket = None
     queue = None
     console = None
-    socket_timeout = 0.80
+    #socket_timeout = 0.80
+    socket_timeout = 4.0
     # NOTE: \377 is octal for 0xFF
     rconsendstring = '\377\377\377\377rcon "%s" %s\n'
     rconreplystring = '\377\377\377\377print\n'
@@ -116,7 +117,7 @@ class Rcon(object):
         :param maxRetries: How many times we have to retry the sending upon failure
         :param socketTimeout: The socket timeout value
         """
-        self.console.verbose3("rcon send")
+        self.console.info("rcon send %r" % threading.current_thread().ident)
         if socketTimeout is None:
             socketTimeout = self.socket_timeout
         if maxRetries is None:
@@ -169,7 +170,7 @@ class Rcon(object):
         :param maxRetries: How many times we have to retry the sending upon failure
         :param socketTimeout: The socket timeout value
         """
-        self.console.verbose("rcon sendRcon %s" % data)
+        self.console.info("rcon sendRcon %s %r" % (data, threading.current_thread().ident))
         if socketTimeout is None:
             socketTimeout = self.socket_timeout
         if maxRetries is None:
@@ -307,7 +308,7 @@ class Rcon(object):
         Read data from the socket (non blocking).
         :param sock: The socket from where to read data
         """
-        self.console.verbose3("rcon readNonBlocking")
+        self.console.info("rcon readNonBlocking %r" % threading.current_thread().ident)
         sock.settimeout(2)
         start_time = time.time()
         data = ''
@@ -347,7 +348,7 @@ class Rcon(object):
         :param size: The read size
         :param socketTimeout: The socket timeout value
         """
-        self.console.verbose3("rcon readSocket")
+        self.console.info("rcon readSocket %r" % threading.current_thread().ident)
         if socketTimeout is None:
             socketTimeout = self.socket_timeout
 

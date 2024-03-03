@@ -25,6 +25,7 @@
 import b4
 import b4.storage.b4_common
 import sys
+import threading
 
 from time import time
 from traceback import extract_tb
@@ -56,7 +57,7 @@ class PymysqlStorage(b4.storage.b4_common.DatabaseStorage):
         Return the database connection. If the connection has not been established yet, will establish a new one.
         :return The connection instance, or None if no connection can be established.
         """
-        #sys.stdout.write("b4_mysql PymysqlStorage getConnection\n")
+        sys.stdout.write("b4_mysql PymysqlStorage getConnection %r\n" % threading.current_thread().ident)
         if self.db and self.db.open:
             return self.db
         return self.connect()
@@ -83,7 +84,7 @@ class PymysqlStorage(b4.storage.b4_common.DatabaseStorage):
         Check whether the connection with the storage layer is active or not.
         :return True if the connection is active, False otherwise.
         """
-        sys.stdout.write("b4_mysql PymysqlStorage status\n")
+        #sys.stdout.write("b4_mysql PymysqlStorage status\n")
         if self.db and self.db.open:
             return True
         return False
@@ -115,8 +116,7 @@ class MysqlConnectorStorage(b4.storage.b4_common.DatabaseStorage):
         Return the database connection. If the connection has not been established yet, will establish a new one.
         :return The connection instance, or None if no connection can be established.
         """
-        sys.stdout.write("b4_mysql MysqlConnectorStorage getConnection\n")
-        self.console.info("b4_mysql.MysqlConnectorStorage.getConnection")
+        sys.stdout.write("b4_mysql MysqlConnectorStorage getConnection %r\n" % threading.current_thread().ident)
         if self.db and self.db._socket is not None:
             return self.db
         return self.connect()
@@ -125,7 +125,7 @@ class MysqlConnectorStorage(b4.storage.b4_common.DatabaseStorage):
         """
         Close the current active database connection.
         """
-        sys.stdout.write("b4_mysql MysqlConnectorStorage shutdown\n")
+        #sys.stdout.write("b4_mysql MysqlConnectorStorage shutdown\n")
         self.console.info("b4_mysql.MysqlConnectorStorage.shutdown")
         if self.db and self.db._socket is not None:
             # the shutdown method is already exception safe
@@ -144,7 +144,7 @@ class MysqlConnectorStorage(b4.storage.b4_common.DatabaseStorage):
         Check whether the connection with the storage layer is active or not.
         :return True if the connection is active, False otherwise.
         """
-        sys.stdout.write("b4_mysql MysqlConnectorStorage status\n")
+        #sys.stdout.write("b4_mysql MysqlConnectorStorage status\n")
         self.console.info("b4_mysql.MysqlConnectorStorage.status")
         if self.db and self.db._socket is not None:
             return True
@@ -177,7 +177,7 @@ class MySQLdbStorage(b4.storage.b4_common.DatabaseStorage):
         Return the database connection. If the connection has not been established yet, will establish a new one.
         :return The connection instance, or None if no connection can be established.
         """
-        sys.stdout.write("b4_mysql MySQLdbStorage connect\n")
+        sys.stdout.write("b4_mysql MySQLdbStorage connect %r\n" % threading.current_thread().ident)
         if self.db and self.db.open:
             return self.db
         return self.connect()
@@ -186,7 +186,7 @@ class MySQLdbStorage(b4.storage.b4_common.DatabaseStorage):
         """
         Close the current active database connection.
         """
-        sys.stdout.write("b4_mysql MySQLdbStorage shutdown\n")
+        #sys.stdout.write("b4_mysql MySQLdbStorage shutdown\n")
         if self.db and self.db.open:
             # checking 'open' will prevent exception raising
             self.console.bot('Closing connection with MySQL database...')
@@ -204,7 +204,7 @@ class MySQLdbStorage(b4.storage.b4_common.DatabaseStorage):
         Check whether the connection with the storage layer is active or not.
         :return True if the connection is active, False otherwise.
         """
-        sys.stdout.write("b4_mysql MySQLdbStorage status\n")
+        #sys.stdout.write("b4_mysql MySQLdbStorage status\n")
         if self.db and self.db.open:
             return True
         return False

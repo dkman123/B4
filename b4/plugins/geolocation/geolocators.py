@@ -65,7 +65,6 @@ class Geolocator(object):
         else:
             raise GeolocalizationError('invalid argument supplied: %s' % type(data).__name__)
 
-
         return data if isinstance(data, str) else data.ip
 
     def getLocation(self, data):
@@ -92,7 +91,7 @@ class IpApiGeolocator(Geolocator):
         ip = self._getIp(data)
         fullresp = urllib.request.urlopen(self._url % ip, timeout=self._timeout)
         body = fullresp.read()
-        resp = json.loads(body.decode("utf-8"))
+        resp = json.loads(body)
 
         if resp['status'] == 'fail':
             raise GeolocalizationError('invalid data returned by the api: %r' % resp)
@@ -104,58 +103,58 @@ class IpApiGeolocator(Geolocator):
                         timezone=resp.get('timezone', None), zipcode=resp.get('zip', None))
 
 
-class TelizeGeolocator(Geolocator):
-
-    _url = 'http://www.telize.com/geoip/%s'
-
-    def getLocation(self, data):
-        """
-        Retrieve location data
-        :param data: A b4 client object or an IP string
-        :raise GeolocalizationError: When we are not able to retrieve location information
-        :return: A Location object initialized with location data
-        """
-        ip = self._getIp(data)
-        response = urllib.request.urlopen(self._url % ip, timeout=self._timeout)
-        body = response.read()
-        rt = json.loads(body.decode("utf-8"))
-        if 'code' in rt and int(rt['code']) == 401:
-            raise GeolocalizationError('input string is not a valid ip address: %s' % ip)
-        if 'country' not in rt:
-            raise GeolocalizationError('could not establish in which country is ip %s' % ip)
-
-        return Location(country=rt.get('country', None), region=rt.get('region', None), city=rt.get('city', None),
-                        cc=rt.get('country_code', None), rc=rt.get('region_code', None), isp=rt.get('isp', None),
-                        lat=rt.get('latitude', None), lon=rt.get('longitude', None),
-                        timezone=rt.get('timezone', None), zipcode=rt.get('postal_code', None))
-
-
-class FreeGeoIpGeolocator(Geolocator):
-
-    _url = 'https://freegeoip.net/json/%s'
-
-    def getLocation(self, data):
-        """
-        Retrieve location data
-        :param data: A b4 client object or an IP string
-        :raise GeolocalizationError: When we are not able to retrieve location information
-        :return: A Location object initialized with location data
-        """
-        ip = self._getIp(data)
-        rq = urllib.request.urlopen(self._url % ip, timeout=self._timeout)
-        if rq.text.strip() == '404 page not found':
-            raise GeolocalizationError('input string is not a valid ip address: %s' % ip)
-
-        body = rq.read()
-        rt = json.loads(body.decode("utf-8"))
-
-        if rt['status'] == 'fail':
-            raise GeolocalizationError('invalid data returned by the api: %r' % rt)
-
-        return Location(country=rt.get('country_name', None), region=rt.get('region_name', None), city=rt.get('city', None),
-                        cc=rt.get('country_code', None), rc=rt.get('region_code', None), lat=rt.get('latitude', None),
-                        lon=rt.get('longitude', None), timezone=rt.get('time_zone', None),
-                        zipcode=rt.get('zip_code', None))
+#class TelizeGeolocator(Geolocator):
+#
+#    _url = 'http://www.telize.com/geoip/%s'
+#
+#    def getLocation(self, data):
+#        """
+#        Retrieve location data
+#        :param data: A b4 client object or an IP string
+#        :raise GeolocalizationError: When we are not able to retrieve location information
+#        :return: A Location object initialized with location data
+#        """
+#        ip = self._getIp(data)
+#        response = urllib.request.urlopen(self._url % ip, timeout=self._timeout)
+#        body = response.read()
+#        rt = json.loads(body.decode("utf-8"))
+#        if 'code' in rt and int(rt['code']) == 401:
+#            raise GeolocalizationError('input string is not a valid ip address: %s' % ip)
+#        if 'country' not in rt:
+#            raise GeolocalizationError('could not establish in which country is ip %s' % ip)
+#
+#        return Location(country=rt.get('country', None), region=rt.get('region', None), city=rt.get('city', None),
+#                        cc=rt.get('country_code', None), rc=rt.get('region_code', None), isp=rt.get('isp', None),
+#                        lat=rt.get('latitude', None), lon=rt.get('longitude', None),
+#                        timezone=rt.get('timezone', None), zipcode=rt.get('postal_code', None))
+#
+#
+#class FreeGeoIpGeolocator(Geolocator):
+#
+#    _url = 'https://freegeoip.net/json/%s'
+#
+#    def getLocation(self, data):
+#        """
+#        Retrieve location data
+#        :param data: A b4 client object or an IP string
+#        :raise GeolocalizationError: When we are not able to retrieve location information
+#        :return: A Location object initialized with location data
+#        """
+#        ip = self._getIp(data)
+#        rq = urllib.request.urlopen(self._url % ip, timeout=self._timeout)
+#        if rq.text.strip() == '404 page not found':
+#            raise GeolocalizationError('input string is not a valid ip address: %s' % ip)
+#
+#        body = rq.read()
+#        rt = json.loads(body.decode("utf-8"))
+#
+#        if rt['status'] == 'fail':
+#            raise GeolocalizationError('invalid data returned by the api: %r' % rt)
+#
+#        return Location(country=rt.get('country_name', None), region=rt.get('region_name', None), city=rt.get('city', None),
+#                        cc=rt.get('country_code', None), rc=rt.get('region_code', None), lat=rt.get('latitude', None),
+#                        lon=rt.get('longitude', None), timezone=rt.get('time_zone', None),
+#                        zipcode=rt.get('zip_code', None))
 
 
 class MaxMindGeolocator(Geolocator):

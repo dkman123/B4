@@ -49,7 +49,8 @@ class GeolocationPlugin(b4.b4_plugin.Plugin):
         b4.b4_plugin.Plugin.__init__(self, console, config)
         # create geolocators instances
         self.info('creating geolocators object instances...')
-        self._geolocators = [IpApiGeolocator(), TelizeGeolocator(), FreeGeoIpGeolocator()]
+        #self._geolocators = [IpApiGeolocator(), TelizeGeolocator(), FreeGeoIpGeolocator()]
+        self._geolocators = [IpApiGeolocator()]
         try:
             # append this one separately since db may be missing
             self._geolocators.append(MaxMindGeolocator())
