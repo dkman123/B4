@@ -75,7 +75,8 @@ class PymysqlStorage(b4.storage.b4_common.DatabaseStorage):
             # checking 'open' will prevent exception raising
             self.console.bot('Closing connection with MySQL database...')
             self.db[threading.current_thread().ident].close()
-        self.db.pop(threading.current_thread().ident, None)
+        if threading.current_thread().ident in self.db:
+            del self.db[threading.current_thread().ident]
 
     ####################################################################################################################
     #                                                                                                                  #
@@ -141,7 +142,8 @@ class MysqlConnectorStorage(b4.storage.b4_common.DatabaseStorage):
             # the shutdown method is already exception safe
             self.console.bot('Closing connection with MySQL database...')
             self.db[threading.current_thread().ident].shutdown()
-        self.db.pop(threading.current_thread().ident, None)
+        if threading.current_thread().ident in self.db:
+            del self.db[threading.current_thread().ident]
 
     ####################################################################################################################
     #                                                                                                                  #
@@ -207,7 +209,8 @@ class MySQLdbStorage(b4.storage.b4_common.DatabaseStorage):
             # checking 'open' will prevent exception raising
             self.console.bot('Closing connection with MySQL database...')
             self.db[threading.current_thread().ident].close()
-        self.db.pop(threading.current_thread().ident, None)
+        if threading.current_thread().ident in self.db:
+            del self.db[threading.current_thread().ident]
 
     ####################################################################################################################
     #                                                                                                                  #
@@ -313,7 +316,8 @@ class MysqlStorage(b4.storage.b4_common.DatabaseStorage):
         # have connection troubles, and we do not want to spam it
         if time() - self._lastConnectAttempt < self._reconnectDelay:
             # remove the key from the dictionary
-            self.db.pop(threading.current_thread().ident, None)
+            if threading.current_thread().ident in self.db:
+                del self.db[threading.current_thread().ident]
             self.console.bot('New MySQL database connection requested but last connection attempt '
                              'failed less than %s seconds ago: exiting...' % self._reconnectDelay)
         else:
