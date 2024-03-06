@@ -1580,8 +1580,9 @@ class Iourt43Parser(Iourt41Parser):
 
         def onRadio(this, event):
             self.debug("b4.parsers.Iourt43Parser.onRadio\n")
-            new_event = b4.b4_events.Event(type=event.type, client=event.client, target=event.target, data=repr(event.data))
-            this.onChat(new_event)
+            new_event = b4.b4_events.Event(type=event.type, client=event.client, target=event.target
+                                           , data=repr(event.data))
+            this.onChat(self, new_event)
 
         #self.spamcontrolPlugin.onRadio = instancemethod(onRadio, self.spamcontrolPlugin, SpamcontrolPlugin)
         self.spamcontrolPlugin.onRadio = instancemethod(onRadio, SpamcontrolPlugin)

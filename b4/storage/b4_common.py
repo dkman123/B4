@@ -239,6 +239,7 @@ class DatabaseStorage(Storage):
         # self.console.debug("NOISY guid %s" % client.guid)
 
         try:
+            self.getConnection()
 
             cursor = self.query(b4.b4_querybuilder.QueryBuilder(self.db[threading.current_thread().ident]).SelectQuery(
                 '*', 'clients', where, None, 1))
@@ -300,6 +301,7 @@ class DatabaseStorage(Storage):
         """
         #self.console.verbose3("b4_common DatabaseStorage getClientsMatching\n")
         self.console.debug('b4_common: getClientsMatching %s' % match)
+        self.getConnection()
         cursor = self.query(
             b4.b4_querybuilder.QueryBuilder(self.db[threading.current_thread().ident]).SelectQuery(
                 '*', 'clients', match, 'time_edit DESC', 5))
@@ -342,6 +344,7 @@ class DatabaseStorage(Storage):
                 # self.console.debug("NOISY setClient setting %s=%s" % (f, self.getVar(f)))
                 data[f] = getattr(client, self.getVar(f))
 
+        self.getConnection()
         # self.console.debug('Storage: setClient data %s' % data)
         if client.id > 0:
             self.query(b4.b4_querybuilder.QueryBuilder(self.db[threading.current_thread().ident]).UpdateQuery(
@@ -371,6 +374,7 @@ class DatabaseStorage(Storage):
                 data[f] = getattr(alias, self.getVar(f))
 
         self.console.debug('Storage: setClientAlias data %s' % data)
+        self.getConnection()
         if alias.id:
             self.query(b4.b4_querybuilder.QueryBuilder(self.db[threading.current_thread().ident]).UpdateQuery(
                 data, 'aliases', {'id': alias.id}))
@@ -388,8 +392,8 @@ class DatabaseStorage(Storage):
         :param alias: The alias object to fill with fetch data.
         :return: The alias object given in input with all the fields set.
         """
-        #self.console.verbose3("b4_common DatabaseStorage getClientAlias\n")
         self.console.debug('Storage: getClientAlias %s' % alias)
+        self.getConnection()
         if hasattr(alias, 'id') and alias.id > 0:
             query = b4.b4_querybuilder.QueryBuilder(self.db[threading.current_thread().ident]).SelectQuery(
                 '*', 'aliases', {'id': alias.id}, None, 1)
@@ -421,8 +425,8 @@ class DatabaseStorage(Storage):
         :param client: The client whose aliases we want to retrieve.
         :return: List of b4_clients.Alias instances.
         """
-        #self.console.verbose3("b4_common DatabaseStorage getClientAliases\n")
         self.console.debug('Storage: getClientAliases %s' % client)
+        self.getConnection()
         cursor = self.query(b4.b4_querybuilder.QueryBuilder(self.db[threading.current_thread().ident])
                             .SelectQuery('*', 'aliases', {'client_id': client.id}, 'id'))
 
@@ -457,6 +461,7 @@ class DatabaseStorage(Storage):
                 data[f] = getattr(ipalias, self.getVar(f))
 
         self.console.debug('Storage: setClientIpAddress data %s' % data)
+        self.getConnection()
         if ipalias.id:
             self.query(b4.b4_querybuilder.QueryBuilder(self.db[threading.current_thread().ident]).UpdateQuery(
                 data, 'ipaliases', {'id': ipalias.id}))
@@ -474,8 +479,8 @@ class DatabaseStorage(Storage):
         :param ipalias: The ipalias object to fill with fetch data.
         :return: The ip alias object given in input with all the fields set.
         """
-        #self.console.verbose3("b4_common DatabaseStorage getClientIpAddress\n")
-        self.console.debug('Storage: getClientIpAddress %s' % ipalias)
+        self.console.debug('b4_common: getClientIpAddress %s' % ipalias)
+        self.getConnection()
         if hasattr(ipalias, 'id') and ipalias.id > 0:
             query = (b4.b4_querybuilder.QueryBuilder(self.db[threading.current_thread().ident])
                      .SelectQuery('*', 'ipaliases', {'id': ipalias.id}, None, 1))
@@ -507,8 +512,8 @@ class DatabaseStorage(Storage):
         :param client: The client whose ip aliases we want to retrieve.
         :return: List of b4_clients.IpAlias instances
         """
-        #self.console.verbose3("b4_common DatabaseStorage getClientIpAddresses\n")
-        self.console.debug('Storage: getClientIpAddresses %s' % client)
+        self.console.debug('b4_common: getClientIpAddresses %s' % client)
+        self.getConnection()
         cursor = self.query(b4.b4_querybuilder.QueryBuilder(self.db[threading.current_thread().ident])
                             .SelectQuery('*', 'ipaliases', {'client_id': client.id}, 'id'))
 
@@ -536,6 +541,7 @@ class DatabaseStorage(Storage):
         """
         #self.console.verbose3("b4_common DatabaseStorage getLastPenalties\n")
         penalties = []
+        self.getConnection()
         where = b4.b4_querybuilder.QueryBuilder(self.db[threading.current_thread().ident]).WhereClause(
             {'type': types, 'inactive': 0})
         where += ' AND (time_expire = -1 OR time_expire > %s)' % int(time())
@@ -580,6 +586,7 @@ class DatabaseStorage(Storage):
                 data[f] = getattr(penalty, self.getVar(f))
 
         self.console.debug('b4_common setClientPenalty data %s' % data)
+        self.getConnection()
 
         if penalty.id:
             self.query(b4.b4_querybuilder.QueryBuilder(self.db[threading.current_thread().ident]).UpdateQuery(
@@ -600,6 +607,7 @@ class DatabaseStorage(Storage):
         """
         #self.console.verbose3("b4_common DatabaseStorage getClientPenalty\n")
         self.console.debug('Storage: getClientPenalty %s' % penalty)
+        self.getConnection()
         cursor = self.query(b4.b4_querybuilder.QueryBuilder(self.db[threading.current_thread().ident])
                             .SelectQuery('*', 'penalties', {'id': penalty.id}, None, 1))
         if cursor.EOF:
@@ -625,6 +633,7 @@ class DatabaseStorage(Storage):
         # DK: testing get client penalties by IP
         #self.console.verbose3("b4_common DatabaseStorage getClientPenalties")
         self.console.debug('b4_common: getClientPenalties %s' % client)
+        self.getConnection()
         where = b4.b4_querybuilder.QueryBuilder(self.db[threading.current_thread().ident]).WhereClause(
             {'type': penType, 'inactive': 0})
         where += ' AND (time_expire = -1 OR time_expire > %s)' % int(time())
@@ -658,6 +667,7 @@ class DatabaseStorage(Storage):
         # DK: testing get client penalties by IP
         #self.console.verbose3("b4_common DatabaseStorage getClientLastPenalty")
         self.console.debug('Storage: getClientPenalties %s' % client)
+        self.getConnection()
         where = b4.b4_querybuilder.QueryBuilder(self.db[threading.current_thread().ident]).WhereClause(
             {'type': penType, 'inactive': 0})
         where += ' AND (time_expire = -1 OR time_expire > %s)' % int(time())
@@ -680,6 +690,7 @@ class DatabaseStorage(Storage):
         :return: The first penalty added for the given client.
         """
         #self.console.verbose3("b4_common DatabaseStorage getClientFirstPenalty")
+        self.getConnection()
         where = b4.b4_querybuilder.QueryBuilder(self.db[threading.current_thread().ident]).WhereClause(
             {'type': penType, 'client_id': client.id, 'inactive': 0})
         where += ' AND (time_expire = -1 OR time_expire > %s)' % int(time())
@@ -699,6 +710,7 @@ class DatabaseStorage(Storage):
         :param penType: The type of the penalties we want to disable.
         """
         #self.console.verbose3("b4_common DatabaseStorage disableClientPenalties")
+        self.getConnection()
         self.query(b4.b4_querybuilder.QueryBuilder(self.db[threading.current_thread().ident]).UpdateQuery(
             {'inactive': 1}, 'penalties', {'type': penType, 'client_id': client.id,'inactive': 0}))
 
@@ -717,6 +729,7 @@ class DatabaseStorage(Storage):
         # DK: testing get client penalties by IP
         #self.console.verbose3("b4_common DatabaseStorage numPenalties")
         self.console.debug('Storage: getClientPenalties %s' % client)
+        self.getConnection()
         where = b4.b4_querybuilder.QueryBuilder(self.db[threading.current_thread().ident]).WhereClause(
             {'type': penType, 'inactive': 0})
         where += ' AND (time_expire = -1 OR time_expire > %s)' % int(time())
@@ -736,6 +749,7 @@ class DatabaseStorage(Storage):
         """
         #self.console.verbose3("b4_common DatabaseStorage getGroups")
         try:
+            self.getConnection()
             if not self._groups:
                 cursor = self.query(b4.b4_querybuilder.QueryBuilder(
                     self.db[threading.current_thread().ident]).SelectQuery(
@@ -765,6 +779,7 @@ class DatabaseStorage(Storage):
         :return: The group instance given in input with all the fields set.
         """
         #self.console.verbose3("b4_common DatabaseStorage getGroup")
+        self.getConnection()
         if hasattr(group, 'keyword') and group.keyword:
             query = b4.b4_querybuilder.QueryBuilder(self.db[threading.current_thread().ident]).SelectQuery(
                 '*', 'usergroups', dict(keyword=group.keyword), None, 1)
@@ -829,6 +844,7 @@ class DatabaseStorage(Storage):
                 data[f] = getattr(mapresult, self.getVar(f))
 
         self.console.debug('Storage: setMapResult data %s' % data)
+        self.getConnection()
         if mapresult.id > 0:
             self.query(b4.b4_querybuilder.QueryBuilder(self.db[threading.current_thread().ident]).UpdateQuery(
                 data, 'mapresult', {'id': mapresult.id}))

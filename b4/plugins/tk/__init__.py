@@ -681,7 +681,10 @@ class TkPlugin(b4.b4_plugin.Plugin):
 
         if not data:
             if len(v.attackers) == 1:
+                forgiveList = []
                 for cid, points in v.attackers.items():
+                    forgiveList.append(cid)
+                for cid in forgiveList:
                     self.forgive(cid, client)
             else:
                 self.cmd_forgivelist(data, client)

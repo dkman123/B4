@@ -91,32 +91,32 @@ class ClientVar(object):
 class Client(object):
 
     ## PVT
-    _autoLogin = 1
-    _data = None
-    _exactName = ''
-    _greeting = ''
-    _groupBits = 0
-    _groups = None
-    _guid = ''
-    _id = 0
-    _ip = ''
-    _lastVisit = None
-    _login = ''
-    _maskGroup = None
-    _maskLevel = 0
-    _maxGroup = None
-    _maxLevel = None
-    _name = ''
-    _password = ''
-    _pluginData = None
-    _pbid = ''
-    _team = TEAM_UNKNOWN
-    _tempLevel = None
-    _timeAdd = 0
-    _timeEdit = 0
-    _app = ''
-    _isocode = ''
-    _permmute = 0
+    autoLogin = 1
+    data = None
+    exactName = ''
+    greeting = ''
+    groupBits = 0
+    groups = None
+    guid = ''
+    id = 0
+    ip = ''
+    lastVisit = None
+    login = ''
+    maskGroup = None
+    maskLevel = 0
+    maxGroup = None
+    maxLevel = None
+    name = ''
+    password = ''
+    pluginData = None
+    pbid = ''
+    team = TEAM_UNKNOWN
+    tempLevel = None
+    timeAdd = 0
+    timeEdit = 0
+    app = ''
+    isocode = ''
+    permmute = 0
 
     # PUB
     authed = False
@@ -159,7 +159,7 @@ class Client(object):
         """
         #self.console.verbose3("b4_clients.Client.isvar")
         try:
-            d = self._pluginData[id(plugin)][key]
+            d = self.pluginData[id(plugin)][key]
             return True
         except Exception:
             return False
@@ -174,16 +174,16 @@ class Client(object):
         """
         #self.console.verbose3("b4_clients.Client.setvar")
         try:
-            self._pluginData[id(plugin)]
+            self.pluginData[id(plugin)]
         except Exception:
-            self._pluginData[id(plugin)] = {}
+            self.pluginData[id(plugin)] = {}
 
         try:
-            self._pluginData[id(plugin)][key].value = value
+            self.pluginData[id(plugin)][key].value = value
         except Exception:
-            self._pluginData[id(plugin)][key] = ClientVar(value)
+            self.pluginData[id(plugin)][key] = ClientVar(value)
 
-        return self._pluginData[id(plugin)][key]
+        return self.pluginData[id(plugin)][key]
 
     def var(self, plugin, key, default=None):
         """
@@ -195,7 +195,7 @@ class Client(object):
         """
         #self.console.verbose3("b4_clients.Client.var")
         try:
-            return self._pluginData[id(plugin)][key]
+            return self.pluginData[id(plugin)][key]
         except Exception:
             return self.setvar(plugin, key, default)
 
@@ -219,7 +219,7 @@ class Client(object):
         """
         #self.console.verbose3("b4_clients.Client.delvar")
         try:
-            del self._pluginData[id(plugin)][key]
+            del self.pluginData[id(plugin)][key]
         except Exception:
             pass
 
@@ -229,179 +229,150 @@ class Client(object):
     #                                                                                                                  #
     ####################################################################################################################
 
-    def getAliases(self):
+    def get_aliases(self):
         #self.console.verbose3("b4_clients.Client.getAliases")
         return self.console.storage.getClientAliases(self)
 
-    aliases = property(getAliases)
-
     # -----------------------
 
-    def getBans(self):
+    def get_bans(self):
         #self.console.verbose3("b4_clients.Client.getBans")
         return self.console.storage.getClientPenalties(self, penType=('Ban', 'TempBan'))
 
-    bans = property(getBans)
-
     # -----------------------
 
-    def _set_data(self, data):
+    def set_data(self, data):
         #self.console.verbose3("b4_clients.Client._set_data")
         for k, v in data.items():
-            self._data[k] = v
+            self.data[k] = v
 
-    def _get_data(self):
+    def get_data(self):
         #self.console.verbose3("b4_clients.Client._get_data")
-        return self._data
-
-    data = property(_get_data, _set_data)
+        return self.data
 
     # -----------------------
 
-    def _get_firstWarn(self):
+    def get_firstWarning(self):
         #self.console.verbose3("b4_clients.Client._get_firstWarn")
         if not self.id:
             return None
         return self.console.storage.getClientFirstPenalty(self, 'Warning')
 
-    firstWarning = property(_get_firstWarn)
-
     # -----------------------
 
-    def getGroups(self):
+    def get_groups(self):
         #self.console.verbose3("b4_clients.Client.getGroups")
-        if not self._groups:
-            self._groups = []
+        if not self.groups:
+            self.groups = []
             groups = self.console.storage.getGroups()
             guest_group = None
             for g in groups:
                 if g.id == 0:
                     guest_group = g
-                if g.id & self._groupBits:
-                    self._groups.append(g)
-            if not len(self._groups) and guest_group:
-                self._groups.append(guest_group)
-        return self._groups
-
-    groups = property(getGroups)
+                if g.id & self.groupBits:
+                    self.groups.append(g)
+            if not len(self.groups) and guest_group:
+                self.groups.append(guest_group)
+        return self.groups
 
     # -----------------------
 
-    def getIpAddresses(self):
-        #self.console.verbose3("b4_clients.Client.getIpAddresses")
+    def get_ip_addresses(self):
+        #self.console.verbose3("b4_clients.Client.get_ip_addresses")
         return self.console.storage.getClientIpAddresses(self)
 
-    ip_addresses = property(getIpAddresses)
+    # -----------------------
+
+    def get_lastVisit(self):
+        #self.console.verbose3("b4_clients.Client.get_lastVisit")
+        return self.lastVisit
+
+    def set_lastVisit(self, lastVisit):
+        #self.console.verbose3("b4_clients.Client.set_lastVisit")
+        self.lastVisit = lastVisit
 
     # -----------------------
 
-    def _get_last_visit(self):
-        #self.console.verbose3("b4_clients.Client._get_last_visit")
-        return self._lastVisit
-
-    def _set_last_visit(self, lastVisit):
-        #self.console.verbose3("b4_clients.Client._set_last_visit")
-        self._lastVisit = lastVisit
-
-    lastVisit = property(_get_last_visit, _set_last_visit)
-
-    # -----------------------
-
-    def _get_lastBan(self):
-        #self.console.verbose3("b4_clients.Client._get_lastBan")
+    def get_lastBan(self):
+        #self.console.verbose3("b4_clients.Client.get_lastBan")
         if not self.id:
             return None
         return self.console.storage.getClientLastPenalty(self, ('Ban', 'TempBan'))
 
-    lastBan = property(_get_lastBan)
-
     # -----------------------
 
-    def _get_lastWarn(self):
-        #self.console.verbose3("b4_clients.Client._get_lastWarn")
+    def get_lastWarning(self):
+        #self.console.verbose3("b4_clients.Client.get_lastWarning")
         if not self.id:
             return None
         return self.console.storage.getClientLastPenalty(self, 'Warning')
 
-    lastWarning = property(_get_lastWarn)
 
     # -----------------------
 
-    def _get_maxLevel(self):
-        #self.console.verbose3("b4_clients.Client._get_maxLevel")
-        if self._maxLevel is None:
+    def get_maxLevel(self):
+        #self.console.verbose3("b4_clients.Client.get_maxLevel")
+        if self.maxLevel is None:
             if self.groups and len(self.groups):
                 m = -1
                 for g in self.groups:
                     if g.level > m:
                         m = g.level
-                        self._maxGroup = g
+                        self.maxGroup = g
 
-                self._maxLevel = m
-            elif self._tempLevel:
-                self._maxGroup = Group(id=-1, name='Unspecified', level=self._tempLevel)
-                return self._tempLevel
+                self.maxLevel = m
+            elif self.tempLevel:
+                self.maxGroup = Group(id=-1, name='Unspecified', level=self.tempLevel)
+                return self.tempLevel
             else:
                 return 0
 
-        return self._maxLevel
-
-    maxLevel = property(_get_maxLevel)
+        return self.maxLevel
 
     # -----------------------
 
-    def _get_maxGroup(self):
-        #self.console.verbose3("b4_clients.Client._get_maxGroup")
-        self._get_maxLevel()
-        return self._maxGroup
-
-    maxGroup = property(_get_maxGroup)
+    def get_maxGroup(self):
+        #self.console.verbose3("b4_clients.Client.get_maxGroup")
+        self.get_maxLevel()
+        return self.maxGroup
 
     # -----------------------
 
-    def _get_numBans(self):
-        #self.console.verbose3("b4_clients.Client._get_numBans")
+    def get_numBans(self):
+        #self.console.verbose3("b4_clients.Client.get_numBans")
         if not self.id:
             return 0
         return self.console.storage.numPenalties(self, ('Ban', 'TempBan'))
 
-    numBans = property(_get_numBans)
-
     # -----------------------
 
-    def _get_numWarns(self):
-        #self.console.verbose3("b4_clients.Client._get_numWarns")
+    def get_numWarnings(self):
+        #self.console.verbose3("b4_clients.Client.get_numWarnings")
         if not self.id:
             return 0
         return self.console.storage.numPenalties(self, 'Warning')
 
-    numWarnings = property(_get_numWarns)
-
     # -----------------------
 
-    def _set_team(self, team):
-        #self.console.verbose3("b4_clients.Client._set_team")
-        if self._team != team:
+    def set_team(self, team):
+        #self.console.verbose3("b4_clients.Client.set_team")
+        if self.team != team:
             previous_team = self.team
-            self._team = team
+            self.team = team
             if self.console:
                 self.console.queueEvent(self.console.getEvent('EVT_CLIENT_TEAM_CHANGE', self.team, self))
                 self.console.queueEvent(self.console.getEvent('EVT_CLIENT_TEAM_CHANGE2', {'previous': previous_team,
                                                                                           'new': self.team}, self))
 
-    def _get_team(self):
-        #self.console.verbose3("b4_clients.Client._get_team")
-        return self._team
-
-    team = property(_get_team, _set_team)
+    def get_team(self):
+        #self.console.verbose3("b4_clients.Client.get_team")
+        return self.team
 
     # -----------------------
 
-    def getWarnings(self):
+    def get_Warnings(self):
         #self.console.verbose3("b4_clients.Client.getWarnings")
         return self.console.storage.getClientPenalties(self, penType='Warning')
-
-    warnings = property(getWarnings)
 
     # -----------------------
 
@@ -415,53 +386,45 @@ class Client(object):
     #                                                                                                                  #
     ####################################################################################################################
 
-    def _set_auto_login(self, autoLogin):
-        #self.console.verbose3("b4_clients.Client._set_auto_login")
-        self._autoLogin = autoLogin
+    def set_autoLogin(self, autoLogin):
+        #self.console.verbose3("b4_clients.Client.set_autoLogin")
+        self.autoLogin = autoLogin
 
-    def _get_auto_login(self):
-        #self.console.verbose3("b4_clients.Client._get_auto_login")
-        return self._autoLogin
-
-    autoLogin = property(_get_auto_login, _set_auto_login)
+    def get_auto_login(self):
+        #self.console.verbose3("b4_clients.Client.get_autoLogin")
+        return self.autoLogin
 
     # -----------------------
 
     _connections = 0
-    def _set_connections(self, v):
-        #self.console.verbose3("b4_clients.Client._set_connections")
-        self._connections = int(v)
+    def set_connections(self, v):
+        #self.console.verbose3("b4_clients.Client.set_connections")
+        self.connections = int(v)
 
-    def _get_connections(self):
-        #self.console.verbose3("b4_clients.Client._get_connections")
-        return self._connections
-
-    connections = property(_get_connections, _set_connections)
+    def get_connections(self):
+        #self.console.verbose3("b4_clients.Client.get_connections")
+        return self.connections
 
     # -----------------------
 
-    def _set_greeting(self, greeting):
-        #self.console.verbose3("b4_clients.Client._set_greeting")
-        self._greeting = greeting
+    def set_greeting(self, greeting):
+        #self.console.verbose3("b4_clients.Client.set_greeting")
+        self.greeting = greeting
 
-    def _get_greeting(self):
-        #self.console.verbose3("b4_clients.Client._get_greeting")
-        return self._greeting
-
-    greeting = property(_get_greeting, _set_greeting)
+    def get_greeting(self):
+        #self.console.verbose3("b4_clients.Client.get_greeting")
+        return self.greeting
 
     # -----------------------
 
-    def _set_groupBits(self, bits):
-        #self.console.verbose3("b4_clients.Client._set_groupBits")
-        self._groupBits = int(bits)
+    def set_groupBits(self, bits):
+        #self.console.verbose3("b4_clients.Client.set_groupBits")
+        self.groupBits = int(bits)
         self.refreshLevel()
 
-    def _get_groupBits(self):
-        #self.console.verbose3("b4_clients.Client._get_groupBits")
-        return self._groupBits
-
-    groupBits = property(_get_groupBits, _set_groupBits)
+    def get_groupBits(self):
+        #self.console.verbose3("b4_clients.Client.get_groupBits")
+        return self.groupBits
 
     def addGroup(self, group):
         #self.console.verbose3("b4_clients.Client.addGroup")
@@ -481,79 +444,71 @@ class Client(object):
 
     # -----------------------
 
-    def _set_guid(self, guid):
-        #self.console.verbose3("b4_clients.Client._set_guid")
+    def set_guid(self, guid):
+        #self.console.verbose3("b4_clients.Client.set_guid")
         if guid and len(guid) > 2:
-            if self._guid and self._guid != guid:
-                self.console.error('Client has guid but its not the same %s <> %s', self._guid, guid)
+            if self.guid and self.guid != guid:
+                self.console.error('Client has guid but its not the same %s <> %s', self.guid, guid)
                 self.authed = False
-            elif not self._guid:
-                self._guid = guid
+            elif not self.guid:
+                self.guid = guid
         else:
             self.authed = False
-            self._guid = ''
+            self.guid = ''
 
-    def _get_guid(self):
-        #self.console.verbose3("b4_clients.Client._get_guid")
-        return self._guid
-
-    guid = property(_get_guid, _set_guid)
+    def get_guid(self):
+        #self.console.verbose3("b4_clients.Client.get_guid")
+        return self.guid
 
     # -----------------------
 
-    def _set_id(self, v):
-        #self.console.verbose3("b4_clients.Client._set_id")
+    def set_id(self, v):
+        #self.console.verbose3("b4_clients.Client.set_id")
         if not v:
-            self._id = 0
+            self.id = 0
         else:
-            self._id = int(v)
+            self.id = int(v)
 
-    def _get_id(self):
-        #self.console.verbose3("b4_clients.Client._get_id")
-        return self._id
-
-    id = property(_get_id, _set_id)
+    def get_id(self):
+        #self.console.verbose3("b4_clients.Client.get_id")
+        return self.id
 
     # -----------------------
 
-    def _set_ip(self, ip):
-        #self.console.verbose3("b4_clients.Client._set_ip")
+    def set_ip(self, ip):
+        #self.console.verbose3("b4_clients.Client.set_ip")
         if ':' in ip:
             ip = ip[0:ip.find(':')]
-        if self._ip != ip:
-            self.makeIpAlias(self._ip)
-        self._ip = ip
+        if self.ip != ip:
+            self.makeIpAlias(self.ip)
+        self.ip = ip
 
-    def _get_ip(self):
-        #self.console.verbose3("b4_clients.Client._get_ip")
-        return self._ip
-
-    ip = property(_get_ip, _set_ip)
+    def get_ip(self):
+        #self.console.verbose3("b4_clients.Client.get_ip")
+        return self.ip
 
     # -----------------------
 
-    def _set_login(self, login):
-        #self.console.verbose3("b4_clients.Client._set_login")
-        self._login = login
+    def set_login(self, login):
+        #self.console.verbose3("b4_clients.Client.set_login")
+        self.login = login
 
-    def _get_login(self):
-        #self.console.verbose3("b4_clients.Client._get_login")
-        return self._login
-
-    login = property(_get_login, _set_login)
+    def get_login(self):
+        #self.console.verbose3("b4_clients.Client.get_login")
+        return self.login
 
     # -----------------------
 
-    def _set_maskGroup(self, g):
-        #self.console.verbose3("b4_clients.Client._set_maskGroup")
+    def set_maskGroup(self, g):
+        #self.console.verbose3("b4_clients.Client.set_maskGroup")
         self.maskLevel = g.level
-        self._maskGroup = None
+        self.maskGroup = None
 
-    def _get_maskGroup(self):
-        #self.console.verbose3("b4_clients.Client._get_maskGroup")
+    def get_maskGroup(self):
+        #self.console.verbose3("b4_clients.Client.get_maskGroup")
         if not self.maskLevel:
             return None
-        elif not self._maskGroup:
+        elif not self.maskGroup:
             try:
                 group = self.console.storage.getGroup(Group(level=self.maskLevel))
             except Exception as err:
@@ -561,164 +516,142 @@ class Client(object):
                 self.maskLevel = 0
                 return None
             else:
-                self._maskGroup = group
-        return self._maskGroup
-
-    maskGroup = property(_get_maskGroup, _set_maskGroup)
+                self.maskGroup = group
+        return self.maskGroup
 
     # -----------------------
 
-    def _get_maskedGroup(self):
-        #self.console.verbose3("b4_clients.Client._get_maskedGroup")
+    def get_maskedGroup(self):
+        #self.console.verbose3("b4_clients.Client.get_maskedGroup")
         group = self.maskGroup
         return group if group else self.maxGroup
 
-    maskedGroup = property(_get_maskedGroup)
+    # -----------------------
+
+    def set_maskLevel(self, v):
+        #self.console.verbose3("b4_clients.Client.set_maskLevel")
+        self.maskLevel = int(v)
+        self.maskGroup = None
+
+    def get_maskLevel(self):
+        #self.console.verbose3("b4_clients.Client.get_maskLevel")
+        return self.maskLevel
 
     # -----------------------
 
-    def _set_maskLevel(self, v):
-        #self.console.verbose3("b4_clients.Client._set_maskLevel")
-        self._maskLevel = int(v)
-        self._maskGroup = None
-
-    def _get_maskLevel(self):
-        #self.console.verbose3("b4_clients.Client._get_maskLevel")
-        return self._maskLevel
-
-    maskLevel = property(_get_maskLevel, _set_maskLevel)
-
-    # -----------------------
-
-    def _get_maskedLevel(self):
-        #self.console.verbose3("b4_clients.Client._get_maskedLevel")
+    def get_maskedLevel(self):
+        #self.console.verbose3("b4_clients.Client.get_maskedLevel")
         group = self.maskedGroup
         if group:
             return group.level
         else:
             return 0
 
-    maskedLevel = property(_get_maskedLevel)
-
     # -----------------------
 
-    def _set_name(self, name):
-        #self.console.verbose3("b4_clients.Client._set_name")
+    def set_name(self, name):
+        #self.console.verbose3("b4_clients.Client.set_name")
         if self.console:
             newName = self.console.stripColors(name)
         else:
             newName = name.strip()
 
-        if self._name == newName:
+        if self.name == newName:
             if self.console:
                 self.console.verbose2('Aborted making alias for cid %s: name is the same' % self.cid)
             return
-        if self.cid == '-1' or self.cid == 'Server': # bfbc2 addition
+        if self.cid == '-1' or self.cid == 'Server':  # bfbc2 addition
             if self.console:
                 self.console.verbose2('Aborted making alias for cid %s: must be B4' % self.cid)
             return
 
-        self.makeAlias(self._name)
-        self._name = newName
-        self._exactName = name + '^7'
+        self.makeAlias(self.name)
+        self.name = newName
+        self.exactName = name + '^7'
 
         if self.console and self.authed:
             self.console.queueEvent(self.console.getEvent('EVT_CLIENT_NAME_CHANGE', self.name, self))
 
-    def _get_name(self):
+    def get_name(self):
+        # cleaned, without colors
         #self.console.verbose3("b4_clients.Client._get_name")
-        return self._name
+        return self.name
 
-    def _get_exactName(self):
+    def get_exactName(self):
+        # with color codes
         #self.console.verbose3("b4_clients.Client._get_exactName")
-        return self._exactName
-
-    name = property(_get_name, _set_name)               # cleaned
-    exactName = property(_get_exactName, _set_name)     # with color codes
+        return self.exactName
 
     # -----------------------
 
-    def _set_password(self, password):
+    def set_password(self, password):
         #self.console.verbose3("b4_clients.Client._set_password")
-        self._password = password
+        self.password = password
 
-    def _get_password(self):
+    def get_password(self):
         #self.console.verbose3("b4_clients.Client._get_password")
-        return self._password
-
-    password = property(_get_password, _set_password)
+        return self.password
 
     # -----------------------
 
-    def _set_pbid(self, pbid):
-        #self.console.verbose3("b4_clients.Client._set_pbid")
-        self._pbid = pbid
+    def set_pbid(self, pbid):
+        #self.console.verbose3("b4_clients.Client.set_pbid")
+        self.pbid = pbid
 
-    def _get_pbid(self):
-        #self.console.verbose3("b4_clients.Client._get_pbid")
-        return self._pbid
-
-    pbid = property(_get_pbid, _set_pbid)
+    def get_pbid(self):
+        #self.console.verbose3("b4_clients.Client.get_pbid")
+        return self.pbid
 
     # -----------------------
 
-    def _set_timeAdd(self, timeAdd):
-        #self.console.verbose3("b4_clients.Client._set_timeAdd")
-        self._timeAdd = int(timeAdd)
+    def set_timeAdd(self, timeAdd):
+        #self.console.verbose3("b4_clients.Client.set_timeAdd")
+        self.timeAdd = int(timeAdd)
 
-    def _get_timeAdd(self):
-        #self.console.verbose3("b4_clients.Client._get_timeAdd")
-        return self._timeAdd
+    def get_timeAdd(self):
+        #self.console.verbose3("b4_clients.Client.get_timeAdd")
+        return self.timeAdd
 
-    timeAdd = property(_get_timeAdd, _set_timeAdd)
-
-    # -----------------------
-
-    def _set_timeEdit(self, timeEdit):
-        #self.console.verbose3("b4_clients.Client._set_timeEdit")
-        self._timeEdit = int(timeEdit)
-
-    def _get_timeEdit(self):
-        #self.console.verbose3("b4_clients.Client._get_timeEdit")
-        return self._timeEdit
-
-    timeEdit = property(_get_timeEdit, _set_timeEdit)
 
     # -----------------------
 
-    def _set_app(self, app):
-        #self.console.verbose3("b4_clients.Client._set_app")
-        self._app = app
+    def set_timeEdit(self, timeEdit):
+        #self.console.verbose3("b4_clients.Client.set_timeEdit")
+        self.timeEdit = int(timeEdit)
 
-    def _get_app(self):
-        #self.console.verbose3("b4_clients.Client._get_app")
-        return self._app
-
-    app = property(_get_app, _set_app)
+    def get_timeEdit(self):
+        #self.console.verbose3("b4_clients.Client.get_timeEdit")
+        return self.timeEdit
 
     # -----------------------
 
-    def _set_isocode(self, isocode):
-        #self.console.verbose3("b4_clients.Client._set_isocode")
-        self._isocode = isocode
+    def set_app(self, app):
+        #self.console.verbose3("b4_clients.Client.set_app")
+        self.app = app
 
-    def _get_isocode(self):
-        #self.console.verbose3("b4_clients.Client._get_isocode")
-        return self._isocode
-
-    isocode = property(_get_isocode, _set_isocode)
+    def get_app(self):
+        #self.console.verbose3("b4_clients.Client.get_app")
+        return self.app
 
     # -----------------------
 
-    def _set_permmute(self, permmute):
-        #self.console.verbose3("b4_clients.Client._set_permmute")
-        self._permmute = int(permmute)
+    def set_isocode(self, isocode):
+        #self.console.verbose3("b4_clients.Client.set_isocode")
+        self.isocode = isocode
 
-    def _get_permmute(self):
-        #self.console.verbose3("b4_clients.Client._get_permmute")
-        return self._permmute
+    def get_isocode(self):
+        #self.console.verbose3("b4_clients.Client.get_isocode")
+        return self.isocode
 
-    permmute = property(_get_permmute, _set_permmute)
+    # -----------------------
+
+    def set_permmute(self, permmute):
+        #self.console.verbose3("b4_clients.Client.set_permmute")
+        self.permmute = int(permmute)
+
+    def get_permmute(self):
+        #self.console.verbose3("b4_clients.Client.get_permmute")
+        return self.permmute
 
     ####################################################################################################################
     #                                                                                                                  #
@@ -731,8 +664,8 @@ class Client(object):
         Refresh the client level.
         """
         #self.console.verbose3("b4_clients.Client.refreshLevel")
-        self._maxLevel = None
-        self._groups = None
+        self.maxLevel = None
+        self.groups = None
 
     def disconnect(self):
         """
@@ -1054,7 +987,7 @@ class Struct(object):
     """
     Base class for Penalty/Alias/IpAlias/Group classes.
     """
-    _id = 0
+    id = 0
 
     def __init__(self, **kwargs):
         """
@@ -1063,18 +996,16 @@ class Struct(object):
         for k, v in kwargs.items():
             setattr(self, k, v)
 
-    def _set_id(self, v):
-        #self.console.verbose3("b4_clients.Struct.xxxxx")
+    def set_id(self, v):
+        #self.console.verbose3("b4_clients.Struct.set_id")
         if not v:
-            self._id = 0
+            self.id = 0
         else:
-            self._id = int(v)
+            self.id = int(v)
 
-    def _get_id(self):
-        #self.console.verbose3("b4_clients.Struct.xxxxx")
-        return self._id
-
-    id = property(_get_id, _set_id)
+    def get_id(self):
+        #self.console.verbose3("b4_clients.Struct.get_id")
+        return self.id
 
 
 class Penalty(Struct):
@@ -1087,72 +1018,60 @@ class Penalty(Struct):
     reason = ''
     type = ''
 
-    _adminId = None
-    _clientId = None
-    _timeAdd = 0
-    _timeEdit = 0
-    _timeExpire = 0
-    _duration = 0
+    adminId = None
+    clientId = None
+    timeAdd = 0
+    timeEdit = 0
+    timeExpire = 0
+    duration = 0
 
-    def _set_admin_id(self, v):
-        #self.console.verbose3("b4_clients.Penalty.xxxxx")
-        self._adminId = v
+    def set_adminId(self, v):
+        #self.console.verbose3("b4_clients.Penalty.set_adminId")
+        self.adminId = v
 
-    def _get_admin_id(self):
-        #self.console.verbose3("b4_clients.Penalty.xxxxx")
-        return self._adminId
+    def get_adminId(self):
+        #self.console.verbose3("b4_clients.Penalty.get_adminId")
+        return self.adminId
 
-    adminId = property(_get_admin_id, _set_admin_id)
+    def set_clientId(self, v):
+        #self.console.verbose3("b4_clients.Penalty.set_clientId")
+        self.clientId = v
 
-    def _set_client_id(self, v):
-        #self.console.verbose3("b4_clients.Penalty.xxxxx")
-        self._clientId = v
+    def get_clientId(self):
+        #self.console.verbose3("b4_clients.Penalty.get_clientId")
+        return self.clientId
 
-    def _get_client_id(self):
-        #self.console.verbose3("b4_clients.Penalty.xxxxx")
-        return self._clientId
+    def set_duration(self, v):
+        #self.console.verbose3("b4_clients.Penalty.set_duration")
+        self.duration = b4.b4_functions.time2minutes(v)
 
-    clientId = property(_get_client_id, _set_client_id)
+    def get_duration(self):
+        #self.console.verbose3("b4_clients.Penalty.get_duration")
+        return self.duration
 
-    def _set_duration(self, v):
-        #self.console.verbose3("b4_clients.Penalty.xxxxx")
-        self._duration = b4.b4_functions.time2minutes(v)
+    def set_timeAdd(self, v):
+        #self.console.verbose3("b4_clients.Penalty.set_timeAdd")
+        self.timeAdd = int(v)
 
-    def _get_duration(self):
-        #self.console.verbose3("b4_clients.Penalty.xxxxx")
-        return self._duration
+    def get_timeAdd(self):
+        #self.console.verbose3("b4_clients.Penalty.get_timeAdd")
+        return self.timeAdd
 
-    duration = property(_get_duration, _set_duration)
+    def set_timeEdit(self, v):
+        #self.console.verbose3("b4_clients.Penalty.set_timeEdit")
+        self.timeEdit = int(v)
 
-    def _set_timeAdd(self, v):
-        #self.console.verbose3("b4_clients.Penalty.xxxxx")
-        self._timeAdd = int(v)
+    def get_timeEdit(self):
+        #self.console.verbose3("b4_clients.Penalty.get_timeEdit")
+        return self.timeEdit
 
-    def _get_timeAdd(self):
-        #self.console.verbose3("b4_clients.Penalty.xxxxx")
-        return self._timeAdd
+    def set_timeExpire(self, v):
+        #self.console.verbose3("b4_clients.Penalty.set_timeExpire")
+        self.timeExpire = int(v)
 
-    timeAdd = property(_get_timeAdd, _set_timeAdd)
-
-    def _set_timeEdit(self, v):
-        #self.console.verbose3("b4_clients.Penalty.xxxxx")
-        self._timeEdit = int(v)
-
-    def _get_timeEdit(self):
-        #self.console.verbose3("b4_clients.Penalty.xxxxx")
-        return self._timeEdit
-
-    timeEdit = property(_get_timeEdit, _set_timeEdit)
-
-    def _set_timeExpire(self, v):
-        #self.console.verbose3("b4_clients.Penalty._set_timeExpire")
-        self._timeExpire = int(v)
-
-    def _get_timeExpire(self):
-        #self.console.verbose3("b4_clients.Penalty._get_timeExpire")
-        return self._timeExpire
-
-    timeExpire = property(_get_timeExpire, _set_timeExpire)
+    def get_timeExpire(self):
+        #self.console.verbose3("b4_clients.Penalty.get_timeExpire")
+        return self.timeExpire
 
     def save(self, console):
         """
@@ -1172,15 +1091,13 @@ class ClientWarning(Penalty):
     """
     type = 'Warning'
 
-    def _get_reason(self):
-        #self.console.verbose3("b4_clients.ClientWarning._get_reason")
+    def get_reason(self):
+        #self.console.verbose3("b4_clients.ClientWarning.get_reason")
         return self.reason
 
-    def _set_reason(self, v):
-        #self.console.verbose3("b4_clients.ClientWarning._get_reason")
+    def set_reason(self, v):
+        #self.console.verbose3("b4_clients.ClientWarning.get_reason")
         self.reason = v
-
-    warning = property(_get_reason, _set_reason)
 
 
 class ClientNotice(Penalty):
@@ -1189,15 +1106,13 @@ class ClientNotice(Penalty):
     """
     type = 'Notice'
 
-    def _get_reason(self):
-        #self.console.verbose3("b4_clients.ClientNotice._get_reason")
+    def get_reason(self):
+        #self.console.verbose3("b4_clients.ClientNotice.get_reason")
         return self.reason
 
-    def _set_reason(self, v):
-        #self.console.verbose3("b4_clients.ClientNotice._set_reason")
+    def set_reason(self, v):
+        #self.console.verbose3("b4_clients.ClientNotice.set_reason")
         self.reason = v
-
-    notice = property(_get_reason, _set_reason)
 
 
 class ClientBan(Penalty):
@@ -1225,61 +1140,51 @@ class Alias(Struct):
     """
     Represent an Alias.
     """
-    _alias = ''
-    _clientId = 0
-    _numUsed = 1
-    _timeAdd = 0
-    _timeEdit = 0
+    alias = ''
+    clientId = 0
+    numUsed = 1
+    timeAdd = 0
+    timeEdit = 0
 
-    def _set_alias(self, v):
-        #self.console.verbose3("b4_clients.Alias._set_alias")
-        self._alias = v
+    def set_alias(self, v):
+        #self.console.verbose3("b4_clients.Alias.set_alias")
+        self.alias = v
 
-    def _get_alias(self):
-        #self.console.verbose3("b4_clients.Alias._get_alias")
-        return self._alias
+    def get_alias(self):
+        #self.console.verbose3("b4_clients.Alias.get_alias")
+        return self.alias
 
-    alias = property(_get_alias, _set_alias)
+    def set_clientId(self, v):
+        #self.console.verbose3("b4_clients.Alias.set_clientId")
+        self.clientId = v
 
-    def _set_client_id(self, v):
-        #self.console.verbose3("b4_clients.Alias._set_client_id")
-        self._clientId = v
+    def get_clientId(self):
+        #self.console.verbose3("b4_clients.Alias.get_clientId")
+        return self.clientId
 
-    def _get_client_id(self):
-        #self.console.verbose3("b4_clients.Alias._get_client_id")
-        return self._clientId
+    def set_numUsed(self, v):
+        #self.console.verbose3("b4_clients.Alias.set_numUsed")
+        self.numUsed = v
 
-    clientId = property(_get_client_id, _set_client_id)
+    def get_numUsed(self):
+        #self.console.verbose3("b4_clients.Alias.get_numUsed")
+        return self.numUsed
 
-    def _set_num_used(self, v):
-        #self.console.verbose3("b4_clients.Alias._set_num_used")
-        self._numUsed = v
+    def set_timeAdd(self, v):
+        #self.console.verbose3("b4_clients.Alias.set_timeAdd")
+        self.timeAdd = int(v)
 
-    def _get_num_used(self):
-        #self.console.verbose3("b4_clients.Alias._get_num_used")
-        return self._numUsed
+    def get_timeAdd(self):
+        #self.console.verbose3("b4_clients.Alias.get_timeAdd")
+        return self.timeAdd
 
-    numUsed = property(_get_num_used, _set_num_used)
+    def set_timeEdit(self, v):
+        #self.console.verbose3("b4_clients.Alias.set_timeEdit")
+        self.timeEdit = int(v)
 
-    def _set_time_add(self, v):
-        #self.console.verbose3("b4_clients.Alias._set_time_add")
-        self._timeAdd = int(v)
-
-    def _get_time_add(self):
-        #self.console.verbose3("b4_clients.Alias._get_time_add")
-        return self._timeAdd
-
-    timeAdd = property(_get_time_add, _set_time_add)
-
-    def _set_time_edit(self, v):
-        #self.console.verbose3("b4_clients.Alias._set_time_edit")
-        self._timeEdit = int(v)
-
-    def _get_time_edit(self):
-        #self.console.verbose3("b4_clients.Alias._get_time_edit")
-        return self._timeEdit
-
-    timeEdit = property(_get_time_edit, _set_time_edit)
+    def get_timeEdit(self):
+        #self.console.verbose3("b4_clients.Alias.get_timeEdit")
+        return self.timeEdit
 
     def save(self, console):
         """
@@ -1300,61 +1205,52 @@ class IpAlias(Struct):
     """
     Represent an Ip Alias.
     """
-    _ip = None
-    _clientId = 0
-    _numUsed = 1
-    _timeAdd = 0
-    _timeEdit = 0
+    ip = None
+    clientId = 0
+    numUsed = 1
+    timeAdd = 0
+    timeEdit = 0
 
-    def _set_ip(self, v):
-        #self.console.verbose3("b4_clients.IpAlias._set_ip")
-        self._ip = v
+    def set_ip(self, v):
+        #self.console.verbose3("b4_clients.IpAlias.set_ip")
+        self.ip = v
 
-    def _get_ip(self):
-        #self.console.verbose3("b4_clients.IpAlias._get_ip")
-        return self._ip
+    def get_ip(self):
+        #self.console.verbose3("b4_clients.IpAlias.get_ip")
+        return self.ip
 
-    ip = property(_get_ip, _set_ip)
+    def set_clientId(self, v):
+        #self.console.verbose3("b4_clients.IpAlias.set_clientId")
+        self.clientId = v
 
-    def _set_client_id(self, v):
-        #self.console.verbose3("b4_clients.IpAlias.xxxxx")
-        self._clientId = v
+    def get_clientId(self):
+        #self.console.verbose3("b4_clients.IpAlias.get_clientId")
+        return self.clientId
 
-    def _get_client_id(self):
-        #self.console.verbose3("b4_clients.IpAlias._get_client_id")
-        return self._clientId
+    def set_numUsed(self, v):
+        #self.console.verbose3("b4_clients.IpAlias.set_numUsed")
+        self.numUsed = v
 
-    clientId = property(_get_client_id, _set_client_id)
+    def get_numUsed(self):
+        #self.console.verbose3("b4_clients.IpAlias.get_numUsed")
+        return self.numUsed
 
-    def _set_num_used(self, v):
-        #self.console.verbose3("b4_clients.IpAlias._set_num_used")
-        self._numUsed = v
 
-    def _get_num_used(self):
-        #self.console.verbose3("b4_clients.IpAlias.xxxxx")
-        return self._numUsed
+    def set_timeAdd(self, v):
+        #self.console.verbose3("b4_clients.IpAlias.set_timeAdd")
+        self.timeAdd = int(v)
 
-    numUsed = property(_get_num_used, _set_num_used)
+    def get_timeAdd(self):
+        #self.console.verbose3("b4_clients.IpAlias.get_timeAdd")
+        return self.timeAdd
 
-    def _set_time_add(self, v):
-        #self.console.verbose3("b4_clients.IpAlias._set_time_add")
-        self._timeAdd = int(v)
+    def set_timeEdit(self, v):
+        #self.console.verbose3("b4_clients.IpAlias.set_timeEdit")
+        self.timeEdit = int(v)
 
-    def _get_time_add(self):
-        #self.console.verbose3("b4_clients.IpAlias._get_time_add")
-        return self._timeAdd
-
-    timeAdd = property(_get_time_add, _set_time_add)
-
-    def _set_time_edit(self, v):
-        #self.console.verbose3("b4_clients.IpAlias._set_time_edit")
-        self._timeEdit = int(v)
-
-    def _get_time_edit(self):
-        #self.console.verbose3("b4_clients.IpAlias._get_time_edit")
-        return self._timeEdit
-
-    timeEdit = property(_get_time_edit, _set_time_edit)
+    def get_timeEdit(self):
+        #self.console.verbose3("b4_clients.IpAlias.get_timeEdit")
+        return self.timeEdit
 
     def save(self, console):
         """
@@ -1375,61 +1271,51 @@ class Group(Struct):
     """
     Represent a Group.
     """
-    _name = ''
-    _keyword = ''
-    _level = 0
-    _timeAdd = 0
-    _timeEdit = 0
+    name = ''
+    keyword = ''
+    level = 0
+    timeAdd = 0
+    timeEdit = 0
 
-    def _set_name(self, v):
-        #self.console.verbose3("b4_clients.Group._set_name")
-        self._name = v
+    def set_name(self, v):
+        #self.console.verbose3("b4_clients.Group.set_name")
+        self.name = v
 
-    def _get_name(self):
-        #self.console.verbose3("b4_clients.Group._get_name")
-        return self._name
+    def get_name(self):
+        #self.console.verbose3("b4_clients.Group.get_name")
+        return self.name
 
-    name = property(_get_name, _set_name)
+    def set_keyword(self, v):
+        #self.console.verbose3("b4_clients.Group.set_keyword")
+        self.keyword = v
 
-    def _set_keyword(self, v):
-        #self.console.verbose3("b4_clients.Group._set_keyword")
-        self._keyword = v
+    def get_keyword(self):
+        #self.console.verbose3("b4_clients.Group.get_keyword")
+        return self.keyword
 
-    def _get_keyword(self):
-        #self.console.verbose3("b4_clients.Group._get_keyword")
-        return self._keyword
+    def set_level(self, v):
+        #self.console.verbose3("b4_clients.Group.set_level")
+        self.level = int(v)
 
-    keyword = property(_get_keyword, _set_keyword)
+    def get_level(self):
+        #self.console.verbose3("b4_clients.Group.get_level")
+        return self.level
 
-    def _set_level(self, v):
-        #self.console.verbose3("b4_clients.Group._set_level")
-        self._level = int(v)
+    def set_timeAdd(self, v):
+        #self.console.verbose3("b4_clients.Group.set_time_add")
+        self.timeAdd = int(v)
 
-    def _get_level(self):
-        #self.console.verbose3("b4_clients.Group._get_level")
-        return self._level
+    def get_timeAdd(self):
+        #self.console.verbose3("b4_clients.Group.get_timeAdd")
+        return self.timeAdd
 
-    level = property(_get_level, _set_level)
+    def set_timeEdit(self, v):
+        #self.console.verbose3("b4_clients.Group.set_timeEdit")
+        self.timeEdit = int(v)
 
-    def _set_time_add(self, v):
-        #self.console.verbose3("b4_clients.Group._set_time_add")
-        self._timeAdd = int(v)
-
-    def _get_time_add(self):
-        #self.console.verbose3("b4_clients.Group._get_time_add")
-        return self._timeAdd
-
-    timeAdd = property(_get_time_add, _set_time_add)
-
-    def _set_time_edit(self, v):
-        #self.console.verbose3("b4_clients.Group._set_time_edit")
-        self._timeEdit = int(v)
-
-    def _get_time_edit(self):
+    def get_timeEdit(self):
         #self.console.verbose3("b4_clients.Group._get_time_edit")
-        return self._timeEdit
-
-    timeEdit = property(_get_time_edit, _set_time_edit)
+        return self.timeEdit
 
     def save(self, console):
         """

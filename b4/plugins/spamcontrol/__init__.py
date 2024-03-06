@@ -52,7 +52,8 @@ class SpamcontrolPlugin(b4.b4_plugin.Plugin):
         """
         Load plugin configuration
         """
-        self._maxSpamins = self.getSetting('settings', 'max_spamins', b4.INTEGER, self._maxSpamins, lambda x: clamp(x, minv=0))
+        self._maxSpamins = self.getSetting('settings', 'max_spamins', b4.INTEGER, self._maxSpamins,
+                                           lambda x: clamp(x, minv=0))
         self._modLevel = self.getSetting('settings', 'mod_level', b4.LEVEL, self._modLevel)
         self._falloffRate = self.getSetting('settings', 'falloff_rate', b4.FLOAT, self._falloffRate)
 
