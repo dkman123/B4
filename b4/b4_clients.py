@@ -347,7 +347,7 @@ class Client(object):
 
                 self._maxLevel = m
             elif self._tempLevel:
-                self._maxGroup = Group(id=-1, name='Unspecified', level=self.tempLevel)
+                self._maxGroup = Group(id=-1, name='Unspecified', level=self._tempLevel)
                 return self._tempLevel
             else:
                 return 0
@@ -662,7 +662,7 @@ class Client(object):
         #self.console.verbose3("b4_clients.Client._get_name")
         return self._name
 
-    name = property(fget=get_name)
+    name = property(fget=get_name, fset=set_name)
 
     def get_exactName(self):
         # with color codes
@@ -723,7 +723,7 @@ class Client(object):
 
     def set_app(self, app):
         #self.console.verbose3("b4_clients.Client.set_app")
-        self.app = _app
+        self._app = app
 
     def get_app(self):
         #self.console.verbose3("b4_clients.Client.get_app")
@@ -1381,43 +1381,53 @@ class Group(Struct):
 
     def set_name(self, v):
         #self.console.verbose3("b4_clients.Group.set_name")
-        self.name = v
+        self._name = v
 
     def get_name(self):
         #self.console.verbose3("b4_clients.Group.get_name")
-        return self.name
+        return self._name
+
+    name = property(fget=get_name, fset=set_name)
 
     def set_keyword(self, v):
         #self.console.verbose3("b4_clients.Group.set_keyword")
-        self.keyword = v
+        self._keyword = v
 
     def get_keyword(self):
         #self.console.verbose3("b4_clients.Group.get_keyword")
-        return self.keyword
+        return self._keyword
+
+    keyword = property(fget=get_keyword, fset=set_keyword)
 
     def set_level(self, v):
         #self.console.verbose3("b4_clients.Group.set_level")
-        self.level = int(v)
+        self._level = int(v)
 
     def get_level(self):
         #self.console.verbose3("b4_clients.Group.get_level")
-        return self.level
+        return self._level
+
+    level = property(fget=get_level, fset=set_level)
 
     def set_timeAdd(self, v):
         #self.console.verbose3("b4_clients.Group.set_time_add")
-        self.timeAdd = int(v)
+        self._timeAdd = int(v)
 
     def get_timeAdd(self):
         #self.console.verbose3("b4_clients.Group.get_timeAdd")
-        return self.timeAdd
+        return self._timeAdd
+
+    timeAdd = property(fget=get_timeAdd, fset=set_timeAdd)
 
     def set_timeEdit(self, v):
         #self.console.verbose3("b4_clients.Group.set_timeEdit")
-        self.timeEdit = int(v)
+        self._timeEdit = int(v)
 
     def get_timeEdit(self):
         #self.console.verbose3("b4_clients.Group._get_time_edit")
-        return self.timeEdit
+        return self._timeEdit
+
+    timeEdit = property(fget=get_timeEdit, fset=set_timeEdit)
 
     def save(self, console):
         """
