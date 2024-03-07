@@ -233,11 +233,15 @@ class Client(object):
         #self.console.verbose3("b4_clients.Client.getAliases")
         return self.console.storage.getClientAliases(self)
 
+    aliases = property(fget=get_aliases)
+
     # -----------------------
 
     def get_bans(self):
         #self.console.verbose3("b4_clients.Client.getBans")
         return self.console.storage.getClientPenalties(self, penType=('Ban', 'TempBan'))
+
+    ban = property(fget=get_bans)
 
     # -----------------------
 
@@ -250,6 +254,8 @@ class Client(object):
         #self.console.verbose3("b4_clients.Client._get_data")
         return self.data
 
+    data = property(fget=get_data, fset=set_data)
+
     # -----------------------
 
     def get_firstWarning(self):
@@ -257,6 +263,8 @@ class Client(object):
         if not self.id:
             return None
         return self.console.storage.getClientFirstPenalty(self, 'Warning')
+
+    firstWarning = property(fget=get_firstWarning)
 
     # -----------------------
 
@@ -275,11 +283,15 @@ class Client(object):
                 self.groups.append(guest_group)
         return self.groups
 
+    groups = property(fget=get_groups)
+
     # -----------------------
 
     def get_ip_addresses(self):
         #self.console.verbose3("b4_clients.Client.get_ip_addresses")
         return self.console.storage.getClientIpAddresses(self)
+
+    ip_addresses = property(fget=get_ip_addresses)
 
     # -----------------------
 
@@ -291,6 +303,8 @@ class Client(object):
         #self.console.verbose3("b4_clients.Client.set_lastVisit")
         self.lastVisit = lastVisit
 
+    lastVisit = property(fget=get_lastVisit, fset=set_lastVisit)
+
     # -----------------------
 
     def get_lastBan(self):
@@ -298,6 +312,12 @@ class Client(object):
         if not self.id:
             return None
         return self.console.storage.getClientLastPenalty(self, ('Ban', 'TempBan'))
+
+    #def set_lastBan(self, lastBan):
+    #    #self.console.verbose3("b4_clients.Client.set_lastBan")
+    #    self.lastBan = lastBan
+
+    lastBan = property(fget=get_lastBan)
 
     # -----------------------
 
@@ -307,10 +327,15 @@ class Client(object):
             return None
         return self.console.storage.getClientLastPenalty(self, 'Warning')
 
+    #def set_lastWarning(self, lastWarning):
+    #    #self.console.verbose3("b4_clients.Client.set_lastWarning")
+    #    self.lastWarning = lastWarning
+
+    lastWarning = property(fget=get_lastWarning)
 
     # -----------------------
 
-    def get_maxLevel(self):
+    def get_maxLevel(self) -> int:
         #self.console.verbose3("b4_clients.Client.get_maxLevel")
         if self.maxLevel is None:
             if self.groups and len(self.groups):
@@ -329,30 +354,60 @@ class Client(object):
 
         return self.maxLevel
 
+    #def set_maxLevel(self, maxLevel):
+    #    #self.console.verbose3("b4_clients.Client.get_maxLevel")
+    #    self.maxLevel = maxLevel
+
+    maxLevel = property(fget=get_maxLevel)
+
     # -----------------------
 
-    def get_maxGroup(self):
+    def get_maxGroup(self) -> int:
         #self.console.verbose3("b4_clients.Client.get_maxGroup")
         self.get_maxLevel()
         return self.maxGroup
 
+    #def set_maxGroup(self, maxGroup):
+    #    #self.console.verbose3("b4_clients.Client.get_maxGroup")
+    #    self.maxGroup = maxGroup
+
+    maxGroup = property(fget=get_maxGroup)
+
     # -----------------------
 
-    def get_numBans(self):
+    def get_numBans(self) -> int:
         #self.console.verbose3("b4_clients.Client.get_numBans")
         if not self.id:
             return 0
         return self.console.storage.numPenalties(self, ('Ban', 'TempBan'))
 
+    def set_numBans(self, numBans):
+        #self.console.verbose3("b4_clients.Client.get_numBans")
+        #self.numBans = numBans
+        return
+
+    numBans = property(fget=get_numBans)
+
     # -----------------------
 
-    def get_numWarnings(self):
+    def get_numWarnings(self) -> int:
         #self.console.verbose3("b4_clients.Client.get_numWarnings")
         if not self.id:
             return 0
         return self.console.storage.numPenalties(self, 'Warning')
 
+    # def set_numWarnings(self, numWarnings):
+    #     #self.console.verbose3("b4_clients.Client.get_numWarnings")
+    #     #self.numWarnings = numWarnings
+    #     return
+
+    numWarnings = property(fget=get_numWarnings)
+
     # -----------------------
+
+    def get_team(self) -> int:
+        #self.console.verbose3("b4_clients.Client.get_team")
+        return self.team
 
     def set_team(self, team):
         #self.console.verbose3("b4_clients.Client.set_team")
@@ -364,15 +419,20 @@ class Client(object):
                 self.console.queueEvent(self.console.getEvent('EVT_CLIENT_TEAM_CHANGE2', {'previous': previous_team,
                                                                                           'new': self.team}, self))
 
-    def get_team(self):
-        #self.console.verbose3("b4_clients.Client.get_team")
-        return self.team
+    team = property(fget=get_team, fset=set_team)
 
     # -----------------------
 
     def get_Warnings(self):
         #self.console.verbose3("b4_clients.Client.getWarnings")
         return self.console.storage.getClientPenalties(self, penType='Warning')
+
+    def set_Warnings(self, Warnings):
+        #self.console.verbose3("b4_clients.Client.get_Warnings")
+        #self.Warnings = Warnings
+        return
+
+    warnings = property(fget=get_Warnings, fset=set_Warnings)
 
     # -----------------------
 
