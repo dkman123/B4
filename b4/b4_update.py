@@ -302,7 +302,7 @@ class DBUpdate(object):
             # use the specified configuration file
             config = b4.getAbsolutePath(config, True)
             if not os.path.isfile(config):
-                b4.b4_functions.console_exit('ERROR: configuration file not found (%s).\n'
+                b4.b4_functions.console_exit('b4_update ERROR: configuration file not found (%s).\n'
                                              'Please visit %s to create one.' % (config, b4.B4_CONFIG_GENERATOR))
         else:
             # search a configuration file
@@ -318,14 +318,14 @@ class DBUpdate(object):
                         break
 
             if not config:
-                b4.b4_functions.console_exit('ERROR: could not find any valid configuration file.\n'
+                b4.b4_functions.console_exit('b4_update ERROR: could not find any valid configuration file.\n'
                                              'Please visit %s to create one.' % b4.B4_CONFIG_GENERATOR)
         try:
             self.config = b4.b4_config.MainConfig(b4.b4_config.load(config))
             if self.config.analyze():
                 raise b4.b4_config.ConfigFileNotValid
         except b4.b4_config.ConfigFileNotValid:
-            b4.b4_functions.console_exit('ERROR: configuration file not valid (%s).\n'
+            b4.b4_functions.console_exit('b4_update ERROR: configuration file not valid (%s).\n'
                                          'Please visit %s to generate a new one.' % (config, b4.B4_CONFIG_GENERATOR))
 
     def run(self):

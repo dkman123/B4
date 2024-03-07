@@ -142,12 +142,12 @@ def run(options):
             config = b4.getAbsolutePath(options.config, True)
             if not os.path.isfile(config):
                 printexit = True
-                b4.b4_functions.console_exit('ERROR: configuration file not found (%s).\n'
+                b4.b4_functions.console_exit('b4_run ERROR: configuration file not found (%s).\n'
                                              'Please visit %s to create one.' % (config, b4.B4_CONFIG_GENERATOR))
         else:
             config = None
-            for p in ('b4.%s', 'conf/b4.%s', 'b4/conf/b4.%s',
-                      os.path.join(b4.HOMEDIR, 'b4.%s'), os.path.join(b4.HOMEDIR, 'conf', 'b4.%s'),
+            for p in (os.path.join(b4.HOMEDIR, 'b4.%s'), 'b4.%s', 'conf/b4.%s', 'b4/conf/b4.%s',
+                      os.path.join(b4.HOMEDIR, 'conf', 'b4.%s'),
                       os.path.join(b4.HOMEDIR, 'b4', 'conf', 'b4.%s'), '@b4/conf/b4.%s'):
                 for e in ('ini', 'cfg', 'xml'):
                     path = b4.getAbsolutePath(p % e, True)
@@ -156,28 +156,31 @@ def run(options):
                         config = path
                         sleep(3)
                         break
+                    else:
+                        sys.stdout.write("b4_run Conf not found at %s\n" % path)
 
             if not config:
                 printexit = True
-                b4.b4_functions.console_exit('ERROR: could not find any valid configuration file.\n'
-                                             'Please visit %s to create one.' % b4.B4_CONFIG_GENERATOR)
+                b4.b4_functions.console_exit('b4_run ERROR: could not find any valid configuration file.\n'
+                                             'Please visit %s to create one.\n'
+                                             'Home dir: %s\n' % (b4.B4_CONFIG_GENERATOR, b4.HOMEDIR))
 
         # LOADING MAIN CONFIGURATION
         main_config = b4.b4_config.MainConfig(b4.b4_config.load(config))
         analysis = main_config.analyze()
         if analysis:
-            raise b4.b4_config.ConfigFileNotValid('invalid configuration file specified')
+            raise b4.b4_config.ConfigFileNotValid('b4_run Invalid configuration file specified')
 
         # START B4
         b4.start(main_config, options)
 
     except b4.b4_config.ConfigFileNotValid:
         if analysis:
-            print('CRITICAL: invalid configuration file specified:\n')
+            print('b4_run CRITICAL: invalid configuration file specified:\n')
             for problem in analysis:
                 print("  >>> %s\n" % problem)
         else:
-            print('CRITICAL: invalid configuration file specified!')
+            print('b4_run CRITICAL: invalid configuration file specified!')
         raise SystemExit(1)
     except SystemExit as msg:
         if not printexit and b4.b4_functions.main_is_frozen():
