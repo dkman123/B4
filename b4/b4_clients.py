@@ -91,32 +91,32 @@ class ClientVar(object):
 class Client(object):
 
     ## PVT
-    autoLogin = 1
-    data = None
-    exactName = ''
-    greeting = ''
-    groupBits = 0
-    groups = None
-    guid = ''
-    id = 0
-    ip = ''
-    lastVisit = None
-    login = ''
-    maskGroup = None
-    maskLevel = 0
-    maxGroup = None
-    maxLevel = None
-    name = ''
-    password = ''
-    pluginData = None
-    pbid = ''
-    team = TEAM_UNKNOWN
-    tempLevel = None
-    timeAdd = 0
-    timeEdit = 0
-    app = ''
-    isocode = ''
-    permmute = 0
+    _autoLogin = 1
+    _data = None
+    _exactName = ''
+    _greeting = ''
+    _groupBits = 0
+    _groups = None
+    _guid = ''
+    _id = 0
+    _ip = ''
+    _lastVisit = None
+    _login = ''
+    _maskGroup = None
+    _maskLevel = 0
+    _maxGroup = None
+    _maxLevel = None
+    _name = ''
+    _password = ''
+    _pluginData = None
+    _pbid = ''
+    _team = TEAM_UNKNOWN
+    _tempLevel = None
+    _timeAdd = 0
+    _timeEdit = 0
+    _app = ''
+    _isocode = ''
+    _permmute = 0
 
     # PUB
     authed = False
@@ -159,7 +159,7 @@ class Client(object):
         """
         #self.console.verbose3("b4_clients.Client.isvar")
         try:
-            d = self.pluginData[id(plugin)][key]
+            d = self._pluginData[id(plugin)][key]
             return True
         except Exception:
             return False
@@ -174,16 +174,16 @@ class Client(object):
         """
         #self.console.verbose3("b4_clients.Client.setvar")
         try:
-            self.pluginData[id(plugin)]
+            self._pluginData[id(plugin)]
         except Exception:
-            self.pluginData[id(plugin)] = {}
+            self._pluginData[id(plugin)] = {}
 
         try:
-            self.pluginData[id(plugin)][key].value = value
+            self._pluginData[id(plugin)][key].value = value
         except Exception:
-            self.pluginData[id(plugin)][key] = ClientVar(value)
+            self._pluginData[id(plugin)][key] = ClientVar(value)
 
-        return self.pluginData[id(plugin)][key]
+        return self._pluginData[id(plugin)][key]
 
     def var(self, plugin, key, default=None):
         """
@@ -195,7 +195,7 @@ class Client(object):
         """
         #self.console.verbose3("b4_clients.Client.var")
         try:
-            return self.pluginData[id(plugin)][key]
+            return self._pluginData[id(plugin)][key]
         except Exception:
             return self.setvar(plugin, key, default)
 
@@ -219,7 +219,7 @@ class Client(object):
         """
         #self.console.verbose3("b4_clients.Client.delvar")
         try:
-            del self.pluginData[id(plugin)][key]
+            del self._pluginData[id(plugin)][key]
         except Exception:
             pass
 
@@ -248,11 +248,11 @@ class Client(object):
     def set_data(self, data):
         #self.console.verbose3("b4_clients.Client._set_data")
         for k, v in data.items():
-            self.data[k] = v
+            self._data[k] = v
 
     def get_data(self):
         #self.console.verbose3("b4_clients.Client._get_data")
-        return self.data
+        return self._data
 
     data = property(fget=get_data, fset=set_data)
 
@@ -270,18 +270,18 @@ class Client(object):
 
     def get_groups(self):
         #self.console.verbose3("b4_clients.Client.getGroups")
-        if not self.groups:
-            self.groups = []
+        if not self._groups:
+            self._groups = []
             groups = self.console.storage.getGroups()
             guest_group = None
             for g in groups:
                 if g.id == 0:
                     guest_group = g
-                if g.id & self.groupBits:
-                    self.groups.append(g)
+                if g.id & self._groupBits:
+                    self._groups.append(g)
             if not len(self.groups) and guest_group:
-                self.groups.append(guest_group)
-        return self.groups
+                self._groups.append(guest_group)
+        return self._groups
 
     groups = property(fget=get_groups)
 
@@ -297,11 +297,11 @@ class Client(object):
 
     def get_lastVisit(self):
         #self.console.verbose3("b4_clients.Client.get_lastVisit")
-        return self.lastVisit
+        return self._lastVisit
 
     def set_lastVisit(self, lastVisit):
         #self.console.verbose3("b4_clients.Client.set_lastVisit")
-        self.lastVisit = lastVisit
+        self._lastVisit = lastVisit
 
     lastVisit = property(fget=get_lastVisit, fset=set_lastVisit)
 
@@ -337,18 +337,18 @@ class Client(object):
 
     def get_maxLevel(self) -> int:
         #self.console.verbose3("b4_clients.Client.get_maxLevel")
-        if self.maxLevel is None:
+        if self._maxLevel is None:
             if self.groups and len(self.groups):
                 m = -1
                 for g in self.groups:
                     if g.level > m:
                         m = g.level
-                        self.maxGroup = g
+                        self._maxGroup = g
 
-                self.maxLevel = m
-            elif self.tempLevel:
-                self.maxGroup = Group(id=-1, name='Unspecified', level=self.tempLevel)
-                return self.tempLevel
+                self._maxLevel = m
+            elif self._tempLevel:
+                self._maxGroup = Group(id=-1, name='Unspecified', level=self.tempLevel)
+                return self._tempLevel
             else:
                 return 0
 
@@ -365,7 +365,7 @@ class Client(object):
     def get_maxGroup(self) -> int:
         #self.console.verbose3("b4_clients.Client.get_maxGroup")
         self.get_maxLevel()
-        return self.maxGroup
+        return self._maxGroup
 
     #def set_maxGroup(self, maxGroup):
     #    #self.console.verbose3("b4_clients.Client.get_maxGroup")
@@ -381,10 +381,10 @@ class Client(object):
             return 0
         return self.console.storage.numPenalties(self, ('Ban', 'TempBan'))
 
-    def set_numBans(self, numBans):
-        #self.console.verbose3("b4_clients.Client.get_numBans")
-        #self.numBans = numBans
-        return
+    #def set_numBans(self, numBans):
+    #    #self.console.verbose3("b4_clients.Client.get_numBans")
+    #    #self.numBans = numBans
+    #    return
 
     numBans = property(fget=get_numBans)
 
@@ -407,13 +407,13 @@ class Client(object):
 
     def get_team(self) -> int:
         #self.console.verbose3("b4_clients.Client.get_team")
-        return self.team
+        return self._team
 
     def set_team(self, team):
         #self.console.verbose3("b4_clients.Client.set_team")
-        if self.team != team:
+        if self._team != team:
             previous_team = self.team
-            self.team = team
+            self._team = team
             if self.console:
                 self.console.queueEvent(self.console.getEvent('EVT_CLIENT_TEAM_CHANGE', self.team, self))
                 self.console.queueEvent(self.console.getEvent('EVT_CLIENT_TEAM_CHANGE2', {'previous': previous_team,
@@ -427,12 +427,12 @@ class Client(object):
         #self.console.verbose3("b4_clients.Client.getWarnings")
         return self.console.storage.getClientPenalties(self, penType='Warning')
 
-    def set_Warnings(self, Warnings):
-        #self.console.verbose3("b4_clients.Client.get_Warnings")
-        #self.Warnings = Warnings
-        return
+    #def set_Warnings(self, Warnings):
+    #    #self.console.verbose3("b4_clients.Client.get_Warnings")
+    #    #self.Warnings = Warnings
+    #    return
 
-    warnings = property(fget=get_Warnings, fset=set_Warnings)
+    warnings = property(fget=get_Warnings)
 
     # -----------------------
 
