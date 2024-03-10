@@ -98,8 +98,8 @@ class Parser(object):
     autorestart = False  # whether B4 has been started in autorestart mode
     clients = None
     config = None  # parser configuration file instance
-    delay = 0.33  # time between each game log lines fetching
-    delay2 = 0.02  # time between each game log line processing: max number of lines processed in one second
+    delay = 0.33  # time between each game log lines fetching (0.33)
+    delay2 = 0.02  # time between each game log line processing: max number of lines processed in one second (0.02)
     encoding = 'latin-1'
     game = None
     gameName = None  # console name

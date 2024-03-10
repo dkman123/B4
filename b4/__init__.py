@@ -303,6 +303,7 @@ def start(mainconfig, options):
     parser = loadParser(parsertype)
     global console
     console = parser(mainconfig, options)
+    console.bot("Using config %s" % getShortPath(mainconfig.fileName, True))
 
     def termSignalHandler(signum, frame):
         """

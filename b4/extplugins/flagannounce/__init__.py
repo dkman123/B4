@@ -211,7 +211,10 @@ class FlagannouncePlugin(b4.b4_plugin.Plugin):
         if event.data in 'flag_captured':
             self._warmup = True
             # self.debug("DK: slot id: %s; has_blue %s; has_red %s" % (event.client.cid, self._has_blue, self._has_red))
-            caplimit = self.console.getCvar('capturelimit').getInt()
+            caplimit = self.console.getCvar('capturelimit')
+            if caplimit is None:
+                caplimit = "8"
+            caplimit = caplimit.getInt()
             if event.client.cid == self._has_blue:
                 self._red_score += 1
                 self._has_blue = -1
