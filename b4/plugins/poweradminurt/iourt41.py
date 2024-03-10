@@ -360,15 +360,13 @@ class Poweradminurt41Plugin(b4.b4_plugin.Plugin):
                                           lambda x: b4.b4_functions.clamp(x, maxv=59))
         self._smaxspectime = self.getSetting('speccheck', 'maxspectime', b4.INT, self._smaxspectime)
         self._smaxlevel = self.getSetting('speccheck', 'maxlevel', b4.LEVEL, self._smaxlevel)
-        maxclients = self.console.getCvar('sv_maxclients').getString()
-        if maxclients is not None and maxclients != '':
-            maxclients = maxclients.getInt()
-        else:
+        try:
+            maxclients = self.console.getCvar('sv_maxclients').getInt()
+        except ValueError:
             maxclients = 0
-        pvtclients = self.console.getCvar('sv_privateClients').getString()
-        if pvtclients is not None and pvtclients != '':
-            pvtclients = pvtclients.getInt()
-        else:
+        try:
+            pvtclients = self.console.getCvar('sv_privateClients').getInt()
+        except ValueError:
             pvtclients = 0
 
         smaxplayers = maxclients - pvtclients
@@ -383,7 +381,7 @@ class Poweradminurt41Plugin(b4.b4_plugin.Plugin):
 
     def loadPublicMode(self):
         """
-        Setup the public mode
+        Set up the public mode
         """
         self._randnum = self.getSetting('publicmode', 'randnum', b4.INT, self._randnum)
 
