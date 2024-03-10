@@ -653,10 +653,10 @@ class Poweradminurt41Plugin(b4.b4_plugin.Plugin):
         """
         Handle EVT_GAME_MAP_CHANGE.
         """
-        matchmode = self.console.getCvar('g_matchmode').getString()
-        if matchmode:
-            self._matchmode = matchmode.getBoolean()
-
+        try:
+            self._matchmode = self.console.getCvar('g_matchmode').getBoolean()
+        except ValueError:
+            self._matchmode = False
 
     def onKill(self, event):
         """

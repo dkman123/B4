@@ -215,7 +215,7 @@ class FlagannouncePlugin(b4.b4_plugin.Plugin):
                 caplimit = self.console.getCvar('capturelimit').getInt()
             except ValueError:
                 caplimit = 8
-            
+
             if event.client.cid == self._has_blue:
                 self._red_score += 1
                 self._has_blue = -1
