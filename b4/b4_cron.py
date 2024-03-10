@@ -378,7 +378,7 @@ class Cron(object):
                                                    msg, traceback.extract_tb(sys.exc_info()[2]))
             except RuntimeError as ex:
                 # most likely "dictionary changed size during iteration"
-                self.console.info("cron cycle %r" % ex)
+                self.console.info("b4_cron run cycle caught %r" % ex)
 
             for key in dellist:
                 del self._tabs[key]

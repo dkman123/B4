@@ -213,18 +213,19 @@ class Poweradminurt41Plugin(b4.b4_plugin.Plugin):
         try:
             # save original vote settings
             self._origvote = self.console.getCvar('g_allowvote').getString()
-            if self._origvote is None:
-                self._origvote = 0
-            if type(self._origvote) is str:
-                self._origvote = int(self._origvote)
+            self.warning("iourt41 g_allowvote CVAR value: %s", self._origvote)
+            #if self._origvote is None:
+            #    self._origvote = 0
+            #if type(self._origvote) is str:
+            #    self._origvote = int(self._origvote)
         except ValueError as e:
             self.warning("could not retrieve g_allowvote CVAR value: %s", e)
-            self._origvote = 0  # no votes
+            self._origvote = "0"  # no votes
 
         # if by any chance on botstart g_allowvote is 0
         # we'll use the default UrT value
-        if self._origvote == 0:
-            self._origvote = 536871039
+        if self._origvote == "0":
+            self._origvote = "536871039"
 
         self._lastvote = self._origvote
 
