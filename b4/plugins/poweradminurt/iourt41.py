@@ -228,15 +228,15 @@ class Poweradminurt41Plugin(b4.b4_plugin.Plugin):
 
         self._lastvote = self._origvote
 
-        # how many players are allowed and if g_maxGameClients != 0 we will disable specchecking
-        self._sv_maxclients = self.console.getCvar('sv_maxclients')
-        if self._sv_maxclients == "":
-            self._sv_maxclients = "0"
-        self._sv_maxclients = int(self._sv_maxclients)
-        self._g_maxGameClients = self.console.getCvar('g_maxGameClients')
-        if self.g_maxGameClients == "":
-            self.g_maxGameClients = "0"
-        self.g_maxGameClients = int(self.g_maxGameClients)
+        # how many players are allowed and if g_maxGameClients != 0 we will disable spec-checking
+        try:
+            self._sv_maxclients = int(self.console.getCvar('sv_maxclients'))
+        except ValueError:
+            self._sv_maxclients = 0
+        try:
+            self._g_maxGameClients = int(self.console.getCvar('g_maxGameClients'))
+        except ValueError:
+            self.g_maxGameClients = 0
 
         try:
             # save original gear settings
@@ -619,10 +619,10 @@ class Poweradminurt41Plugin(b4.b4_plugin.Plugin):
         self._teamblue = 0
 
         # vote delay init
-        allowVote = self.console.getCvar('g_allowvote')
-        if allowVote == "":
-            allowVote = "0"
-        allowVote = int(allowVote)
+        try:
+            allowVote = int(self.console.getCvar('g_allowvote'))
+        except ValueError:
+            allowVote = 0
         if self._votedelay > 0 and allowVote != 0:
             # delay voting
             data = 'off'
