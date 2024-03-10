@@ -73,7 +73,7 @@ class Poweradminurt42Plugin(Poweradminurt41Plugin):
         Initialize plugin settings
         """
         Poweradminurt41Plugin.onStartup(self)
-        self._gears['reset'] = self.console.getCvar('g_gear').getString()
+        self._gears['reset'] = self.console.getCvar('g_gear')
 
     def registerEvents(self):
         """
@@ -348,7 +348,7 @@ class Poweradminurt42Plugin(Poweradminurt41Plugin):
                     if opt == '-':
                         gear_set.add(weapon_code)
 
-        current_gear_set = set(self.console.getCvar('g_gear').getString())
+        current_gear_set = set(self.console.getCvar('g_gear'))
         new_gear_set = set(current_gear_set)
         for m in re.finditer(r"(all|none|reset|[+-]\s*[\w.]+)", data.strip().lower()):
             update_gear(new_gear_set, m.group())
@@ -481,7 +481,7 @@ class Poweradminurt42Plugin(Poweradminurt41Plugin):
         """
         if not gearstr:
             # if not explicitly passed get it form the server
-            gearstr = self.console.getCvar('g_gear').getString()
+            gearstr = self.console.getCvar('g_gear')
 
         lines = []
         for key in self._weapons:

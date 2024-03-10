@@ -229,19 +229,25 @@ class Poweradminurt41Plugin(b4.b4_plugin.Plugin):
         self._lastvote = self._origvote
 
         # how many players are allowed and if g_maxGameClients != 0 we will disable specchecking
-        self._sv_maxclients = self.console.getCvar('sv_maxclients').getInt()
-        self._g_maxGameClients = self.console.getCvar('g_maxGameClients').getInt()
+        self._sv_maxclients = self.console.getCvar('sv_maxclients')
+        if self._sv_maxclients == "":
+            self._sv_maxclients = "0"
+        self._sv_maxclients = int(self._sv_maxclients)
+        self._g_maxGameClients = self.console.getCvar('g_maxGameClients')
+        if self.g_maxGameClients == "":
+            self.g_maxGameClients = "0"
+        self.g_maxGameClients = int(self.g_maxGameClients)
 
         try:
             # save original gear settings
-            self._origgear = self.console.getCvar('g_gear').getInt()
+            self._origgear = self.console.getCvar('g_gear')
         except ValueError as e:
             if self.console.gameName == 'iourt41':
                 # if the game is iourt42 don't log since the above cvar retrieval
                 # is going to raise an exception everytime: iourt42 uses a gear
                 # string instead of gear bitmask so int casting will raise a ValueError
                 self.warning("could not retrieve g_gear CVAR value: %s", e)
-                self._origgear = 0  # allow all weapons
+                self._origgear = "0"  # allow all weapons
 
         self.installCrontabs()
 
@@ -613,7 +619,11 @@ class Poweradminurt41Plugin(b4.b4_plugin.Plugin):
         self._teamblue = 0
 
         # vote delay init
-        if self._votedelay > 0 and self.console.getCvar('g_allowvote').getInt() != 0:
+        allowVote = self.console.getCvar('g_allowvote')
+        if allowVote == "":
+            allowVote = "0"
+        allowVote = int(allowVote)
+        if self._votedelay > 0 and allowVote != 0:
             # delay voting
             data = 'off'
             self.votedelay(data)
@@ -1468,8 +1478,8 @@ class Poweradminurt41Plugin(b4.b4_plugin.Plugin):
             return
 
         if data.lower() == 'off':
-            curvalue = self.console.getCvar('g_allowvote').getInt()
-            if curvalue != 0:
+            curvalue = self.console.getCvar('g_allowvote')
+            if curvalue != '0':
                 self._lastvote = curvalue
             self.console.setCvar('g_allowvote', '0')
         elif data.lower() == 'on':
@@ -1905,7 +1915,10 @@ class Poweradminurt41Plugin(b4.b4_plugin.Plugin):
         """
         [<all/none/reset/[+-](nade|snipe|spas|pistol|auto|negev)>] - Set allowed weapons.
         """
-        cur_gear = self.console.getCvar('g_gear').getInt()
+        try:
+            cur_gear = self.console.getCvar('g_gear')
+        except ValueError:
+            cur_gear = 0
         if not data:
 
             if client:
@@ -2193,8 +2206,8 @@ class Poweradminurt41Plugin(b4.b4_plugin.Plugin):
         Count the amount of players in RED and BLUE team.
         """
         try:
-            self._teamred = len(self.console.getCvar('g_redteamlist').getString())
-            self._teamblue = len(self.console.getCvar('g_blueteamlist').getString())
+            self._teamred = len(self.console.getCvar('g_redteamlist'))
+            self._teamblue = len(self.console.getCvar('g_blueteamlist'))
             return True
         except Exception:
             return False
@@ -2208,7 +2221,7 @@ class Poweradminurt41Plugin(b4.b4_plugin.Plugin):
         if self.console.game.gameType is None:
             try:
                 # find and set current gametype
-                self.console.game.gameType = self.console.defineGameType(self.console.getCvar('g_gametype').getString())
+                self.console.game.gameType = self.console.defineGameType(self.console.getCvar('g_gametype'))
                 self.debug('current gametype found - changed to (%s)', self.console.game.gameType)
             except Exception:
                 self.debug('unable to determine current gametype - remains at (%s)', self.console.game.gameType)
@@ -2580,7 +2593,7 @@ class Poweradminurt41Plugin(b4.b4_plugin.Plugin):
                 if self._hs_tempban and headshots > self._hs_tempban_nr \
                         and event.client.maxLevel < self._hs_tempban_immunity_level \
                         and percentage > self._hs_tempban_percent:
-                    gearstring = self.console.getCvar('g_gear').getString()
+                    gearstring = self.console.getCvar('g_gear')
                     # self.verbose("gearstring length: %d. test < %d", len(gearstring),
                     # self._hs_tempban_disable_gear_length)
                     if len(gearstring) < self._hs_tempban_disable_gear_length:

@@ -140,7 +140,7 @@ class JumpRun(object):
             if self.p.console.game.fs_game is None:
 
                 try:
-                    self.p.console.game.fs_game = right_cut(self.p.console.getCvar('fs_game').getString(), '/')
+                    self.p.console.game.fs_game = right_cut(self.p.console.getCvar('fs_game'), '/')
                     self.p.debug('retrieved server cvar <fs_game> : %s' % self.p.console.game.fs_game)
                 except AttributeError as e:
                     self.p.warning('could not retrieve server cvar <fs_game> : %s' % e)
@@ -150,7 +150,7 @@ class JumpRun(object):
             if self.p.console.game.fs_basepath is None:
 
                 try:
-                    self.p.console.game.fs_basepath = self.p.console.getCvar('fs_basepath').getString().rstrip('/')
+                    self.p.console.game.fs_basepath = self.p.console.getCvar('fs_basepath').rstrip('/')
                     self.p.debug('retrieved server cvar <fs_basepath> : %s' % self.p.console.game.fs_basepath)
                 except AttributeError as e:
                     self.p.warning('could not retrieve server cvar <fs_basepath> : %s' % e)
@@ -166,7 +166,7 @@ class JumpRun(object):
                 if self.p.console.game.fs_homepath is None:
 
                     try:
-                        self.p.console.game.fs_homepath = self.p.console.getCvar('fs_homepath').getString().rstrip('/')
+                        self.p.console.game.fs_homepath = self.p.console.getCvar('fs_homepath').rstrip('/')
                         self.p.debug('retrieved server cvar <fs_homepath> : %s' % self.p.console.game.fs_basepath)
                     except AttributeError as e:
                         self.p.warning('could not retrieve server cvar <fs_homepath> : %s' % e)

@@ -70,7 +70,7 @@ class ExtraadminPlugin(b4.b4_plugin.Plugin):
     RAZ_limite = 0
     _min_level_exit = 0
 
-    #--------------CHARGEMENT DES CONFIGS--------------------------------------------
+    # --------------CHARGEMENT DES CONFIGS--------------------------------------------
     def onLoadConfig(self):
         try:
             self._min_level_change = self.config.getint('settings', 'min_level_change')
@@ -144,7 +144,10 @@ class ExtraadminPlugin(b4.b4_plugin.Plugin):
             self._adminPlugin.registerCommand(self, 'exit', self._min_level_exit, self.cmd_exit, 'ex')
 
     def onStartup(self):
-        self.Nbports = self.console.getCvar('sv_maxclients').getInt()
+        self.Nbports = self.console.getCvar('sv_maxclients')
+        if self.Nbports == "":
+            self.Nbports = "0"
+        self.Nbports = int(self.Nbports)
         while self.i <= self.Nbports:
                 self.Tableau.append('S' + str(self.i))
                 self.i = self.i + 1
@@ -169,7 +172,7 @@ class ExtraadminPlugin(b4.b4_plugin.Plugin):
             self.showIP(event.client)
             self.JoueurCo(event)
 
-    #--------------COMMANDE CHANGE--------------------------------------------
+    # --------------COMMANDE CHANGE--------------------------------------------
     def cmd_ChangePlayer(self, data, client, cmd=None):
         """\
         [Player1] [Player2/None] Change team between (1 and 2) or (1 and you)
@@ -213,7 +216,7 @@ class ExtraadminPlugin(b4.b4_plugin.Plugin):
             if client1 == client:
                 client.message('Not you, an other')
 
-    #--------------COMMANDE AFK-KAFK-------------------------------------------
+    # --------------COMMANDE AFK-KAFK-------------------------------------------
     def cmd_AFK(self, data, client, cmd=None):
         """\
         [Player] Ask if player is AFK, if no response, he's forced spectator
@@ -273,7 +276,7 @@ class ExtraadminPlugin(b4.b4_plugin.Plugin):
         self.console.write('forceteam %s spectator' % (self.clientAFK))
         self.forceafk = 0
 
-    #--------------COMMANDE PM--------------------------------------------
+    # --------------COMMANDE PM--------------------------------------------
     def cmd_PM(self, data, client, cmd=None):
         """\
         [Player] [Message] Send a message to a player
@@ -293,7 +296,7 @@ class ExtraadminPlugin(b4.b4_plugin.Plugin):
         if not len(inputdata[1]):
             client.message('Put text in your command')
 
-    #--------------COMMANDE SALUT--------------------------------------------
+    # --------------COMMANDE SALUT--------------------------------------------
     def cmd_Salut(self, data, client, cmd=None):
         """\
         [Player]/[BST] The server show bigtext with Hellow...
@@ -319,7 +322,7 @@ class ExtraadminPlugin(b4.b4_plugin.Plugin):
         if clientHello:
             self.console.write('bigtext "%s says hello to %s"' % (client.exactName, clientHello.exactName))
 
-    #--------------AFFICHAGE IP--------------------------------------------
+    # --------------AFFICHAGE IP--------------------------------------------
     def showIP(self, client):
         if self.showIPclient == 1:
             self.console.write('%s connected : %s' % (client.name, client.ip))
@@ -352,7 +355,7 @@ class ExtraadminPlugin(b4.b4_plugin.Plugin):
             self.RAZ = 0
         self.CycliqueCheck()
 
-    #--------------AUTONUKE--------------------------------------------
+    # --------------AUTONUKE--------------------------------------------
     def cmd_autonuke(self, data, client, cmd=None):
         """\
         [Player] Send nuke until player die
@@ -383,7 +386,7 @@ class ExtraadminPlugin(b4.b4_plugin.Plugin):
             if client.cid == self.clientautonuke.cid:
                 self.clientautonuke = None
 
-    #--------------EXIT--------------------------------------------
+    # --------------EXIT--------------------------------------------
     def cmd_exit(self, data, client, cmd=None):
         """\
         Send the name of the last player disconnect

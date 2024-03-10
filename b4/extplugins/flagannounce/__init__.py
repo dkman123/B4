@@ -448,8 +448,8 @@ class FlagannouncePlugin(b4.b4_plugin.Plugin):
                           'V': 21, 'W': 22, 'X': 23, 'Y': 24, 'Z': 25, '[': 26, '\\': 27, ']': 28, '^': 29, '_': 30,
                           '`':  31}
 
-        teamred = self.console.getCvar('g_redteamlist').getString()
-        teamblue = self.console.getCvar('g_blueteamlist').getString()
+        teamred = self.console.getCvar('g_redteamlist')
+        teamblue = self.console.getCvar('g_blueteamlist')
 
         self.debug("RandomShuffle red: %s" % teamred)
         self.debug("RandomShuffle blue: %s" % teamblue)
@@ -552,8 +552,8 @@ class FlagannouncePlugin(b4.b4_plugin.Plugin):
                           'V': 21, 'W': 22, 'X': 23, 'Y': 24, 'Z': 25, '[': 26, '\\': 27, ']': 28, '^': 29, '_': 30,
                           '`':  31}
 
-        teamred = self.console.getCvar('g_redteamlist').getString()
-        teamblue = self.console.getCvar('g_blueteamlist').getString()
+        teamred = self.console.getCvar('g_redteamlist')
+        teamblue = self.console.getCvar('g_blueteamlist')
 
         self.debug("TeamSwap red: %s" % teamred)
         self.debug("TeamSwap blue: %s" % teamblue)

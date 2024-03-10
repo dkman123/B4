@@ -883,7 +883,7 @@ class DatabaseStorage(Storage):
             #self.console.info("b4_common _query setting dbcursor")
             dbcursor = b4.storage.b4_cursor.Cursor(cursor, self.db[threading.current_thread().ident])
         except Exception as ex:
-            self.console.error("b4_common _query exception %s" % ex)
+            self.console.error("b4_common _query exception %s; %r" % (ex, query))
             dbcursor = None
         #finally:
         #    self._lock.release()

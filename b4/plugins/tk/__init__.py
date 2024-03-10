@@ -705,11 +705,15 @@ class TkPlugin(b4.b4_plugin.Plugin):
         """
         v = self.getClientTkInfo(client)
         if len(v.attackers) == 1:
+            forgiveList = []
             for cid, attacker in v.attackers.items():
                 if v.isGrudged(cid):
                     client.message(self.getMessage('no_forgive'))
                 else:
-                    self.forgive(cid, client)
+                    #self.forgive(cid, client)
+                    forgiveList.append((cid, client))
+            for cid, attacker in forgiveList:
+                self.forgive(cid, client)
         elif v.lastAttacker and not v.isGrudged(v.lastAttacker):
             self.forgive(v.lastAttacker, client)
         else:
