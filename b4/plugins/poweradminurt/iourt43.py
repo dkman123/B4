@@ -419,7 +419,7 @@ class Poweradminurt43Plugin(Poweradminurt41Plugin):
                     if opt == '-':
                         gear_set.add(weapon_code)
 
-        current_gear_set = set(self.console.getCvar('g_gear')).getString()
+        current_gear_set = set(self.console.getCvar('g_gear'))
         new_gear_set = set(current_gear_set)
         for m in re.finditer(r"(all|none|reset|[+-]\s*[\w.]+)", data.strip().lower()):
             update_gear(new_gear_set, m.group())
