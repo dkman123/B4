@@ -211,8 +211,8 @@ class FlagannouncePlugin(b4.b4_plugin.Plugin):
         if event.data in 'flag_captured':
             self._warmup = True
             # self.debug("DK: slot id: %s; has_blue %s; has_red %s" % (event.client.cid, self._has_blue, self._has_red))
-            caplimit = self.console.getCvar('capturelimit')
-            if caplimit is None:
+            caplimit = self.console.getCvar('capturelimit').getString()
+            if caplimit is "":
                 caplimit = "8"
             caplimit = caplimit.getInt()
             if event.client.cid == self._has_blue:
@@ -448,8 +448,8 @@ class FlagannouncePlugin(b4.b4_plugin.Plugin):
                           'V': 21, 'W': 22, 'X': 23, 'Y': 24, 'Z': 25, '[': 26, '\\': 27, ']': 28, '^': 29, '_': 30,
                           '`':  31}
 
-        teamred = self.console.getCvar('g_redteamlist')
-        teamblue = self.console.getCvar('g_blueteamlist')
+        teamred = self.console.getCvar('g_redteamlist').getString()
+        teamblue = self.console.getCvar('g_blueteamlist').getString()
 
         self.debug("RandomShuffle red: %s" % teamred)
         self.debug("RandomShuffle blue: %s" % teamblue)
@@ -552,8 +552,8 @@ class FlagannouncePlugin(b4.b4_plugin.Plugin):
                           'V': 21, 'W': 22, 'X': 23, 'Y': 24, 'Z': 25, '[': 26, '\\': 27, ']': 28, '^': 29, '_': 30,
                           '`':  31}
 
-        teamred = self.console.getCvar('g_redteamlist')
-        teamblue = self.console.getCvar('g_blueteamlist')
+        teamred = self.console.getCvar('g_redteamlist').getString()
+        teamblue = self.console.getCvar('g_blueteamlist').getString()
 
         self.debug("TeamSwap red: %s" % teamred)
         self.debug("TeamSwap blue: %s" % teamblue)

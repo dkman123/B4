@@ -736,7 +736,7 @@ class AbstractParser(b4.b4_parser.Parser):
 
         return players
 
-    def getCvar(self, cvar_name) -> str:
+    def getCvar(self, cvar_name) -> b4.b4_cvar.Cvar:
         """
         Return a CVAR from the server.
         :param cvar_name: The CVAR name.
@@ -765,7 +765,7 @@ class AbstractParser(b4.b4_parser.Parser):
                         default_value = ""
                     return b4.b4_cvar.Cvar(m.group('cvar'), value=m.group('value'), default=default_value)
             else:
-                return ""
+                return b4.b4_cvar.Cvar('', value='', default='')
 
     def setCvar(self, cvar_name, value):
         """

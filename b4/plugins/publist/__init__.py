@@ -194,10 +194,10 @@ class PublistPlugin(b4.b4_plugin.Plugin):
         
         if self.console.gameName in ('bfbc2', 'moh', 'bf3'):
             try:
-                cvar_description = self.console.getCvar('serverDescription')
+                cvar_description = self.console.getCvar('serverDescription').getString()
                 if cvar_description is not None:
                     info.update({'serverDescription': cvar_description.value})
-                cvar_banner_url = self.console.getCvar('bannerUrl')
+                cvar_banner_url = self.console.getCvar('bannerUrl').getString()
                 if cvar_banner_url is not None:
                     info.update({'bannerUrl': cvar_banner_url.value})
             except Exception as e:

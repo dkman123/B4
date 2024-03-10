@@ -144,10 +144,7 @@ class ExtraadminPlugin(b4.b4_plugin.Plugin):
             self._adminPlugin.registerCommand(self, 'exit', self._min_level_exit, self.cmd_exit, 'ex')
 
     def onStartup(self):
-        try:
-            self.Nbports = int(self.console.getCvar('sv_maxclients'))
-        except ValueError:
-            self.Nbports = 0
+        self.Nbports = self.console.getCvar('sv_maxclients').getInt()
         while self.i <= self.Nbports:
                 self.Tableau.append('S' + str(self.i))
                 self.i = self.i + 1

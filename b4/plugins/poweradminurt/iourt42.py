@@ -73,7 +73,7 @@ class Poweradminurt42Plugin(Poweradminurt41Plugin):
         Initialize plugin settings
         """
         Poweradminurt41Plugin.onStartup(self)
-        self._gears['reset'] = self.console.getCvar('g_gear')
+        self._gears['reset'] = self.console.getCvar('g_gear').getString()
 
     def registerEvents(self):
         """
@@ -481,7 +481,7 @@ class Poweradminurt42Plugin(Poweradminurt41Plugin):
         """
         if not gearstr:
             # if not explicitly passed get it form the server
-            gearstr = self.console.getCvar('g_gear')
+            gearstr = self.console.getCvar('g_gear').getString()
 
         lines = []
         for key in self._weapons:

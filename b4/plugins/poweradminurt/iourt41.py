@@ -212,7 +212,7 @@ class Poweradminurt41Plugin(b4.b4_plugin.Plugin):
 
         try:
             # save original vote settings
-            self._origvote = self.console.getCvar('g_allowvote')
+            self._origvote = self.console.getCvar('g_allowvote').getString()
             if self._origvote is None:
                 self._origvote = 0
             if type(self._origvote) is str:
@@ -229,18 +229,13 @@ class Poweradminurt41Plugin(b4.b4_plugin.Plugin):
         self._lastvote = self._origvote
 
         # how many players are allowed and if g_maxGameClients != 0 we will disable spec-checking
-        try:
-            self._sv_maxclients = int(self.console.getCvar('sv_maxclients'))
-        except ValueError:
-            self._sv_maxclients = 0
-        try:
-            self._g_maxGameClients = int(self.console.getCvar('g_maxGameClients'))
-        except ValueError:
-            self.g_maxGameClients = 0
+
+        self._sv_maxclients = self.console.getCvar('sv_maxclients').getInt()
+        self._g_maxGameClients = self.console.getCvar('g_maxGameClients').getInt()
 
         try:
             # save original gear settings
-            self._origgear = self.console.getCvar('g_gear')
+            self._origgear = self.console.getCvar('g_gear').getString()
         except ValueError as e:
             if self.console.gameName == 'iourt41':
                 # if the game is iourt42 don't log since the above cvar retrieval
@@ -343,7 +338,7 @@ class Poweradminurt41Plugin(b4.b4_plugin.Plugin):
         """
         self._votedelay = self.getSetting('votedelay', 'votedelay', b4.INT, self._votedelay)
         # set a max delay, setting it larger than timelimit would be foolish
-        timelimit = self.console.getCvar('timelimit')
+        timelimit = self.console.getCvar('timelimit').getString()
         #sys.stdout.write("iourt41 loadVoteDelayer. timelimit returned %s" % timelimit)
         if timelimit is not None and timelimit != '':
             timelimit = timelimit.getInt()
@@ -365,12 +360,12 @@ class Poweradminurt41Plugin(b4.b4_plugin.Plugin):
                                           lambda x: b4.b4_functions.clamp(x, maxv=59))
         self._smaxspectime = self.getSetting('speccheck', 'maxspectime', b4.INT, self._smaxspectime)
         self._smaxlevel = self.getSetting('speccheck', 'maxlevel', b4.LEVEL, self._smaxlevel)
-        maxclients = self.console.getCvar('sv_maxclients')
+        maxclients = self.console.getCvar('sv_maxclients').getString()
         if maxclients is not None and maxclients != '':
             maxclients = maxclients.getInt()
         else:
             maxclients = 0
-        pvtclients = self.console.getCvar('sv_privateClients')
+        pvtclients = self.console.getCvar('sv_privateClients').getString()
         if pvtclients is not None and pvtclients != '':
             pvtclients = pvtclients.getInt()
         else:
@@ -619,10 +614,7 @@ class Poweradminurt41Plugin(b4.b4_plugin.Plugin):
         self._teamblue = 0
 
         # vote delay init
-        try:
-            allowVote = int(self.console.getCvar('g_allowvote'))
-        except ValueError:
-            allowVote = 0
+        allowVote = self.console.getCvar('g_allowvote').getString()
         if self._votedelay > 0 and allowVote != 0:
             # delay voting
             data = 'off'
@@ -665,7 +657,7 @@ class Poweradminurt41Plugin(b4.b4_plugin.Plugin):
         """
         Handle EVT_GAME_MAP_CHANGE.
         """
-        matchmode = self.console.getCvar('g_matchmode')
+        matchmode = self.console.getCvar('g_matchmode').getString()
         if matchmode:
             self._matchmode = matchmode.getBoolean()
 
@@ -1478,7 +1470,7 @@ class Poweradminurt41Plugin(b4.b4_plugin.Plugin):
             return
 
         if data.lower() == 'off':
-            curvalue = self.console.getCvar('g_allowvote')
+            curvalue = self.console.getCvar('g_allowvote').getString()
             if curvalue != '0':
                 self._lastvote = curvalue
             self.console.setCvar('g_allowvote', '0')
@@ -1916,7 +1908,7 @@ class Poweradminurt41Plugin(b4.b4_plugin.Plugin):
         [<all/none/reset/[+-](nade|snipe|spas|pistol|auto|negev)>] - Set allowed weapons.
         """
         try:
-            cur_gear = self.console.getCvar('g_gear')
+            cur_gear = self.console.getCvar('g_gear').getString()
         except ValueError:
             cur_gear = 0
         if not data:
@@ -2206,8 +2198,8 @@ class Poweradminurt41Plugin(b4.b4_plugin.Plugin):
         Count the amount of players in RED and BLUE team.
         """
         try:
-            self._teamred = len(self.console.getCvar('g_redteamlist'))
-            self._teamblue = len(self.console.getCvar('g_blueteamlist'))
+            self._teamred = len(self.console.getCvar('g_redteamlist').getString())
+            self._teamblue = len(self.console.getCvar('g_blueteamlist').getString())
             return True
         except Exception:
             return False
@@ -2221,7 +2213,7 @@ class Poweradminurt41Plugin(b4.b4_plugin.Plugin):
         if self.console.game.gameType is None:
             try:
                 # find and set current gametype
-                self.console.game.gameType = self.console.defineGameType(self.console.getCvar('g_gametype'))
+                self.console.game.gameType = self.console.defineGameType(self.console.getCvar('g_gametype').getString())
                 self.debug('current gametype found - changed to (%s)', self.console.game.gameType)
             except Exception:
                 self.debug('unable to determine current gametype - remains at (%s)', self.console.game.gameType)
@@ -2593,7 +2585,7 @@ class Poweradminurt41Plugin(b4.b4_plugin.Plugin):
                 if self._hs_tempban and headshots > self._hs_tempban_nr \
                         and event.client.maxLevel < self._hs_tempban_immunity_level \
                         and percentage > self._hs_tempban_percent:
-                    gearstring = self.console.getCvar('g_gear')
+                    gearstring = self.console.getCvar('g_gear').getString()
                     # self.verbose("gearstring length: %d. test < %d", len(gearstring),
                     # self._hs_tempban_disable_gear_length)
                     if len(gearstring) < self._hs_tempban_disable_gear_length:

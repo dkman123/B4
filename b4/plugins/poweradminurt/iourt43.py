@@ -419,7 +419,7 @@ class Poweradminurt43Plugin(Poweradminurt41Plugin):
                     if opt == '-':
                         gear_set.add(weapon_code)
 
-        current_gear_set = set(self.console.getCvar('g_gear'))
+        current_gear_set = set(self.console.getCvar('g_gear')).getString()
         new_gear_set = set(current_gear_set)
         for m in re.finditer(r"(all|none|reset|[+-]\s*[\w.]+)", data.strip().lower()):
             update_gear(new_gear_set, m.group())
@@ -553,7 +553,7 @@ class Poweradminurt43Plugin(Poweradminurt41Plugin):
         # self.debug("printgear: cmd = %s; gearstr = %s" % (cmd, gearstr))
         if not gearstr:
             # if not explicitly passed get it form the server
-            gearstr = self.console.getCvar('g_gear')
+            gearstr = self.console.getCvar('g_gear').getString()
 
         lines = []
         for key in self._weapons:
@@ -603,8 +603,8 @@ class Poweradminurt43Plugin(Poweradminurt41Plugin):
                                 self._teamblue += 1
 
             else:
-                self._teamred = len(self.console.getCvar('g_redteamlist'))
-                self._teamblue = len(self.console.getCvar('g_blueteamlist'))
+                self._teamred = len(self.console.getCvar('g_redteamlist').getString())
+                self._teamblue = len(self.console.getCvar('g_blueteamlist').getString())
             
             return True
             
@@ -661,8 +661,8 @@ class Poweradminurt43Plugin(Poweradminurt41Plugin):
                     clients = self.console.clients.getList()
 
                     listplayers = self.console.write('players')
-                    teamred = self.console.getCvar('g_redteamlist')
-                    teamblue = self.console.getCvar('g_blueteamlist')
+                    teamred = self.console.getCvar('g_redteamlist').getString()
+                    teamblue = self.console.getCvar('g_blueteamlist').getString()
 
                     for c in clients:
                         if not c.isvar(self, 'teamtime'):
@@ -742,8 +742,8 @@ class Poweradminurt43Plugin(Poweradminurt41Plugin):
                             elif line.split(" ")[1].split(":")[1] == "FREE":
                                 return b4.b4_clients.TEAM_FREE
                 
-        teamred = self.console.getCvar('g_redteamlist')
-        teamblue = self.console.getCvar('g_blueteamlist')
+        teamred = self.console.getCvar('g_redteamlist').getString()
+        teamblue = self.console.getCvar('g_blueteamlist').getString()
 
         if slotstoletters[int(client.cid)] in teamred:
             return b4.b4_clients.TEAM_RED
