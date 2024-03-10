@@ -57,7 +57,7 @@ class PymysqlStorage(b4.storage.b4_common.DatabaseStorage):
         Return the database connection. If the connection has not been established yet, will establish a new one.
         :return The connection instance, or None if no connection can be established.
         """
-        self.console.info("b4_mysql PymysqlStorage getConnection %r" % threading.current_thread().ident)
+        self.console.debug("b4_mysql PymysqlStorage getConnection %r" % threading.current_thread().ident)
         if (threading.current_thread().ident in self.db
                 and self.db[threading.current_thread().ident]
                 and self.db[threading.current_thread().ident].open):
