@@ -338,11 +338,9 @@ class Poweradminurt41Plugin(b4.b4_plugin.Plugin):
         """
         self._votedelay = self.getSetting('votedelay', 'votedelay', b4.INT, self._votedelay)
         # set a max delay, setting it larger than timelimit would be foolish
-        timelimit = self.console.getCvar('timelimit').getString()
-        #sys.stdout.write("iourt41 loadVoteDelayer. timelimit returned %s" % timelimit)
-        if timelimit is not None and timelimit != '':
-            timelimit = timelimit.getInt()
-        else:
+        try:
+            timelimit = self.console.getCvar('timelimit').getInt()
+        except ValueError:
             timelimit = 0
 
         if timelimit == 0 and self._votedelay != 0:
