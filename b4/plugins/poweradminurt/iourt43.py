@@ -396,6 +396,8 @@ class Poweradminurt43Plugin(Poweradminurt41Plugin):
             @param gear_set: set of letters representing the g_gear cvar value
             @param param_data: !pagear command parameter representing a weapon/item name/preset/group
             """
+            self.error("iourt43 update_gear %r" % gear_set)
+            self.error(self.console.getCvar().__repr__())
             cleaned_data = re.sub(r'\s', "", param_data)
 
             # set a predefined gear
@@ -419,7 +421,9 @@ class Poweradminurt43Plugin(Poweradminurt41Plugin):
                     if opt == '-':
                         gear_set.add(weapon_code)
 
-        current_gear_set = set(self.console.getCvar('g_gear'))
+        currgear = self.console.getCvar('g_gear').getString()
+        self.error("iourt43 currgear=%r" % currgear)
+        current_gear_set = set(currgear)
         new_gear_set = set(current_gear_set)
         for m in re.finditer(r"(all|none|reset|[+-]\s*[\w.]+)", data.strip().lower()):
             update_gear(new_gear_set, m.group())
@@ -429,7 +433,8 @@ class Poweradminurt43Plugin(Poweradminurt41Plugin):
             return
 
         new_gear_cvar = "".join(sorted(new_gear_set))
-        self.console.setCvar('g_gear', new_gear_cvar)
+        self.error("iourt43 new_gear_cvar=%r" % new_gear_cvar)
+        self.console.setCvar(name='g_gear', value=new_gear_cvar)
         self.printgear(client=client, cmd=cmd, gearstr=new_gear_cvar)
 
     ####
@@ -550,7 +555,7 @@ class Poweradminurt43Plugin(Poweradminurt41Plugin):
         """
         Print the current gear in the game chat
         """
-        # self.debug("printgear: cmd = %s; gearstr = %s" % (cmd, gearstr))
+        self.error("printgear: cmd = %s; gearstr = %s" % (cmd, gearstr))
         if not gearstr:
             # if not explicitly passed get it form the server
             gearstr = self.console.getCvar('g_gear').getString()
@@ -559,7 +564,8 @@ class Poweradminurt43Plugin(Poweradminurt41Plugin):
         for key in self._weapons:
             lines.append('%s:%s' % (key, '^2ON' if self._weapons[key] not in gearstr else '^1OFF'))
 
-        cmd.sayLoudOrPM(client, '^3current gear: ^7%s' % '^7, '.join(lines))
+        saystr = '^7, '.join(lines)
+        cmd.sayLoudOrPM(client, '^3current gear: ^7%s' % saystr)
 
     def getTime(self):
         """ just to ease automated tests """
