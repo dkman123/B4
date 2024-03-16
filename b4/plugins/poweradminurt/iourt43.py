@@ -396,8 +396,7 @@ class Poweradminurt43Plugin(Poweradminurt41Plugin):
             @param gear_set: set of letters representing the g_gear cvar value
             @param param_data: !pagear command parameter representing a weapon/item name/preset/group
             """
-            self.error("iourt43 update_gear %r" % gear_set)
-            self.error(self.console.getCvar().__repr__())
+            #self.debug("iourt43 update_gear %r" % gear_set)
             cleaned_data = re.sub(r'\s', "", param_data)
 
             # set a predefined gear
@@ -422,10 +421,11 @@ class Poweradminurt43Plugin(Poweradminurt41Plugin):
                         gear_set.add(weapon_code)
 
         currgear = self.console.getCvar('g_gear').getString()
-        self.error("iourt43 currgear=%r" % currgear)
+        #self.verbose2("iourt43 currgear=%r" % currgear)
         current_gear_set = set(currgear)
         new_gear_set = set(current_gear_set)
         for m in re.finditer(r"(all|none|reset|[+-]\s*[\w.]+)", data.strip().lower()):
+            #self.verbose2("iourt43 new_gear found %s" % m.group())
             update_gear(new_gear_set, m.group())
 
         if current_gear_set == new_gear_set:
@@ -433,8 +433,8 @@ class Poweradminurt43Plugin(Poweradminurt41Plugin):
             return
 
         new_gear_cvar = "".join(sorted(new_gear_set))
-        self.error("iourt43 new_gear_cvar=%r" % new_gear_cvar)
-        self.console.setCvar(name='g_gear', value=new_gear_cvar)
+        #self.verbose2("iourt43 new_gear_cvar=%r" % new_gear_cvar)
+        self.console.setCvar(cvar_name='g_gear', value=new_gear_cvar)
         self.printgear(client=client, cmd=cmd, gearstr=new_gear_cvar)
 
     ####
@@ -555,7 +555,7 @@ class Poweradminurt43Plugin(Poweradminurt41Plugin):
         """
         Print the current gear in the game chat
         """
-        self.error("printgear: cmd = %s; gearstr = %s" % (cmd, gearstr))
+        #self.debug("printgear: cmd = %s; gearstr = %s" % (cmd, gearstr))
         if not gearstr:
             # if not explicitly passed get it form the server
             gearstr = self.console.getCvar('g_gear').getString()
