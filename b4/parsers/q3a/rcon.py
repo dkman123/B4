@@ -29,18 +29,17 @@ import time
 import threading
 import queue
 
-from threading import Thread
-
 __author__ = 'ThorN'
 __version__ = '1.11'
 
 
 class Rcon(object):
 
+    _instances = {}
+    _lock = threading.Lock()
+
     host = ()
     password = None
-    lock = threading.Lock()
-    lock.acquire()
     socket = None
     queue = None
     console = None
@@ -56,6 +55,13 @@ class Rcon(object):
     status_cache = False
     status_cache_expired = None
     status_cache_data = ''
+
+    def __call__(self, *args, **kwargs):
+        if self not in self._instances:
+            with self._lock:
+                if self not in self._instances:
+                    self._instances[self] = super(Rcon, self)
+        return self._instances[self]
 
     def __init__(self, console, host, password):
         """
