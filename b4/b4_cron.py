@@ -272,6 +272,16 @@ class PluginCronTab(CronTab):
 class Cron(object):
     cronThread = None
 
+    _instances = {}
+    _lock = threading.Lock()
+
+    def __call__(self, *args, **kwargs):
+        if self not in self._instances:
+            with self._lock:
+                if self not in self._instances:
+                    self._instances[self] = super(Parser, self)
+        return self._instances[self]
+
     def __init__(self, console):
         """
         Object constructor.
