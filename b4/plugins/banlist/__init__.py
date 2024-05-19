@@ -238,7 +238,8 @@ class BanlistPlugin(b4.b4_plugin.Plugin):
         """
         Examine players ip-bans and allow/deny to connect.
         """
-        self.info('checking slot: %s, %s, %s, %s; thread %r' % (client.cid, client.name, client.ip, client.guid, threading.current_thread().ident))
+        self.info('checking slot: %s, %s, %s, %s; thread %r' % (client.cid, client.name, client.ip, client.guid
+                                                                , threading.current_thread().ident))
 
         # start chunk
         # note: might want to move this up to onAuth, so it doesn't spin up a thread
@@ -286,7 +287,8 @@ class BanlistPlugin(b4.b4_plugin.Plugin):
 
                     client.kick('BANLISTED [%s] %s' % (banlist.name, result), keyword="banlist", silent=True)
                     self.info('kicking @%s %s, ip:%s, guid:%s. Found in banlist : %s' % (client.id, client.name,
-                                                                                         client.ip, client.guid, banlist.name))
+                                                                                         client.ip, client.guid,
+                                                                                         banlist.name))
                     msg = banlist.getMessage(client)
                     if msg and msg != "":
                         self.console.write(msg)
@@ -480,13 +482,15 @@ class Banlist(object):
                     if result is not True:
                         raise BanlistException("failed to create '%s' from %s. (%s)" % (self.file, self.url, result))
                 else:
-                    self.plugin.warning("%s [%s] file is older than an hour, consider updating" % (self.__class__.__name__, self.name))
+                    self.plugin.warning("%s [%s] file is older than an hour, consider updating" % (
+                        self.__class__.__name__, self.name))
 
 
         if self.url is not None and self.plugin._auto_update:
             rmin = random.randint(0,59)
             self.plugin.debug("[%s] will be autoupdated at %s min of every hour" % (self.name, rmin))
-            self._cronTab = b4.b4_cron.PluginCronTab(self.plugin, self.autoUpdateFromUrl, 0, rmin, '*', '*', '*', '*')
+            self._cronTab = b4.b4_cron.PluginCronTab(self.plugin, self.autoUpdateFromUrl, 0, rmin,
+                                                     '*', '*', '*', '*')
             self.plugin.console.cron + self._cronTab
 
         self.plugin.info("loading %s [%s], file:[%s], url:[%s], message:[%s]" % (self.__class__.__name__, self.name,
@@ -578,11 +582,11 @@ class Banlist(object):
         Return the message with pattern $name replaced with the banlist's name.
         """
         if self.message:
-            return self.message.replace('$name','%s' % client.name)\
-                .replace('$ip','%s' % client.ip)\
-                .replace('$guid','%s' % client.guid)\
-                .replace('$pbid','%s' % client.pbid)\
-                .replace('$id','@%s' % client.id)
+            return self.message.replace('$name', '%s' % client.name)\
+                .replace('$ip', '%s' % client.ip)\
+                .replace('$guid', '%s' % client.guid)\
+                .replace('$pbid', '%s' % client.pbid)\
+                .replace('$id', '@%s' % client.id)
         else:
             return ""
 
@@ -649,32 +653,42 @@ class IpBanlist(Banlist):
         rStrict = re.compile(r'''^(?P<entry>%s(?:[^\d\n\r].*)?)$''' % re.escape(ip), re.MULTILINE)
         m = rStrict.search(self.file_content)
         if m:
-            return ip, "ip '%s' matches banlist entry %r (%s %s)" % (ip, m.group('entry').strip(), self.name, self.getHumanModifiedTime())
+            return ip, "ip '%s' matches banlist entry %r (%s %s)" % (ip, m.group('entry').strip(), self.name
+                                                                     , self.getHumanModifiedTime())
 
         # search the ip with .0 at the end
-        rRange = re.compile(r'''^(?P<entry>%s\.0(?:[^\d\n\r].*)?)$''' % re.escape('.'.join(ip.split('.')[0:3])), re.MULTILINE)
+        rRange = re.compile(r'''^(?P<entry>%s\.0(?:[^\d\n\r].*)?)$''' % re.escape('.'.join(ip.split('.')[0:3]))
+                            , re.MULTILINE)
         m = rRange.search(self.file_content)
         if m:
-            return ip, "ip '%s' matches (by range) banlist entry %r (%s %s)" % (ip, m.group('entry').strip(), self.name, self.getHumanModifiedTime())
+            return ip, "ip '%s' matches (by range) banlist entry %r (%s %s)" % (ip, m.group('entry').strip()
+                                                                                , self.name, self.getHumanModifiedTime())
 
         # search the ip with .0.0 at the end
-        rRange = re.compile(r'''^(?P<entry>%s\.0\.0(?:[^\d\n\r].*)?)$''' % re.escape('.'.join(ip.split('.')[0:2])), re.MULTILINE)
+        rRange = re.compile(r'''^(?P<entry>%s\.0\.0(?:[^\d\n\r].*)?)$''' % re.escape('.'.join(ip.split('.')[0:2]))
+                            , re.MULTILINE)
         m = rRange.search(self.file_content)
         if m:
-            return ip, "ip '%s' matches (by range) banlist entry %r (%s %s)" % (ip, m.group('entry').strip(), self.name, self.getHumanModifiedTime())
+            return ip, "ip '%s' matches (by range) banlist entry %r (%s %s)" % (ip, m.group('entry').strip()
+                                                                                , self.name, self.getHumanModifiedTime())
 
         # search the ip with .0.0.0 at the end
-        rRange = re.compile(r'''^(?P<entry>%s\.0\.0\.0(?:[^\d\n\r].*)?)$''' % re.escape('.'.join(ip.split('.')[0:1])), re.MULTILINE)
+        rRange = re.compile(r'''^(?P<entry>%s\.0\.0\.0(?:[^\d\n\r].*)?)$''' % re.escape('.'.join(ip.split('.')[0:1]))
+                            , re.MULTILINE)
         m = rRange.search(self.file_content)
         if m:
-            return ip, "ip '%s' matches (by range) banlist entry %r (%s %s)" % (ip, m.group('entry').strip(), self.name, self.getHumanModifiedTime())
+            return ip, "ip '%s' matches (by range) banlist entry %r (%s %s)" % (ip, m.group('entry').strip()
+                                                                                , self.name
+                                                                                , self.getHumanModifiedTime())
 
         # if force range is set, enforce search by range even if banlist ip are not ending with ".0"
         if self._forceRange:
-            rForceRange = re.compile(r'''^(?P<entry>%s\.\d{1,3}(?:[^\d\n\r].*)?)$''' % re.escape('.'.join(ip.split('.')[0:3])), re.MULTILINE)
+            rForceRange = re.compile(r'''^(?P<entry>%s\.\d{1,3}(?:[^\d\n\r].*)?)$''' %
+                                     re.escape('.'.join(ip.split('.')[0:3])), re.MULTILINE)
             m = rForceRange.search(self.file_content)
             if m:
-                return ip, "ip '%s' matches (by forced range) banlist entry %r (%s %s)" % (ip, m.group('entry').strip(), self.name, self.getHumanModifiedTime())
+                return (ip, "ip '%s' matches (by forced range) banlist entry %r (%s %s)" %
+                        (ip, m.group('entry').strip(), self.name, self.getHumanModifiedTime()))
 
         return False, "ip '%s' not found in banlist (%s %s)" % (ip, self.name, self.getHumanModifiedTime())
 
@@ -704,7 +718,8 @@ class GuidBanlist(Banlist):
         re_guid = re.compile(r'''^(?P<entry>\s*%s\b.*)$''' % re.escape(guid), re.IGNORECASE | re.MULTILINE)
         m = re_guid.search(self.file_content)
         if m:
-            return guid, "guid '%s' matches banlist entry %r (%s %s)" % (guid, m.group('entry'), self.name, self.getHumanModifiedTime())
+            return guid, "guid '%s' matches banlist entry %r (%s %s)" % (guid, m.group('entry'), self.name
+                                                                         , self.getHumanModifiedTime())
         return False, "guid '%s' not found in banlist (%s %s)" % (guid, self.name, self.getHumanModifiedTime())
 
 
@@ -733,7 +748,8 @@ class PbidBanlist(Banlist):
         re_guid = re.compile(r'''^(?P<entry>\s*%s\b.*)$''' % re.escape(pbid), re.IGNORECASE | re.MULTILINE)
         m = re_guid.search(self.file_content)
         if m:
-            return pbid, "PBid '%s' matches banlist entry %r (%s %s)" % (pbid, m.group('entry'), self.name, self.getHumanModifiedTime())
+            return pbid, "PBid '%s' matches banlist entry %r (%s %s)" % (pbid, m.group('entry'), self.name
+                                                                         , self.getHumanModifiedTime())
         return False, "PBid '%s' not found in banlist (%s %s)" % (pbid, self.name, self.getHumanModifiedTime())
 
 

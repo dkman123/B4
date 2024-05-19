@@ -1325,6 +1325,7 @@ class Parser(object):
                 self.working = False
 
             event_name = self.getEventName(event.type)
+            # determine how long it's been in queue
             self._eventsStats.add_event_wait((self.time() - added) * 1000)
             if self.time() >= expire:  # events can only sit in the queue until expire time
                 self.error('**** Event sat in queue too long: %s %s', event_name, self.time() - expire)

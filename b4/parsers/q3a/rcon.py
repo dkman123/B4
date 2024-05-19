@@ -254,7 +254,7 @@ class Rcon(object):
 
     def _writelines(self):
         """
-        Write multiple RCON commands on the socket.
+        Read the queue, write RCON commands on the socket.
         """
         self.console.info("rcon _writelines; thread %r" % threading.current_thread().ident)
         while not self._stopEvent.is_set():
@@ -262,8 +262,8 @@ class Rcon(object):
             for cmd in lines:
                 if not cmd:
                     continue
-                #with self.lock:
-                self.sendRcon(cmd, maxRetries=1)
+                with self._lock:
+                    self.sendRcon(cmd, maxRetries=1)
             time.sleep(1)
 
     def writelines(self, lines):
@@ -289,8 +289,8 @@ class Rcon(object):
                 self.console.verbose2('Using Status: Cached %s' % cmd)
                 return self.status_cache_data
             else:
-                #with self.lock:
-                data = self.sendRcon(cmd, maxRetries=maxRetries, socketTimeout=socketTimeout)
+                with self._lock:
+                    data = self.sendRcon(cmd, maxRetries=maxRetries, socketTimeout=socketTimeout)
                 if data:
                     self.status_cache_data = data
                     self.status_cache_expired = time.time() + self.status_cache_expire_time
@@ -301,8 +301,8 @@ class Rcon(object):
                     self.status_cache_data = ''
                 return self.status_cache_data
         
-        #with self.lock:
-        data = self.sendRcon(cmd, maxRetries=maxRetries, socketTimeout=socketTimeout)
+        with self._lock:
+            data = self.sendRcon(cmd, maxRetries=maxRetries, socketTimeout=socketTimeout)
         return data if data else ''
 
     def flush(self):
@@ -401,20 +401,20 @@ class Rcon(object):
 
     def getRules(self):
         #self.console.verbose3("rcon getRules")
-        self.lock.acquire()
+        self._lock.acquire()
         try:
             data = self.send('getstatus')
         finally:
-            self.lock.release()
+            self._lock.release()
         return data if data else ''
 
     def getInfo(self):
         #self.console.verbose3("rcon getInfo")
-        self.lock.acquire()
+        self._lock.acquire()
         try:
             data = self.send('getinfo')
         finally:
-            self.lock.release()
+            self._lock.release()
         return data if data else ''
 
 ########################################################################################################################

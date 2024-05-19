@@ -1017,7 +1017,7 @@ class Banlist(object):
         self.plugin = plugin
         self.file_content = ""  # the banlist file content
         self.cache = {}  # used to cache isBanned results. Must be cleared after banlist file change/update
-        self.cache_time = 0  # holds the modifed time of the banlist file used to fill that cache
+        self.cache_time = 0  # holds the modified time of the banlist file used to fill that cache
 
         node = config.find('name')
         if node is None or node.text is None or node.text == '':
@@ -1059,7 +1059,8 @@ class Banlist(object):
         #             if result is not True:
         #                 raise BanlistException("failed to create '%s' from %s. (%s)" % (self.file, self.url, result))
         #         else:
-        #             self.plugin.warning("%s [%s] file is older than an hour, consider updating" % (self.__class__.__name__, self.name))
+        #             self.plugin.warning("%s [%s] file is older than an hour, consider updating" % (
+        #                 self.__class__.__name__, self.name))
         #
         # if self.url is not None and self.plugin._auto_update:
         #     rmin = random.randint(0,59)

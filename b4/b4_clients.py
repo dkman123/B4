@@ -1875,9 +1875,11 @@ class Clients(dict):
             # lookup is delayed to allow time for auth
             # it will also allow us to batch the lookups if several players
             # are joining at once
-            self._authorizing = True
-            t = threading.Timer(5, self._authorizeClients)
-            t.start()
+            # NOTE: not used in urt4.3
+            pass
+            #self._authorizing = True
+            #t = threading.Timer(5, self._authorizeClients)
+            #t.start()
 
     def _authorizeClients(self):
         """

@@ -2448,7 +2448,7 @@ class AdminPlugin(b4.b4_plugin.Plugin):
 
     def cmd_spams(self, data, client=None, cmd=None):
         """
-        - list spam messages
+        list spam messages
         """
         #sys.stdout.write("AdminPlugin cmd_spams\n")
         ws = sorted(self.config.options('spamages'))
