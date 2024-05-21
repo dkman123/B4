@@ -2635,8 +2635,8 @@ class Command(object):
     def sayLoudOrPM(self, client, message, *args):
         """
         Display a message with visibility regulated by the command prefix.
-        :param client: The client on who to send the message
-        :param message: The message to be sent
+        :param client: The client to whom we'll send the message.
+        :param message: The message to be sent.
         """
         #sys.stdout.write("Command sayLoudOrPM\n")
         if self.loud:

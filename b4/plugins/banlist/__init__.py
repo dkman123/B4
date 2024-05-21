@@ -35,6 +35,7 @@ import codecs
 import datetime
 import gzip
 import os
+import queue
 import random
 import re
 import threading
@@ -60,6 +61,11 @@ class BanlistPlugin(b4.b4_plugin.Plugin):
     _recent_players = {}
     _store_for_minutes = 120
     _cronTab = None
+    localQueue = None
+
+    # thread will stop if this event gets set
+    _stopEvent = threading.Event()
+    _processThread = None
 
     ####################################################################################################################
     #                                                                                                                  #
@@ -71,6 +77,7 @@ class BanlistPlugin(b4.b4_plugin.Plugin):
         """
         Startup the plugin.
         """
+        self.info("banlist.onStartup; thread %r" % threading.current_thread().ident)
         self._adminPlugin = self.console.getPlugin('admin')
         if not self._adminPlugin:
             raise AttributeError('could not find admin plugin')
@@ -103,10 +110,14 @@ class BanlistPlugin(b4.b4_plugin.Plugin):
                     #self.console.cron.cancel(whitelist._cronTab)
                     self.console.cron - whitelist._cronTab
 
+        self.start()
+        self.checkConnectedPlayers()
+
     def onLoadConfig(self):
         """
         Load plugin configuration.
         """
+        self.info("banlist.onLoadConfig; thread %r" % threading.current_thread().ident)
         try:
             self._immunity_level = self.config.getint('global_settings', 'immunity_level')
         except (NoOptionError, ValueError):
@@ -189,7 +200,6 @@ class BanlistPlugin(b4.b4_plugin.Plugin):
                 self.error(e)
 
         self.debug("%d whitelists loaded" % len(self._whitelists))
-        self.checkConnectedPlayers()
 
         if self._cronTab:
             # remove existing crontab
@@ -216,8 +226,35 @@ class BanlistPlugin(b4.b4_plugin.Plugin):
         """
         Handle EVT_CLIENT_AUTH.
         """
+        self.info("banlist.onAuth; thread %r" % threading.current_thread().ident)
         if self._banlists:
-            threading.Thread(target=self.checkClient, args=(event.client,)).start()
+            # threading.Thread(target=self.checkClient, args=(event.client,)).start()
+            self.localQueue.put(event.client)
+
+    def pluginEvents(self):
+        self.info("banlist.pluginEvents; thread %r" % threading.current_thread().ident)
+        while not self._stopEvent.is_set():
+            if not self.localQueue.empty():
+                client = self.localQueue.get()
+                self.checkClient(client)
+            time.sleep(5)
+
+    def start(self):
+        """
+        Start the process thread.
+        """
+        self.info("banlist.start; thread %r" % threading.current_thread().ident)
+        if self._processThread is None:
+            self.localQueue = queue.Queue()
+            self._stopEvent.clear()
+            self._processThread = threading.Thread(target=self.pluginEvents, args=()).start()
+
+    def stop(self):
+        """
+        Stop the thread.
+        """
+        self.info("banlist.stop; thread %r" % threading.current_thread().ident)
+        self._stopEvent.set()
 
     ####################################################################################################################
     #                                                                                                                  #
@@ -229,15 +266,18 @@ class BanlistPlugin(b4.b4_plugin.Plugin):
         """
         Check all the connected players.
         """
+        self.info("banlist.checkConnectedPlayers; thread %r" % threading.current_thread().ident)
         self.info("checking all connected players")
         clients = self.console.clients.getList()
         for c in clients:
-            self.checkClient(c)
+            #self.checkClient(c)
+            self.localQueue.put(c)
 
     def checkClient(self, client):
         """
         Examine players ip-bans and allow/deny to connect.
         """
+        self.info("banlist.checkClient; thread %r" % threading.current_thread().ident)
         self.info('checking slot: %s, %s, %s, %s; thread %r' % (client.cid, client.name, client.ip, client.guid
                                                                 , threading.current_thread().ident))
 
@@ -388,6 +428,7 @@ class BanlistPlugin(b4.b4_plugin.Plugin):
         Check all players against banlists
         """
         # clear the recent player list
+        self.info("banlist.cmd_banlistcheck; thread %r" % threading.current_thread().ident)
         self._recent_players.clear()
 
         if client is not None:
@@ -418,6 +459,7 @@ class BanlistPlugin(b4.b4_plugin.Plugin):
         # self.debug("%d entries culled" % count)
         # if client is not None:
         #     client.message("%d entries culled" % count)
+
 
 class Banlist(object):
 

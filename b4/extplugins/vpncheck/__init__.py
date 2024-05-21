@@ -29,6 +29,7 @@ import b4.b4_plugin
 import datetime
 import json
 import os
+import queue
 #import random
 import re
 import urllib.request
@@ -74,6 +75,11 @@ class VpncheckPlugin(b4.b4_plugin.Plugin):
     _whitelist_clients = ""
     _whitelist_client_list = {}
     _non_whitelist_client_time = 120
+    localQueue = None
+
+    # thread will stop if this event gets set
+    _stopEvent = threading.Event()
+    _processThread = None
 
     ####################################################################################################################
     #                                                                                                                  #
@@ -85,6 +91,7 @@ class VpncheckPlugin(b4.b4_plugin.Plugin):
         """
         startup the plugin
         """
+        #self.info("vpncheck.onStartup; thread %r" % threading.current_thread().ident)
         # get the admin plugin so we can register commands
         self._adminPlugin = self.console.getPlugin('admin')
 
@@ -110,10 +117,13 @@ class VpncheckPlugin(b4.b4_plugin.Plugin):
                     #self.console.cron.cancel(whitelist._cronTab)
                     self.console.cron - whitelist._cronTab
 
+        self.start()
+
     def onLoadConfig(self):
         """
         load plugin configuration
         """
+        #self.info("vpncheck.onLoadConfig; thread %r" % threading.current_thread().ident)
         try:
             self._immunity_level = self.config.getint('settings', 'immunity_level')
         except (NoOptionError, ValueError):
@@ -309,12 +319,38 @@ class VpncheckPlugin(b4.b4_plugin.Plugin):
         """
         Examine players ip address and allow/deny connection.
         """
-        # self.debug("VPNCheck: onPlayerConnect")
+        #self.info("vpncheck.onPlayerConnect; thread %r" % threading.current_thread().ident)
         if self._on_connect == 1:
             #if self._whitelists:
             # self.debug("VPNCheck: running whitelist check")
             # NOTE: 2nd argument must be a tuple, leave the "extra/stray" comma
-            threading.Thread(target=self.checkClient, args=(event.client, )).start()
+            #threading.Thread(target=self.checkClient, args=(event.client, )).start()
+            self.localQueue.put(event.client)
+
+    def pluginEvents(self):
+        #self.info("vpncheck.pluginEvents; thread %r" % threading.current_thread().ident)
+        while not self._stopEvent.is_set():
+            if not self.localQueue.empty():
+                client = self.localQueue.get()
+                self.checkClient(client)
+            time.sleep(5)
+
+    def start(self):
+        """
+        Start the process thread.
+        """
+        #self.info("vpncheck.start; thread %r" % threading.current_thread().ident)
+        if self._processThread is None:
+            self.localQueue = queue.Queue()
+            self._stopEvent.clear()
+            self._processThread = threading.Thread(target=self.pluginEvents, args=()).start()
+
+    def stop(self):
+        """
+        Stop the thread.
+        """
+        #self.info("vpncheck.stop; thread %r" % threading.current_thread().ident)
+        self._stopEvent.set()
 
     ####################################################################################################################
     #                                                                                                                  #
@@ -746,7 +782,7 @@ class VpncheckPlugin(b4.b4_plugin.Plugin):
         except Exception:
             self.error("vpncheck CheckProxyCheck SSLError connecting to %s", url)
             return {'is_vpn': is_vpn, 'asn': asn, 'org': org, 'isocode': isocode
-                , 'country': country, 'region': region, 'connection_type': connection_type}
+                    , 'country': country, 'region': region, 'connection_type': connection_type}
 
         # sample response (json):
 
@@ -832,9 +868,11 @@ class VpncheckPlugin(b4.b4_plugin.Plugin):
                 connection_type = data[_userip]["type"]
             except KeyError:
                 self.warning("key not found: type")
+        else:
+            self.warning("vpncheck.CheckProxyCheck %s" % data)
 
         return {'is_vpn': is_vpn, 'asn': asn, 'org': org, 'isocode': isocode
-            , 'country': country, 'region': region, 'connection_type': connection_type, 'status': status}
+                , 'country': country, 'region': region, 'connection_type': connection_type, 'status': status}
 
     ####################################################################################################################
     #                                                                                                                  #
@@ -916,7 +954,8 @@ class VpncheckPlugin(b4.b4_plugin.Plugin):
                     cmd.sayLoudOrPM(client, self.getMessage('proxycheck_org', str(proxycheck_response['org'])))
                     cmd.sayLoudOrPM(client, self.getMessage('proxycheck_isocode', str(proxycheck_response['isocode'])))
                     cmd.sayLoudOrPM(client, self.getMessage('proxycheck_region', str(proxycheck_response['region'])))
-                    cmd.sayLoudOrPM(client, self.getMessage('proxycheck_type', str(proxycheck_response['connection_type'])))
+                    cmd.sayLoudOrPM(client, self.getMessage('proxycheck_type',
+                                    str(proxycheck_response['connection_type'])))
                     cmd.sayLoudOrPM(client, self.getMessage('proxycheck_proxy', str(proxycheck_response['is_vpn'])))
 
     def cmd_vpncheckip(self, data=None, client=None, cmd=None):
@@ -987,7 +1026,8 @@ class VpncheckPlugin(b4.b4_plugin.Plugin):
                     cmd.sayLoudOrPM(client, self.getMessage('proxycheck_org', str(proxycheck_response['org'])))
                     cmd.sayLoudOrPM(client, self.getMessage('proxycheck_isocode', str(proxycheck_response['isocode'])))
                     cmd.sayLoudOrPM(client, self.getMessage('proxycheck_region', str(proxycheck_response['region'])))
-                    cmd.sayLoudOrPM(client, self.getMessage('proxycheck_type', str(proxycheck_response['connection_type'])))
+                    cmd.sayLoudOrPM(client, self.getMessage('proxycheck_type',
+                                    str(proxycheck_response['connection_type'])))
                     cmd.sayLoudOrPM(client, self.getMessage('proxycheck_proxy', str(proxycheck_response['is_vpn'])))
 
 ####################################################################################################################
